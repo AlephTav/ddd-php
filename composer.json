@@ -1,0 +1,34 @@
+{
+    "name": "alephtools/ddd",
+    "type": "library",
+    "description": "Helpful instruments for Domain Driven Design.",
+    "license": "MIT",
+    "keywords": ["aleph", "ddd", "clean architecture"],
+    "authors": [
+        {
+            "name": "Aleph Tav",
+            "email": "4lephtav@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.2.0",
+        "ramsey/uuid": "^3.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "AlephTools\\DDD\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AlephTools\\DDD\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

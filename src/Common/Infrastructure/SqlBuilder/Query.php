@@ -420,6 +420,7 @@ class Query extends AbstractExpression
             $this->built = false;
             $result = $this->column();
             $this->select = $prevSelect;
+            $this->built = false;
             return $result;
         }
         $this->validateAndBuild();
@@ -439,6 +440,7 @@ class Query extends AbstractExpression
             $this->built = false;
             $result = $this->scalar();
             $this->select = $prevSelect;
+            $this->built = false;
             return $result;
         }
         $this->validateAndBuild();
@@ -454,14 +456,13 @@ class Query extends AbstractExpression
         $prevLimit = $this->limit;
         $prevOffset = $this->offset;
         $prevOrder = $this->order;
-        $prevBuilt = $this->built;
         $this->limit = $this->offset = $this->order = null;
         $this->built = false;
         $total = (int)$this->scalar("COUNT($column)");
         $this->order = $prevOrder;
         $this->limit = $prevLimit;
         $this->offset = $prevOffset;
-        $this->built = $prevBuilt;
+        $this->built = false;
         return $total;
     }
 

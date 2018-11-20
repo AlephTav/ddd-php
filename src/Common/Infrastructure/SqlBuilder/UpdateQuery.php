@@ -294,8 +294,8 @@ class UpdateQuery extends AbstractExpression
 
     private function buildAssignment(): void
     {
-        $this->sql .= ' SET ';
         if ($this->assignment) {
+            $this->sql .= ' SET ';
             $this->sql .= $this->assignment->toSql();
             $this->addParams($this->assignment->getParams());
         }

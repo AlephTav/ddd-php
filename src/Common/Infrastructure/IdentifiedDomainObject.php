@@ -25,15 +25,6 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     }
 
     /**
-     * @param AbstractId $id
-     * @return void
-     */
-    protected function setId(?AbstractId $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * Converts an object to its identity.
      *
      * @return mixed

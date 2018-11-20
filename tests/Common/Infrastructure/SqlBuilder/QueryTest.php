@@ -2,6 +2,8 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder;
 
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\QueryExecutor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ConditionalExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
@@ -18,6 +20,7 @@ class QueryTest extends TestCase
             ->from('some_table');
 
         $this->assertSame('SELECT * FROM some_table', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromTableNameWithAlias(): void
@@ -26,6 +29,7 @@ class QueryTest extends TestCase
             ->from('some_table', 't');
 
         $this->assertSame('SELECT * FROM some_table t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfTables(): void
@@ -38,6 +42,7 @@ class QueryTest extends TestCase
             ]);
 
         $this->assertSame('SELECT * FROM tab1, tab2, tab3', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfTablesWithAliases(): void
@@ -50,6 +55,7 @@ class QueryTest extends TestCase
             ]);
 
         $this->assertSame('SELECT * FROM tab1 t1, tab2 t2, tab3 t3', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfTablesAppend(): void
@@ -60,6 +66,7 @@ class QueryTest extends TestCase
             ->from('t3');
 
         $this->assertSame('SELECT * FROM t1, t2, t3', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfTablesWithAliasesAppend(): void
@@ -70,6 +77,7 @@ class QueryTest extends TestCase
             ->from('tab3', 't3');
 
         $this->assertSame('SELECT * FROM tab1 t1, tab2 t2, tab3 t3', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromRawExpression(): void
@@ -78,6 +86,7 @@ class QueryTest extends TestCase
             ->from(Query::raw('my_table AS t'));
 
         $this->assertSame('SELECT * FROM my_table AS t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromAnotherQuery(): void
@@ -86,6 +95,7 @@ class QueryTest extends TestCase
             ->from((new Query())->from('my_table'));
 
         $this->assertSame('SELECT * FROM (SELECT * FROM my_table)', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromAnotherQueryWithAlias(): void
@@ -97,6 +107,7 @@ class QueryTest extends TestCase
             );
 
         $this->assertSame('SELECT * FROM (SELECT * FROM my_table) t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfQueries(): void
@@ -112,6 +123,7 @@ class QueryTest extends TestCase
             'SELECT * FROM (SELECT * FROM tab1), (SELECT * FROM tab2), (SELECT * FROM tab3)',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromListOfQueriesWithAliases(): void
@@ -127,6 +139,7 @@ class QueryTest extends TestCase
             'SELECT * FROM (SELECT * FROM tab1) t1, (SELECT * FROM tab2) t2, (SELECT * FROM tab3) t3',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testFromMixedSources(): void
@@ -143,6 +156,7 @@ class QueryTest extends TestCase
             'SELECT * FROM tab1 t1, tab1 t2, tab3 t3, (SELECT * FROM tab4)',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     //endregion
@@ -160,6 +174,7 @@ class QueryTest extends TestCase
             ]);
 
         $this->assertSame('SELECT f1, f2, f3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectListOfFieldsWithAlias(): void
@@ -173,6 +188,7 @@ class QueryTest extends TestCase
             ]);
 
         $this->assertSame('SELECT field1 f1, field2 f2, field3 f3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectListOfFieldsAppend(): void
@@ -184,6 +200,7 @@ class QueryTest extends TestCase
             ->select('field3');
 
         $this->assertSame('SELECT field1, field2, field3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectListOfFieldsWithAliasesAppend(): void
@@ -195,6 +212,7 @@ class QueryTest extends TestCase
             ->select('field3', 't3');
 
         $this->assertSame('SELECT field1 t1, field2 t2, field3 t3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectStringExpression(): void
@@ -204,6 +222,7 @@ class QueryTest extends TestCase
             ->select('f1, f2, f3');
 
         $this->assertSame('SELECT f1, f2, f3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectRawExpression(): void
@@ -213,6 +232,7 @@ class QueryTest extends TestCase
             ->select(Query::raw('f1, f2, f3'));
 
         $this->assertSame('SELECT f1, f2, f3 FROM t', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectQuery(): void
@@ -222,6 +242,7 @@ class QueryTest extends TestCase
             ->select((new Query())->from('t2'));
 
         $this->assertSame('SELECT (SELECT * FROM t2) FROM t1', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectQueryWithAlias(): void
@@ -234,6 +255,7 @@ class QueryTest extends TestCase
             );
 
         $this->assertSame('SELECT (SELECT * FROM tab2) f1 FROM tab1 t1', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testSelectMixedSources(): void
@@ -251,6 +273,7 @@ class QueryTest extends TestCase
             'SELECT (SELECT * FROM tab2) f1, NULL f2, field3 f3, COUNT(*) f4 FROM t1',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     //endregion
@@ -264,6 +287,7 @@ class QueryTest extends TestCase
             ->join('tab2 t2', 't2.id = t1.tab1_id');
 
         $this->assertSame('SELECT * FROM tab1 t1 JOIN tab2 t2 ON t2.id = t1.tab1_id', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinListOfTables(): void
@@ -276,6 +300,7 @@ class QueryTest extends TestCase
             'SELECT * FROM tab1 JOIN (tab2, tab3) ON tab2.id = tab3.id AND tab1.id = tab3.id',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinListOfTablesAppend(): void
@@ -290,6 +315,7 @@ class QueryTest extends TestCase
             'SELECT * FROM t1 JOIN t2 ON t2.id = t1.id JOIN t3 ON t3.id = t2.id JOIN t4 USING (t4.id, t3.id)',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinListOfTablesWithAliases(): void
@@ -302,6 +328,7 @@ class QueryTest extends TestCase
             'SELECT * FROM tab1 t1 JOIN (tab2 t2, tab3 t3) ON t2.id = t3.id AND t1.id = t3.id',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinTableWithColumnList(): void
@@ -311,6 +338,7 @@ class QueryTest extends TestCase
             ->join('t2', ['f1', 'f2', 'f3']);
 
         $this->assertSame('SELECT * FROM t1 JOIN t2 USING (f1, f2, f3)', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinSubquery(): void
@@ -320,6 +348,7 @@ class QueryTest extends TestCase
             ->join((new Query())->from('t2'), 't2.id = t1.id');
 
         $this->assertSame('SELECT * FROM t1 JOIN (SELECT * FROM t2) ON t2.id = t1.id', $q->toSql());
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinSubqueryWithAlias(): void
@@ -332,9 +361,10 @@ class QueryTest extends TestCase
             'SELECT * FROM tab1 t1 JOIN (SELECT * FROM tab2) t2 ON t2.id = t1.id',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
-    public function testJoinTableWithNestedConditions(): void
+    public function testJoinTableWithNestedConditionsClosure(): void
     {
         $q = (new Query())
             ->from('t1')
@@ -348,6 +378,24 @@ class QueryTest extends TestCase
             'SELECT * FROM t1 JOIN t2 ON (t2.id = t1.id AND t1.f1 > t2.f2 OR t2.f3 <> t1.f3)',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
+    }
+
+    public function testJoinTableWithNestedConditionsConditionalExpression(): void
+    {
+        $q = (new Query())
+            ->from('t1')
+            ->join('t2', Query::condition()
+                ->with('t2.id', '=', Query::raw('t1.id'))
+                ->and('t1.f1', '>', Query::raw('t2.f2'))
+                ->or('t2.f3', '<>', Query::raw('t1.f3'))
+            );
+
+        $this->assertSame(
+            'SELECT * FROM t1 JOIN t2 ON (t2.id = t1.id AND t1.f1 > t2.f2 OR t2.f3 <> t1.f3)',
+            $q->toSql()
+        );
+        $this->assertSame([], $q->getParams());
     }
 
     public function testJoinOfDifferentTypes(): void
@@ -372,6 +420,7 @@ class QueryTest extends TestCase
             'NATURAL RIGHT OUTER JOIN t10 CROSS JOIN t11 STRAIGHT_JOIN t12',
             $q->toSql()
         );
+        $this->assertSame([], $q->getParams());
     }
 
     //endregion
@@ -948,6 +997,160 @@ class QueryTest extends TestCase
             '(SELECT * FROM t3) LIMIT 5 OFFSET 50',
             $q->toSql()
         );
+    }
+
+    //endregion
+
+    //region Query Execution
+
+    public function testQueryExecutorValidationForRows(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The query executor instance must not be null.');
+
+        (new Query())->rows();
+    }
+
+    public function testQueryExecutorValidationForRow(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The query executor instance must not be null.');
+
+        (new Query())->row();
+    }
+
+    public function testQueryExecutorValidationForColumn(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The query executor instance must not be null.');
+
+        (new Query())->column();
+    }
+
+    public function testQueryExecutorValidationForScalar(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The query executor instance must not be null.');
+
+        (new Query())->scalar();
+    }
+
+    public function testQueryExecutorValidationForCount(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The query executor instance must not be null.');
+
+        (new Query())->count();
+    }
+
+    public function testRows(): void
+    {
+        $q = (new Query($this->getMockQueryExecutor('rows')))
+            ->from('tb')
+            ->where('c1', '=', 123);
+
+        $this->assertSame([$q->toSql(), $q->getParams()], $q->rows());
+    }
+
+    public function testRow(): void
+    {
+        $q = (new Query($this->getMockQueryExecutor('row')))
+            ->from('tb')
+            ->where('c1', '=', 123)
+            ->limit(1);
+
+        $this->assertSame([$q->toSql(), $q->getParams()], $q->row());
+    }
+
+    public function testColumn(): void
+    {
+        $executor = $this->getMockQueryExecutor('column');
+
+        $q = (new Query($executor))
+            ->from('tb')
+            ->where('c1', '=', 123);
+
+        $this->assertSame([$q->toSql(), $q->getParams()], $q->column());
+
+        $column = $q->column('c2');
+        $this->assertSame('SELECT * FROM tb WHERE c1 = :p1', $q->toSql());
+        $this->assertSame(['p1' => 123], $q->getParams());
+
+        $q->select('c2');
+        $this->assertSame([$q->toSql(), $q->getParams()], $column);
+    }
+
+    public function testScalar(): void
+    {
+        $executor = $this->getMockQueryExecutor('scalar');
+
+        $q = (new Query($executor))
+            ->from('tb')
+            ->where('c1', '=', 123);
+
+        $this->assertSame([$q->toSql(), $q->getParams()], $q->scalar());
+
+        $column = $q->scalar('c2');
+        $this->assertSame('SELECT * FROM tb WHERE c1 = :p1', $q->toSql());
+        $this->assertSame(['p1' => 123], $q->getParams());
+
+        $q->select('c2');
+        $this->assertSame([$q->toSql(), $q->getParams()], $column);
+    }
+
+    public function testCount(): void
+    {
+        $executor = $this->getMockBuilder(QueryExecutor::class)
+            ->setMethods(['rows', 'row', 'column', 'scalar', 'insert', 'execute'])
+            ->getMock();
+
+        $result = null;
+        $executor->method('scalar')
+            ->willReturnCallback(function(string $sql, array $params) use(&$result) {
+                $result = [$sql, $params];
+                return 5;
+            });
+
+        $q = (new Query($executor))
+            ->from('tb')
+            ->where('c1', '=', 123)
+            ->orderBy('c3')
+            ->limit(10)
+            ->offset(25);
+
+        $count = $q->count();
+        $this->assertSame(5, $count);
+        $this->assertSame(['SELECT COUNT(*) FROM tb WHERE c1 = :p1', $q->getParams()], $result);
+
+        $count = $q->count('c2');
+        $this->assertSame(5, $count);
+        $this->assertSame(['SELECT COUNT(c2) FROM tb WHERE c1 = :p1', $q->getParams()], $result);
+
+        $this->assertSame('SELECT * FROM tb WHERE c1 = :p1 ORDER BY c3 LIMIT 10 OFFSET 25', $q->toSql());
+        $this->assertSame(['p1' => 123], $q->getParams());
+    }
+
+    public function testGetQueryExecutor(): void
+    {
+        $executor = $this->getMockBuilder(QueryExecutor::class)
+            ->getMock();
+        $q = new Query($executor);
+
+        $this->assertSame($executor, $q->getQueryExecutor());
+    }
+
+    private function getMockQueryExecutor(string $method): MockObject
+    {
+        $executor = $this->getMockBuilder(QueryExecutor::class)
+            ->setMethods(['rows', 'row', 'column', 'scalar', 'insert', 'execute'])
+            ->getMock();
+
+        $executor->method($method)
+            ->willReturnCallback(function(string $sql, array $params) {
+                return [$sql, $params];
+            });
+
+        return $executor;
     }
 
     //endregion

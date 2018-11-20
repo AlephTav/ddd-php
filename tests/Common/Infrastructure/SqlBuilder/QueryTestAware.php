@@ -9,7 +9,7 @@ trait QueryTestAware
     /**
      * @throws \ReflectionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $property = (new \ReflectionClass(AbstractExpression::class))->getProperty('parameterIndex');
         $property->setAccessible(true);

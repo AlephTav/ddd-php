@@ -31,7 +31,7 @@ class DateHelperTest extends TestCase
         $now = new DateTime();
         foreach (DateHelper::getAvailableDateFormats() as $format) {
             $date = $now->format($format);
-echo $date . PHP_EOL;
+
             $data[] = [
                 $date,
                 $format,

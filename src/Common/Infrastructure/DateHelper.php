@@ -8,6 +8,8 @@ use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 class DateHelper
 {
     private static $dateFormats = [
+        DateTime::ATOM,
+        'Y-m-d\TH:i:s.uP',
         'Y-m-d H:i:s',
         'm/d/Y H:i:s',
         'Y-m-d',

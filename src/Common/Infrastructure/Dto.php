@@ -336,14 +336,14 @@ abstract class Dto implements Serializable
         return $method->invoke($this);
     }
 
-    private function invokeSetter(string $setter, $value)
+    private function invokeSetter(string $setter, $value): void
     {
         $method = $this->reflector->getMethod($setter);
         $method->setAccessible(true);
         $method->invoke($this, $value);
     }
 
-    private function invokeValidator(string $validator)
+    private function invokeValidator(string $validator): void
     {
         $method = $this->reflector->getMethod($validator);
         $method->setAccessible(true);
@@ -355,7 +355,7 @@ abstract class Dto implements Serializable
      *
      * @return void
      */
-    private function extractProperties()
+    private function extractProperties(): void
     {
         if (isset(self::$properties[static::class])) {
             return;
@@ -374,6 +374,12 @@ abstract class Dto implements Serializable
                 }
 
                 $propertyName = $matches[2][$i];
+                if (!$this->reflector->hasProperty($propertyName)) {
+                    throw new PropertyMissingException(
+                        "Property $propertyName is not connected with the appropriate class field."
+                    );
+                }
+
                 if (!$this->reflector->hasMethod($setter = $this->getSetterName($propertyName))) {
                     $setter = null;
                 }

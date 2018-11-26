@@ -26,7 +26,7 @@ class DtoTestObject extends Dto
         return $this->prop1;
     }
 
-    protected function setProp2(int $value)
+    protected function setProp2(int $value): void
     {
         $this->prop2 = $value;
     }
@@ -36,21 +36,26 @@ class DtoTestObject extends Dto
         return $this->prop3;
     }
 
-    public function setProp4(string $value)
+    public function setProp4(string $value): void
     {
         $this->prop4 = $value;
     }
 
-    protected function validateProp2()
+    protected function validateProp2(): void
     {
         $this->assertArgumentMax($this->prop2, 10, 'error message 1');
     }
 
-    private function validateProp4()
+    private function validateProp4(): void
     {
         $this->assertArgumentNotEmpty($this->prop4, 'error message 2');
     }
 }
+
+/**
+ * @property mixed $notExistingProp
+ */
+class DtoTestObjectWithNonExistentProperty extends Dto {}
 
 class DtoTest extends TestCase
 {
@@ -343,5 +348,13 @@ class DtoTest extends TestCase
         $new = unserialize(serialize($obj));
 
         $this->assertSame($obj->toArray(), $new->toArray());
+    }
+
+    public function testDtoWithNotExistingProperty(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Property notExistingProp is not connected with the appropriate class field.');
+
+        new DtoTestObjectWithNonExistentProperty(['notExistingProp' => 'test']);
     }
 }

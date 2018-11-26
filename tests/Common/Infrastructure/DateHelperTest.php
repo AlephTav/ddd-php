@@ -28,9 +28,10 @@ class DateHelperTest extends TestCase
     public function dateDataProvider(): array
     {
         $data = [];
+        $now = new DateTime();
         foreach (DateHelper::getAvailableDateFormats() as $format) {
-            $date = date($format);
-
+            $date = $now->format($format);
+echo $date . PHP_EOL;
             $data[] = [
                 $date,
                 $format,

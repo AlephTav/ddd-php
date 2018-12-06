@@ -14,14 +14,14 @@ class FullName extends ValueObject
     public const FIRST_NAME_MAX_LENGTH = 50;
     public const LAST_NAME_MAX_LENGTH = 50;
 
-    private $firstName;
-    private $lastName;
+    protected $firstName;
+    protected $lastName;
 
     /**
      * Parses the full name string in format "firstName lastName".
      *
      * @param string $fullName
-     * @return FullName
+     * @return static
      */
     public static function parse(?string $fullName)
     {
@@ -79,9 +79,8 @@ class FullName extends ValueObject
 
     protected function validateFirstName(): void
     {
-        $this->assertArgumentLength(
+        $this->assertArgumentMaxLength(
             $this->firstName,
-            0,
             static::FIRST_NAME_MAX_LENGTH,
             'First name must be at most ' . static::FIRST_NAME_MAX_LENGTH . ' characters.'
         );
@@ -89,9 +88,8 @@ class FullName extends ValueObject
 
     protected function validateLastName(): void
     {
-        $this->assertArgumentLength(
+        $this->assertArgumentMaxLength(
             $this->lastName,
-            0,
             static::LAST_NAME_MAX_LENGTH,
             'Last name must be at most ' . static::LAST_NAME_MAX_LENGTH . ' characters.'
         );

@@ -253,6 +253,40 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentLength("some text", 10, 15, 'error message');
     }
 
+    public function testAssertArgumentMinLengthSuccess(): void
+    {
+        self::$obj->assertArgumentMinLength('some text', 5, 'error message');
+        self::$obj->assertArgumentMinLength('', 0, 'error message');
+        self::$obj->assertArgumentMinLength(null, 0, 'error message');
+
+        $this->assertTrue(true);
+    }
+
+    public function testAssertArgumentMinLengthFailure(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('error message');
+
+        self::$obj->assertArgumentMinLength("some text", 10, 'error message');
+    }
+
+    public function testAssertArgumentMaxLengthSuccess(): void
+    {
+        self::$obj->assertArgumentMaxLength('some text', 9, 'error message');
+        self::$obj->assertArgumentMaxLength('', 3, 'error message');
+        self::$obj->assertArgumentMaxLength(null, 3, 'error message');
+
+        $this->assertTrue(true);
+    }
+
+    public function testAssertArgumentMaxLengthFailure(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('error message');
+
+        self::$obj->assertArgumentMaxLength("some text", 5, 'error message');
+    }
+
     public function testAssertArgumentRangeSuccess(): void
     {
         self::$obj->assertArgumentRange(10, 5, 15, 'error message');

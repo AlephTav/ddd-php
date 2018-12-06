@@ -83,6 +83,20 @@ trait AssertionConcern
         }
     }
 
+    protected function assertArgumentMinLength(?string $value, int $min, string $msg): void
+    {
+        if (mb_strlen($value) < $min) {
+            throw new InvalidArgumentException($msg);
+        }
+    }
+
+    protected function assertArgumentMaxLength(?string $value, int $max, string $msg): void
+    {
+        if (mb_strlen($value) > $max) {
+            throw new InvalidArgumentException($msg);
+        }
+    }
+
     protected function assertArgumentRange($value, $min, $max, string $msg): void
     {
         if ($value < $min || $value > $max) {

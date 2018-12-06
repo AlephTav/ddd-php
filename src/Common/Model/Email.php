@@ -12,9 +12,9 @@ class Email extends ValueObject
 {
     public const ADDRESS_MAX_LENGTH = 255;
 
-    private $address;
+    protected $address;
 
-    private static $emailPattern = '/[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})/';
+    protected static $emailPattern = '/[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})/';
 
     /**
      * Constructor. Available formats:
@@ -33,16 +33,15 @@ class Email extends ValueObject
         }
     }
 
-    private function setAddress(?string $address): void
+    protected function setAddress(?string $address): void
     {
         $this->address = Sanitizer::sanitizeEmail($address);
     }
 
-    private function validateAddress(): void
+    protected function validateAddress(): void
     {
-        $this->assertArgumentLength(
+        $this->assertArgumentMaxLength(
             $this->address,
-            0,
             static::ADDRESS_MAX_LENGTH,
             'Email address must be at most ' . static::ADDRESS_MAX_LENGTH . ' characters.'
         );

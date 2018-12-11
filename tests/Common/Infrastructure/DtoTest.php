@@ -74,7 +74,7 @@ class DtoTest extends TestCase
     public function testCreationFailureNotExistingProperty(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop5 not found.');
+        $this->expectExceptionMessage('Property "prop5" not found.');
 
         new DtoTestObject([
             'prop1' => null,
@@ -187,7 +187,7 @@ class DtoTest extends TestCase
     public function testGetFailureWriteOnly(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop4 is write only.');
+        $this->expectExceptionMessage('Property "prop4" is write only.');
 
         $obj = new DtoTestObject([
             'prop2' => 5,
@@ -200,7 +200,7 @@ class DtoTest extends TestCase
     public function testGetFailureNoAccessibleGetter(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop1 does not have accessible getter.');
+        $this->expectExceptionMessage('Property "prop1" does not have accessible getter.');
 
         (new DtoTestObject([
             'prop1' => true,
@@ -236,7 +236,7 @@ class DtoTest extends TestCase
     public function testSetFailureReadOnly(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop3 is read only.');
+        $this->expectExceptionMessage('Property "prop3" is read only.');
 
         $obj = new DtoTestObject([
             'prop2' => 5,
@@ -250,7 +250,7 @@ class DtoTest extends TestCase
     public function testSetFailureNoAccessibleSetter(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop2 does not have accessible setter.');
+        $this->expectExceptionMessage('Property "prop2" does not have accessible setter.');
 
         $obj = new DtoTestObject([
             'prop2' => 5,
@@ -274,7 +274,7 @@ class DtoTest extends TestCase
     public function testIssetFailureWriteOnly(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop4 is write only.');
+        $this->expectExceptionMessage('Property "prop4" is write only.');
 
         $obj = new DtoTestObject([
             'prop2' => 5,
@@ -287,7 +287,7 @@ class DtoTest extends TestCase
     public function testIssetFailureNoAccessibleGetter(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop1 does not have accessible getter.');
+        $this->expectExceptionMessage('Property "prop1" does not have accessible getter.');
 
         $obj = new DtoTestObject([
             'prop2' => 5,
@@ -311,7 +311,7 @@ class DtoTest extends TestCase
     public function testUnsetFailureReadOnly(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop3 is read only.');
+        $this->expectExceptionMessage('Property "prop3" is read only.');
 
 
         $obj = new DtoTestObject([
@@ -325,7 +325,7 @@ class DtoTest extends TestCase
     public function testUnsetFailureNoAccessibleSetter(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property prop2 does not have accessible setter.');
+        $this->expectExceptionMessage('Property "prop2" does not have accessible setter.');
 
 
         $obj = new DtoTestObject([
@@ -353,7 +353,7 @@ class DtoTest extends TestCase
     public function testDtoWithNotExistingProperty(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property notExistingProp is not connected with the appropriate class field.');
+        $this->expectExceptionMessage('Property "notExistingProp" is not connected with the appropriate class field.');
 
         new DtoTestObjectWithNonExistentProperty(['notExistingProp' => 'test']);
     }

@@ -379,7 +379,7 @@ class AssertionConcernTest extends TestCase
     public function testAssertArgumentNotInFutureSuccess(): void
     {
         self::$obj->assertArgumentNotInFuture(new DateTime(), 'error message 1');
-        self::$obj->assertArgumentNotInFuture(new DateTime('-1 day'), 'error message 2');
+        self::$obj->assertArgumentNotInFuture(new DateTime('-1 second'), 'error message 2');
 
         $this->assertTrue(true);
     }
@@ -389,7 +389,23 @@ class AssertionConcernTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('error message');
 
-        self::$obj->assertArgumentNotInFuture(new DateTime('+1 day'), 'error message');
+        self::$obj->assertArgumentNotInFuture(new DateTime('+1 second'), 'error message');
+    }
+
+    public function testAssertArgumentNotInPastSuccess(): void
+    {
+        self::$obj->assertArgumentNotInPast(new DateTime(), 'error message 1');
+        self::$obj->assertArgumentNotInPast(new DateTime('+1 second'), 'error message 2');
+
+        $this->assertTrue(true);
+    }
+
+    public function testAssertArgumentNotInPastFailure(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('error message');
+
+        self::$obj->assertArgumentNotInPast(new DateTime('-1 second'), 'error message');
     }
 
     public function testAssertArgumentInstanceOfSuccess(): void

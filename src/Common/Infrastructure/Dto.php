@@ -164,7 +164,7 @@ abstract class Dto implements Serializable
 
         $info = $this->properties()[$property];
         if ($info[self::PROP_TYPE] === self::PROP_TYPE_WRITE) {
-            throw new RuntimeException("Property $property is write only.");
+            throw new RuntimeException("Property \"$property\" is write only.");
         }
 
         $getter = $info[self::PROP_GETTER];
@@ -175,7 +175,7 @@ abstract class Dto implements Serializable
         if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
             return $this->{$getter}();
         }
-        throw new RuntimeException("Property $property does not have accessible getter.");
+        throw new RuntimeException("Property \"$property\" does not have accessible getter.");
     }
 
     /**
@@ -191,7 +191,7 @@ abstract class Dto implements Serializable
 
         $info = $this->properties()[$property];
         if ($info[self::PROP_TYPE] === self::PROP_TYPE_READ) {
-            throw new RuntimeException("Property $property is read only.");
+            throw new RuntimeException("Property \"$property\" is read only.");
         }
 
         $setter = $info[self::PROP_SETTER];
@@ -202,7 +202,7 @@ abstract class Dto implements Serializable
             if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
                 $this->{$setter}($value);
             } else {
-                throw new RuntimeException("Property $property does not have accessible setter.");
+                throw new RuntimeException("Property \"$property\" does not have accessible setter.");
             }
         }
     }
@@ -300,7 +300,7 @@ abstract class Dto implements Serializable
     private function checkPropertyExistence(string $property): void
     {
         if (!isset($this->properties()[$property])) {
-            throw new PropertyMissingException("Property $property not found.");
+            throw new PropertyMissingException("Property \"$property\" not found.");
         }
     }
 
@@ -376,7 +376,7 @@ abstract class Dto implements Serializable
                 $propertyName = $matches[2][$i];
                 if (!$this->reflector->hasProperty($propertyName)) {
                     throw new PropertyMissingException(
-                        "Property $propertyName is not connected with the appropriate class field."
+                        "Property \"$propertyName\" is not connected with the appropriate class field."
                     );
                 }
 

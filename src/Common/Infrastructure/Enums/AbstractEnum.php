@@ -25,7 +25,7 @@ abstract class AbstractEnum implements JsonSerializable
      *
      * @var array
      */
-    public static $instances = [];
+    private static $instances = [];
 
     /**
      * The name of an enum constant associated with the given enum instance.
@@ -195,7 +195,9 @@ abstract class AbstractEnum implements JsonSerializable
      */
     public function __wakeup()
     {
-        self::$instances[static::class][$this->constant] = $this;
+        if (empty(self::$instances[static::class][$this->constant])) {
+            self::$instances[static::class][$this->constant] = $this;
+        }
     }
 
     /**

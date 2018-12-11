@@ -125,6 +125,13 @@ trait AssertionConcern
         }
     }
 
+    protected function assertArgumentNotInPast(DateTime $date, string $msg): void
+    {
+        if ($date < new DateTime('-1 second')) {
+            throw new InvalidArgumentException($msg);
+        }
+    }
+
     protected function assertArgumentPatternMatch(string $value, string $pattern, string $msg): void
     {
         if (!preg_match($pattern, $value)) {

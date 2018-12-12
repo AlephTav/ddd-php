@@ -61,6 +61,14 @@ abstract class AbstractEnum implements JsonSerializable
     }
 
     /**
+     * Clears the enum cache.
+     */
+    final public static function clear(): void
+    {
+        self::$instances = [];
+    }
+
+    /**
      * Checks if the given constant name is in the enum type.
      *
      * @param string $name

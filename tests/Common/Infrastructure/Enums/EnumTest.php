@@ -173,4 +173,21 @@ class EnumTest extends TestCase
         $this->assertEquals(EnumTestObject::C1(), $c1);
         $this->assertEquals('C1', $c1);
     }
+
+    public function testClearEnumCache(): void
+    {
+        $c1 = EnumTestObject::C1();
+        AbstractEnum::clear();
+
+        $this->assertNotSame(EnumTestObject::C1(), $c1);
+        $this->assertEquals(EnumTestObject::C1(), $c1);
+        $this->assertEquals('C1', $c1);
+
+        AbstractEnum::clear();
+        $c1 = unserialize(serialize($c1));
+
+        $this->assertSame(EnumTestObject::C1(), $c1);
+        $this->assertEquals(EnumTestObject::C1(), $c1);
+        $this->assertEquals('C1', $c1);
+    }
 }

@@ -15,7 +15,7 @@ class Hash
      * @param bool $rawOutput When set to TRUE, outputs raw binary data. FALSE outputs lowercase hexits.
      * @return string
      */
-    public static function of($item, string $algorithm = 'md5', bool $rawOutput = true): string
+    public static function of($item, string $algorithm = 'md5', bool $rawOutput = false): string
     {
         if (is_object($item)) {
             if ($item instanceof Hashable) {

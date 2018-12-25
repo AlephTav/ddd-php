@@ -22,6 +22,24 @@ class DomainTestObject extends DomainObject
 
 class DomainObjectTest extends TestCase
 {
+    public function testCopy(): void
+    {
+        $copy = (new DomainTestObject([
+            'prop1' => 5,
+            'prop2' => 'foo',
+            'prop3' => true,
+            'prop4' => null
+        ]))->copy();
+
+        $this->assertInstanceOf(DomainTestObject::class, $copy);
+        $this->assertEquals([
+            'prop1' => 5,
+            'prop2' => 'foo',
+            'prop3' => true,
+            'prop4' => null
+        ], $copy->toArray());
+    }
+
     public function testCopyWith(): void
     {
         $copy = (new DomainTestObject([

@@ -20,9 +20,10 @@ abstract class EventSourcedEntity extends Entity
      * Sets properties.
      *
      * @param array $newProperties
+     * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
      * @return void
      */
-    protected function assignProperties(array $newProperties): void
+    protected function assignProperties(array $newProperties, bool $strict = true): void
     {
         if ($this->isEntityInstantiated) {
             $oldProperties = $this->getOldProperties($newProperties);

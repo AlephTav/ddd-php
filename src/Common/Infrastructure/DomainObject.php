@@ -7,7 +7,7 @@ use ReflectionClass;
 /**
  * The base class for all domain objects (entities, value objects, domain events).
  */
-abstract class DomainObject extends Dto implements Hashable
+abstract class DomainObject extends StrictDto implements Hashable
 {
     /**
      * Compares two domain objects.
@@ -45,6 +45,16 @@ abstract class DomainObject extends Dto implements Hashable
     public function hash(): string
     {
         return Hash::of($this->toArray());
+    }
+
+    /**
+     * Creates a copy of this domain object.
+     *
+     * @return DomainObject
+     */
+    public function copy(): DomainObject
+    {
+        return new static($this->toArray());
     }
 
     /**

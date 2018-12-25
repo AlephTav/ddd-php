@@ -3,7 +3,6 @@
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use DateTime;
-use AlephTools\DDD\Common\Infrastructure\Exceptions\PropertyMissingException;
 
 /**
  * @property-read string|null $keyword
@@ -15,7 +14,7 @@ use AlephTools\DDD\Common\Infrastructure\Exceptions\PropertyMissingException;
  * @property-read bool $withoutCount
  * @property-read bool $withoutItems
  */
-abstract class AbstractQuery extends Dto
+abstract class AbstractQuery extends WeakDto
 {
     //region Constants
 
@@ -62,20 +61,6 @@ abstract class AbstractQuery extends Dto
     protected function toDate($value): DateTime
     {
         return DateHelper::parse($value);
-    }
-
-    /**
-     * Assigns value to a property.
-     *
-     * @param string $property
-     * @param mixed $value
-     * @return void
-     */
-    protected function assignProperty(string $property, $value): void
-    {
-        try {
-            parent::assignProperty($property, $value);
-        } catch (PropertyMissingException $ignore) {}
     }
 
     //region Setters

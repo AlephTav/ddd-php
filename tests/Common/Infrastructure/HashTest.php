@@ -23,9 +23,9 @@ class HashTest extends TestCase
 {
     public function testHashScalar(): void
     {
-        $this->assertEquals(hash('md5', 10, true), Hash::of(10));
-        $this->assertEquals(hash('md5', 'foo', true), Hash::of('foo'));
-        $this->assertEquals(hash('sha256', true, true), Hash::of(true, 'sha256'));
+        $this->assertEquals(hash('md5', 10, true), Hash::of(10, 'md5', true));
+        $this->assertEquals(hash('md5', 'foo', true), Hash::of('foo', 'md5', true));
+        $this->assertEquals(hash('sha256', true, true), Hash::of(true, 'sha256', true));
         $this->assertEquals(hash('md5', 'foo', false), Hash::of('foo', 'md5', false));
     }
 

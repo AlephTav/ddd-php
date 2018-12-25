@@ -46,11 +46,12 @@ abstract class Dto implements Serializable
      * Constructor.
      *
      * @param array $properties
+     * @param bool $strict  Determines whether to throw exception for non-existing properties (TRUE).
      */
-    public function __construct(array $properties = [])
+    public function __construct(array $properties = [], bool $strict = true)
     {
         $this->init();
-        $this->assignPropertiesAndValidate($properties);
+        $this->assignPropertiesAndValidate($properties, $strict);
     }
 
     /**
@@ -243,12 +244,13 @@ abstract class Dto implements Serializable
      * Assigns values to properties.
      *
      * @param array $properties
+     * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
      * @return void
      */
-    protected function assignProperties(array $properties): void
+    protected function assignProperties(array $properties, bool $strict = true): void
     {
         foreach ($properties as $property => $value) {
-            $this->assignProperty($property, $value);
+            $this->assignProperty($property, $value, $strict);
         }
     }
 
@@ -257,11 +259,16 @@ abstract class Dto implements Serializable
      *
      * @param string $property
      * @param mixed $value
+     * @param bool $strict Determines whether to throw exception for non-existing property (TRUE).
      * @return void
      */
-    protected function assignProperty(string $property, $value): void
+    protected function assignProperty(string $property, $value, bool $strict = true): void
     {
-        $this->checkPropertyExistence($property);
+        if ($strict) {
+            $this->checkPropertyExistence($property);
+        } else if (!isset($this->properties()[$property])) {
+            return;
+        }
 
         $setter = $this->properties()[$property][self::PROP_SETTER];
         if ($setter === null) {
@@ -275,11 +282,12 @@ abstract class Dto implements Serializable
      * Sets properties and validates their values.
      *
      * @param array $properties
+     * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
      * @return void
      */
-    protected function assignPropertiesAndValidate(array $properties): void
+    protected function assignPropertiesAndValidate(array $properties, bool $strict = true): void
     {
-        $this->assignProperties($properties);
+        $this->assignProperties($properties, $strict);
         $this->validate();
     }
 

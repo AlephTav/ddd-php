@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
 
 /**
- * @method static C1(string $method = null)
- * @method static C2(string $method = null)
- * @method static C3(string $method = null, int $index = 0)
+ * @method static static C1(string $method = null)
+ * @method static static C2(string $method = null)
+ * @method static static C3(string $method = null, int $index = 0)
  */
 class EnumTestObject extends AbstractEnum
 {
@@ -159,9 +159,13 @@ class EnumTest extends TestCase
         $this->assertSame(EnumTestObject::C3(), $c3);
         $this->assertEquals(EnumTestObject::C3(), $c3);
         $this->assertEquals('C3', $c3);
+        $this->assertTrue(EnumTestObject::C3()->is($c3));
+        $this->assertTrue(EnumTestObject::C3()->is('C3'));
 
         $this->assertNotEquals('C1', $c3);
         $this->assertNotEquals(EnumTestObject::C2(), $c3);
+        $this->assertFalse($c3->is('C1'));
+        $this->assertFalse($c3->is(EnumTestObject::C2()));
     }
 
     public function testSerializeEnum(): void

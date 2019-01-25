@@ -153,6 +153,22 @@ abstract class AbstractEnum implements JsonSerializable
     }
 
     /**
+     * Compares two enum instance.
+     * Returns TRUE if two objects have the same enum value (even though they refer different object instances).
+     *
+     * @param mixed $enum
+     * @return bool
+     */
+    public function is($enum): bool
+    {
+        if ($enum instanceof static) {
+            return $this->constant === $enum->getConstantName();
+        }
+
+        return $enum === $this->constant;
+    }
+
+    /**
      * Returns the name of the constant that associated with the current enum instance.
      *
      * @return string

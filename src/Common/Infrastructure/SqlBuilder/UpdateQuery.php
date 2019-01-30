@@ -3,6 +3,11 @@
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder;
 
 use RuntimeException;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\FromAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
@@ -15,19 +20,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
  */
 class UpdateQuery extends AbstractExpression
 {
-    /**
-     * The FROM expression instance.
-     *
-     * @var FromExpression
-     */
-    private $from;
-
-    /**
-     * The JOIN expression instance.
-     *
-     * @var JoinExpression
-     */
-    private $join;
+    use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
 
     /**
      * The SET expression instance.
@@ -35,25 +28,6 @@ class UpdateQuery extends AbstractExpression
      * @var AssignmentExpression
      */
     private $assignment;
-
-    /**
-     * The WHERE expression instance.
-     *
-     * @var WhereExpression
-     */
-    private $where;
-
-    /**
-     * The ORDER BY expression instance.
-     *
-     * @var OrderExpression
-     */
-    private $order;
-
-    /**
-     * @var int
-     */
-    private $limit;
 
     /**
      * The query executor instance.
@@ -97,82 +71,7 @@ class UpdateQuery extends AbstractExpression
 
     public function table($table, $alias = null): UpdateQuery
     {
-        $this->from = $this->from ?? new FromExpression();
-        $this->from->append($table, $alias);
-        $this->built = false;
-        return $this;
-    }
-
-    //endregion
-
-    //region JOIN
-
-    public function join($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('JOIN', $table, $conditions);
-    }
-
-    public function innerJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('INNER JOIN', $table, $conditions);
-    }
-
-    public function crossJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('CROSS JOIN', $table, $conditions);
-    }
-
-    public function leftJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('LEFT JOIN', $table, $conditions);
-    }
-
-    public function rightJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('RIGHT JOIN', $table, $conditions);
-    }
-
-    public function leftOuterJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('LEFT OUTER JOIN', $table, $conditions);
-    }
-
-    public function rightOuterJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('RIGHT OUTER JOIN', $table, $conditions);
-    }
-
-    public function naturalLeftJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('NATURAL LEFT JOIN', $table, $conditions);
-    }
-
-    public function naturalRightJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('NATURAL RIGHT JOIN', $table, $conditions);
-    }
-
-    public function naturalLeftOuterJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('NATURAL LEFT OUTER JOIN', $table, $conditions);
-    }
-
-    public function naturalRightOuterJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('NATURAL RIGHT OUTER JOIN', $table, $conditions);
-    }
-
-    public function straightJoin($table, $conditions = null): UpdateQuery
-    {
-        return $this->typeJoin('STRAIGHT_JOIN', $table, $conditions);
-    }
-
-    private function typeJoin(string $type, $table, $conditions = null): UpdateQuery
-    {
-        $this->join = $this->join ?? new JoinExpression();
-        $this->join->append($type, $table, $conditions);
-        $this->built = false;
-        return $this;
+        return $this->from($table, $alias);
     }
 
     //endregion
@@ -183,51 +82,6 @@ class UpdateQuery extends AbstractExpression
     {
         $this->assignment = $this->assignment ?? new AssignmentExpression();
         $this->assignment->append($column, $value);
-        $this->built = false;
-        return $this;
-    }
-
-    //endregion
-
-    //region WHERE
-
-    public function andWhere($column, $operator = null, $value = null): UpdateQuery
-    {
-        return $this->where($column, $operator, $value, 'AND');
-    }
-
-    public function orWhere($column, $operator = null, $value = null): UpdateQuery
-    {
-        return $this->where($column, $operator, $value, 'OR');
-    }
-
-    public function where($column, $operator = null, $value = null, string $connector = 'AND'): UpdateQuery
-    {
-        $this->where = $this->where ?? new WhereExpression();
-        $this->where->with($column, $operator, $value, $connector);
-        $this->built = false;
-        return $this;
-    }
-
-    //endregion
-
-    //region ORDER BY
-
-    public function orderBy($column, $order): UpdateQuery
-    {
-        $this->order = $this->order ?? new OrderExpression();
-        $this->order->append($column, $order);
-        $this->built = false;
-        return $this;
-    }
-
-    //endregion
-
-    //region LIMIT
-
-    public function limit(?int $limit): UpdateQuery
-    {
-        $this->limit = $limit;
         $this->built = false;
         return $this;
     }

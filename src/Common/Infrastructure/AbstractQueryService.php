@@ -2,6 +2,8 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use RuntimeException;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
@@ -58,8 +60,12 @@ abstract class AbstractQueryService
         return $query;
     }
 
-    protected function applyDateRangeFiltering(Query $query, string $column, AbstractQuery $request)
+    protected function applyDateRangeFiltering(AbstractExpression $query, string $column, AbstractQuery $request)
     {
+        if (!method_exists($query,'where')) {
+            throw new RuntimeException('Class ' . get_class($query) . ' does not support method "where".');
+        }
+
         if ($request->from && $request->to) {
             $query->where($column, 'BETWEEN', [$request->from, $request->to]);
         } else if ($request->from) {

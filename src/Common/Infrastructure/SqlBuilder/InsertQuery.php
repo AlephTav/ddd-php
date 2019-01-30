@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder;
 
 use RuntimeException;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\FromAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
@@ -14,12 +15,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpress
  */
 class InsertQuery extends AbstractExpression
 {
-    /**
-     * The FROM expression instance.
-     *
-     * @var FromExpression
-     */
-    private $from;
+    use FromAware;
 
     /**
      * The list of columns.
@@ -96,10 +92,7 @@ class InsertQuery extends AbstractExpression
 
     public function into($table, $alias = null): InsertQuery
     {
-        $this->from = $this->from ?? new FromExpression();
-        $this->from->append($table, $alias);
-        $this->built = false;
-        return $this;
+        return $this->from($table, $alias);
     }
 
     //endregion

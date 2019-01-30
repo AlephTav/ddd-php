@@ -13,6 +13,21 @@ class ConditionalExpression extends AbstractExpression
         }
     }
 
+    public function andWhere($column, $operator = null, $value = null): ConditionalExpression
+    {
+        return $this->with($column, $operator, $value, 'AND');
+    }
+
+    public function orWhere($column, $operator = null, $value = null): ConditionalExpression
+    {
+        return $this->with($column, $operator, $value, 'OR');
+    }
+
+    public function where($column, $operator = null, $value = null, string $connector = 'AND'): ConditionalExpression
+    {
+        return $this->with($column, $operator, $value, $connector);
+    }
+
     public function and($column, $operator = null, $value = null): ConditionalExpression
     {
         return $this->with($column, $operator, $value, 'AND');

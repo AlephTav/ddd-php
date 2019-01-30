@@ -30,9 +30,9 @@ class AbstractExpression
 
     //region Factory Methods
 
-    public static function raw(string $expression): RawExpression
+    public static function raw(string $expression, array $params = []): RawExpression
     {
-        return new RawExpression($expression);
+        return new RawExpression($expression, $params);
     }
 
     public static function condition(): ConditionalExpression
@@ -57,7 +57,7 @@ class AbstractExpression
         return $this->params;
     }
 
-    public function addParams(array $params): void
+    protected function addParams(array $params): void
     {
         $this->params = array_merge($this->params, $params);
     }

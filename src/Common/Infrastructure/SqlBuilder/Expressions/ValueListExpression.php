@@ -38,6 +38,7 @@ class ValueListExpression extends AbstractExpression
             $sql = implode(', ', $sql);
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
+            $this->addParams($expression->getParams());
         } else if ($expression === null) {
             $sql = 'NULL';
         } else {

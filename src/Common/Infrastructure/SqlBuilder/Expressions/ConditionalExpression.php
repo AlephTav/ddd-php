@@ -65,6 +65,7 @@ class ConditionalExpression extends AbstractExpression
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
+            $this->addParams($expression->getParams());
         } else if (is_array($expression)) {
             $list = [];
             foreach ($expression as $key => $value) {
@@ -94,6 +95,7 @@ class ConditionalExpression extends AbstractExpression
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
+            $this->addParams($expression->getParams());
         } else if (is_array($expression)) {
             $isBetween = $this->isBetween($operator);
             $list = [];

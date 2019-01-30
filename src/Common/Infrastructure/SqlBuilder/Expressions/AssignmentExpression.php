@@ -29,6 +29,7 @@ class AssignmentExpression extends AbstractExpression
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
+            $this->addParams($expression->getParams());
         } else if (is_array($expression)) {
             $list = [];
             foreach ($expression as $key => $value) {
@@ -55,6 +56,7 @@ class AssignmentExpression extends AbstractExpression
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
+            $this->addParams($expression->getParams());
         } else if ($expression === null) {
             $sql = 'NULL';
         } else {

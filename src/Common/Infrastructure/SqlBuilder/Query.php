@@ -257,11 +257,11 @@ class Query extends AbstractExpression
     }
 
     /**
-     * @param string $column
+     * @param mixed $column
      * @return array
      * @throws RuntimeException
      */
-    public function column(string $column = ''): array
+    public function column($column = ''): array
     {
         if ($column !== '') {
             $prevSelect = $this->select;
@@ -277,11 +277,11 @@ class Query extends AbstractExpression
     }
 
     /**
-     * @param string $column
+     * @param mixed $column
      * @return mixed
      * @throws RuntimeException
      */
-    public function scalar(string $column = '')
+    public function scalar($column = '')
     {
         if ($column !== '') {
             $prevSelect = $this->select;

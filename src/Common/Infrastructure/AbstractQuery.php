@@ -72,7 +72,7 @@ abstract class AbstractQuery extends WeakDto
 
     protected function setLimit($limit): void
     {
-        $this->limit = is_numeric($limit) ? (int)$limit : static::DEFAULT_PAGE_SIZE;
+        $this->limit = is_numeric($limit) ? abs((int)$limit) : static::DEFAULT_PAGE_SIZE;
 
         if ($this->limit > static::PAGE_MAX_SIZE) {
             $this->limit = static::PAGE_MAX_SIZE;
@@ -81,12 +81,12 @@ abstract class AbstractQuery extends WeakDto
 
     protected function setOffset($offset): void
     {
-        $this->offset = is_numeric($offset) ? (int)$offset : null;
+        $this->offset = is_numeric($offset) ? abs((int)$offset) : null;
     }
 
     protected function setPage($page): void
     {
-        $this->page = is_numeric($page) ? (int)$page : null;
+        $this->page = is_numeric($page) ? abs((int)$page) : null;
     }
 
     protected function setSort($sort): void

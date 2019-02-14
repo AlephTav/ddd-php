@@ -24,7 +24,7 @@ trait DomainEventPublisherAware
          * @var EventDispatcher $dispatcher
          */
         $this->publisher = new DomainEventPublisher($dispatcher);
-        $this->publisher->turnOnTransactionMode();
+        $this->publisher->queued(true);
         $this->publisher->cleanAll();
 
         ApplicationContext::set(function() {

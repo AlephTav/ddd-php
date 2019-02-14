@@ -12,7 +12,9 @@ class DomainEventPublisher
 
     private $events = [];
 
-    private $inTransaction = true;
+    private $queued = true;
+
+    private $async = true;
 
     private $isPublishing = false;
 
@@ -48,22 +50,31 @@ class DomainEventPublisher
         $this->cleanSubscribers();
     }
 
-    public function inTransactionMode(): bool
+    public function inAsyncMode(): bool
     {
-        return $this->inTransaction;
+        return $this->async;
     }
 
-    public function turnOnTransactionMode(): void
+    public function async(bool $flag): void
     {
-        $this->inTransaction = true;
+        $this->async = $flag;
     }
 
-    public function turnOffTransactionMode(): void
+    public function inQueueMode(): bool
     {
-        if ($this->inTransaction && !$this->isPublishing) {
+        return $this->queued;
+    }
+
+    public function queued(bool $flag): void
+    {
+        $this->queued = $flag;
+    }
+
+    public function release(): void
+    {
+        if ($this->queued && !$this->isPublishing) {
             $this->isPublishing = true;
             $this->dispatchAll();
-            $this->inTransaction = false;
             $this->isPublishing = false;
         }
     }
@@ -93,7 +104,7 @@ class DomainEventPublisher
 
     public function publish(DomainEvent $event): void
     {
-        if ($this->inTransaction) {
+        if ($this->queued) {
             $this->events[] = $event;
         } else {
             $this->dispatch($event);
@@ -120,7 +131,7 @@ class DomainEventPublisher
     private function dispatch(DomainEvent $event): void
     {
         foreach ($this->findMatchedSubscribers($event) as $subscriber) {
-            $this->dispatcher->dispatch($subscriber, $event);
+            $this->dispatcher->dispatch($subscriber, $event, $this->async);
         }
     }
 

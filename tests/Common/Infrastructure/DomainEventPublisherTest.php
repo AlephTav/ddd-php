@@ -54,15 +54,26 @@ class DomainEventPublisherTest extends TestCase
             ->getMock();
     }
 
+    public function testAsyncMode(): void
+    {
+        $publisher = new DomainEventPublisher($this->eventDispatcher);
+
+        $this->assertTrue($publisher->inAsyncMode());
+        $publisher->async(false);
+        $this->assertFalse($publisher->inAsyncMode());
+        $publisher->async(true);
+        $this->assertTrue($publisher->inAsyncMode());
+    }
+
     public function testInstantEventPublish(): void
     {
         $this->eventDispatcher->method('dispatch')
-            ->willReturnCallback(function($subscriber, $event) {
-                $this->result[] = [$subscriber, $event];
+            ->willReturnCallback(function(string $subscriber, DomainEvent $event, bool $async) {
+                $this->result[] = [$subscriber, $event, $async];
             });
 
         $publisher = new DomainEventPublisher($this->eventDispatcher);
-        $publisher->turnOffTransactionMode();
+        $publisher->queued(false);
 
         $publisher->subscribeAll([
             Event1SubscriberTestObject::class,
@@ -78,19 +89,21 @@ class DomainEventPublisherTest extends TestCase
 
         $publisher->publishAll([
             $event1 = new Event1TestObject(),
-            $event2 = new Event2TestObject(),
-            $event3 = new Event3TestObject()
+            $event2 = new Event2TestObject()
         ]);
+
+        $publisher->async(false);
+        $publisher->publish($event3 = new Event3TestObject());
 
         $this->assertCount(6, $this->result);
 
         $this->assertSame([
-            [DefaultDomainEventSubscriber::class, $event1],
-            [Event1SubscriberTestObject::class, $event1],
-            [DefaultDomainEventSubscriber::class, $event2],
-            [Event2SubscriberTestObject::class, $event2],
-            [DefaultDomainEventSubscriber::class, $event3],
-            [Event2SubscriberTestObject::class, $event3],
+            [DefaultDomainEventSubscriber::class, $event1, true],
+            [Event1SubscriberTestObject::class, $event1, true],
+            [DefaultDomainEventSubscriber::class, $event2, true],
+            [Event2SubscriberTestObject::class, $event2, true],
+            [DefaultDomainEventSubscriber::class, $event3, false],
+            [Event2SubscriberTestObject::class, $event3, false],
         ], $this->result);
 
         $this->assertSame($subscribers, $publisher->getSubscribers());
@@ -98,16 +111,16 @@ class DomainEventPublisherTest extends TestCase
         $this->assertSame([], $publisher->getEvents());
     }
 
-    public function testTransactionEventPublish(): void
+    public function testQueuedEventPublish(): void
     {
         $event4 = new Event1TestObject();
         $publisher = new DomainEventPublisher($this->eventDispatcher);
 
         $this->eventDispatcher->method('dispatch')
-            ->willReturnCallback(function($subscriber, $event) use($publisher, $event4) {
+            ->willReturnCallback(function(string $subscriber, DomainEvent $event) use($publisher, $event4) {;
                 $this->result[] = [$subscriber, $event];
 
-                if ($publisher->inTransactionMode() &&
+                if ($publisher->inQueueMode() &&
                     $event instanceof Event3TestObject &&
                     !$publisher->getEvents()
                 ) {
@@ -115,15 +128,16 @@ class DomainEventPublisherTest extends TestCase
                 }
             });
 
-        $publisher->turnOnTransactionMode();
+        $publisher->queued(true);
 
         $publisher->subscribeAll([
             Event1SubscriberTestObject::class,
             Event2SubscriberTestObject::class
         ]);
 
+        $publisher->publish($event1 = new Event1TestObject());
+
         $publisher->publishAll([
-            $event1 = new Event1TestObject(),
             $event2 = new Event2TestObject(),
             $event3 = new Event3TestObject()
         ]);
@@ -137,7 +151,7 @@ class DomainEventPublisherTest extends TestCase
         ];
         $this->assertSame($subscribers, $publisher->getSubscribers());
 
-        $publisher->turnOffTransactionMode();
+        $publisher->release();
 
         $this->assertCount(8, $this->result);
 

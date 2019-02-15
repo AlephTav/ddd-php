@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Common\Model\Identity;
 
+use AlephTools\DDD\Common\Infrastructure\Hash;
 use ReflectionException;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
@@ -37,6 +38,16 @@ abstract class AbstractId extends ValueObject
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    /**
+     * Generates a hash value for the id.
+     *
+     * @return string
+     */
+    public function hash(): string
+    {
+        return Hash::of($this->toString());
     }
 
     /**

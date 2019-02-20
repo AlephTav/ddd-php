@@ -31,16 +31,6 @@ abstract class AbstractId extends ValueObject
     }
 
     /**
-     * Converts this identifier to a string.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
      * Generates a hash value for the id.
      *
      * @return string

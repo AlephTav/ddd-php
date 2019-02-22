@@ -3,14 +3,24 @@
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Model\Assets\FileId;
+use AlephTools\DDD\Common\Model\Exceptions\EntityNotFoundException;
 
 interface FileStorage
 {
+    /**
+     * Returns TRUE if file with the given identifier exists in our storage.
+     *
+     * @param mixed $fileId
+     * @return bool
+     */
+    public function exists($fileId): bool;
+
     /**
      * Returns the file metadata by its unique identifier.
      *
      * @param mixed $fileId
      * @return FileMetadata
+     * @throws EntityNotFoundException
      */
     public function getMetadata($fileId): FileMetadata;
 

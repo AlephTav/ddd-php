@@ -16,6 +16,7 @@ class FileMetadataTest extends TestCase
             'isPrivate' => true,
             'createdAt' => new \DateTime(),
             'contentType' => 'application/json',
+            'name' => 'test.txt',
             'baseName' => 'test',
             'extension' => 'txt',
             'suggestedExtension' => 'json',
@@ -25,12 +26,5 @@ class FileMetadataTest extends TestCase
         $data = new FileMetadata($properties);
 
         $this->assertSame($properties, $data->toArray());
-        $this->assertEquals('test.txt', $data->getFileName());
-
-        $data->extension = '';
-        $this->assertEquals('test.json', $data->getFileName());
-
-        $data->suggestedExtension = '';
-        $this->assertEquals('test', $data->getFileName());
     }
 }

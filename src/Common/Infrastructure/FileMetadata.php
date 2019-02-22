@@ -10,6 +10,7 @@ use AlephTools\DDD\Common\Model\Assets\FileId;
  * @property bool $isPrivate
  * @property DateTime $createdAt
  * @property string $contentType
+ * @property string $name
  * @property string $baseName
  * @property string $extension
  * @property string $suggestedExtension
@@ -23,18 +24,13 @@ class FileMetadata extends Dto
     private $isPrivate;
     private $createdAt;
     private $contentType;
+    private $name;
     private $baseName;
     private $extension;
     private $suggestedExtension;
     private $size;
 
     //endregion
-
-    public function getFileName(): string
-    {
-        $ext = $this->extension ?: ($this->suggestedExtension ?: '');
-        return $ext === '' ? $this->baseName : $this->baseName . '.' . $ext;
-    }
 
     //region Setters
 
@@ -56,6 +52,11 @@ class FileMetadata extends Dto
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     public function setBaseName(string $baseName): void

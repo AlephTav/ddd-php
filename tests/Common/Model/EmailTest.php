@@ -58,9 +58,9 @@ class EmailTest extends TestCase
             [null, ''],
             ['', ''],
             ['some@email.com', 'some@email.com'],
-            ['  a@a.com', 'a@a.com'],
-            ['a@a.com    ', 'a@a.com'],
-            [' a@a.com ', 'a@a.com']
+            ['  abc@abc.com', 'abc@abc.com'],
+            ['abc@abc.com    ', 'abc@abc.com'],
+            [' abc@abc.com ', 'abc@abc.com']
         ];
     }
 }

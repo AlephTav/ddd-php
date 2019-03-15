@@ -74,7 +74,7 @@ class DtoTest extends TestCase
     public function testCreationFailureNotExistingProperty(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property "prop5" not found.');
+        $this->expectExceptionMessage('Property "prop5" does not exist.');
 
         new DtoTestObject([
             'prop1' => null,
@@ -356,5 +356,13 @@ class DtoTest extends TestCase
         $this->expectExceptionMessage('Property "notExistingProp" is not connected with the appropriate class field.');
 
         new DtoTestObjectWithNonExistentProperty(['notExistingProp' => 'test']);
+    }
+
+    public function testProcessingTypeError(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Property "prop2" must be of the type integer, string given.');
+
+        new DtoTestObject(['prop2' => 'test']);
     }
 }

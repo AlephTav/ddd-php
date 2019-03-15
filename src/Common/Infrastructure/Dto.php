@@ -2,9 +2,11 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use TypeError;
 use ReflectionClass;
 use RuntimeException;
-use AlephTools\DDD\Common\Infrastructure\Exceptions\PropertyMissingException;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use AlephTools\DDD\Common\Infrastructure\Exceptions\NonExistentPropertyException;
 
 /**
  * The base class for data transfer objects.
@@ -201,7 +203,9 @@ abstract class Dto implements Serializable
         } else {
             $method = $this->reflector->getMethod($setter);
             if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
-                $this->{$setter}($value);
+                $this->invokeWithTypeErrorProcessing(function() use($setter, $value) {
+                    $this->{$setter}($value);
+                });
             } else {
                 throw new RuntimeException("Property \"$property\" does not have accessible setter.");
             }
@@ -308,7 +312,7 @@ abstract class Dto implements Serializable
     private function checkPropertyExistence(string $property): void
     {
         if (!isset($this->properties()[$property])) {
-            throw new PropertyMissingException("Property \"$property\" not found.");
+            throw new NonExistentPropertyException("Property \"$property\" does not exist.");
         }
     }
 
@@ -348,7 +352,9 @@ abstract class Dto implements Serializable
     {
         $method = $this->reflector->getMethod($setter);
         $method->setAccessible(true);
-        $method->invoke($this, $value);
+        $this->invokeWithTypeErrorProcessing(function() use($method, $value) {
+            $method->invoke($this, $value);
+        });
     }
 
     private function invokeValidator(string $validator): void
@@ -356,6 +362,20 @@ abstract class Dto implements Serializable
         $method = $this->reflector->getMethod($validator);
         $method->setAccessible(true);
         $method->invoke($this);
+    }
+
+    private function invokeWithTypeErrorProcessing(callable $callback)
+    {
+        try {
+            $callback();
+        } catch (TypeError $e) {
+            $error = $e->getMessage();
+            preg_match('/^.*::[a-z_0-9]+([A-Z][a-zA-Z_0-9]+)\(\)(.+given).*$/', $error, $matches);
+            if ($matches) {
+                $error = 'Property "' . lcfirst($matches[1]) . '"' . $matches[2] . '.';
+            }
+            throw new InvalidArgumentException($error);
+        }
     }
 
     /**
@@ -383,7 +403,7 @@ abstract class Dto implements Serializable
 
                 $propertyName = $matches[2][$i];
                 if (!$this->reflector->hasProperty($propertyName)) {
-                    throw new PropertyMissingException(
+                    throw new NonExistentPropertyException(
                         "Property \"$propertyName\" is not connected with the appropriate class field."
                     );
                 }

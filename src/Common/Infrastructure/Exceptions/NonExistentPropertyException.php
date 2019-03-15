@@ -4,4 +4,4 @@ namespace AlephTools\DDD\Common\Infrastructure\Exceptions;
 
 use RuntimeException;
 
-class PropertyMissingException extends RuntimeException {}
+class NonExistentPropertyException extends RuntimeException {}

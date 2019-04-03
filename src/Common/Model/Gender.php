@@ -10,6 +10,6 @@ use AlephTools\DDD\Common\Infrastructure\Enums\NamedEnum;
  */
 class Gender extends NamedEnum
 {
-    public const FEMALE = 'Female';
-    public const MALE = 'Male';
+    private const FEMALE = 'Female';
+    private const MALE = 'Male';
 }

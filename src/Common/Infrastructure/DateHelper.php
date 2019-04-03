@@ -15,6 +15,7 @@ class DateHelper
         'Y-m-d',
         'm/d/Y',
         'm/d/y',
+        'H:i:s',
         'Y'
     ];
 

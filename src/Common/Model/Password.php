@@ -14,7 +14,7 @@ class Password extends ValueObject
     //region Constants
 
     public const HASH_MAX_LENGTH = 255;
-    public const PASSWORD_MIN_LENGTH = 8;
+    public const PASSWORD_MIN_LENGTH = 1;
     public const PASSWORD_MAX_LENGTH = 255;
     public const RANDOM_PASSWORD_LENGTH = 32;
 

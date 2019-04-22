@@ -1,6 +1,6 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common;
+namespace AlephTools\DDD\Tests\Common\Model;
 
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Password;
@@ -66,7 +66,7 @@ class PasswordTest extends TestCase
             [
                 [
                     'hash' => 'abcd',
-                    'password' => '123'
+                    'password' => ''
                 ],
                 'Password must be at least ' . Password::PASSWORD_MIN_LENGTH .
                 ' and at most ' . Password::PASSWORD_MAX_LENGTH . ' characters.'

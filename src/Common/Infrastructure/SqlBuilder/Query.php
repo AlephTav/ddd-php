@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder;
 
+use Generator;
 use RuntimeException;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\FromAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
@@ -313,6 +314,30 @@ class Query extends AbstractExpression
         $this->offset = $prevOffset;
         $this->built = false;
         return $total;
+    }
+
+    /**
+     * @param int $size
+     * @param int $page
+     * @return Generator|array[]
+     */
+    public function pages(int $size = 1000, int $page = 0): Generator
+    {
+        while (true) {
+            $rows = $this
+                ->paginate($page, $size)
+                ->rows();
+
+            $count = count($rows);
+            if ($count > 0) {
+                yield from $rows;
+            }
+            if ($count < $size) {
+                break;
+            }
+
+            ++$page;
+        }
     }
 
     /**

@@ -40,6 +40,11 @@ class DateHelperTest extends TestCase
         }
         $data = array_merge($data, [
             [
+                new DateTime(),
+                null,
+                false
+            ],
+            [
                 null,
                 null,
                 false,

@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use DateTime;
+use DateTimeInterface;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 class DateHelper
@@ -24,10 +25,10 @@ class DateHelper
         return self::$dateFormats;
     }
 
-    public static function parse($date): ?DateTime
+    public static function parse($date): ?DateTimeInterface
     {
-        if ($date === null) {
-            return null;
+        if ($date === null || $date instanceof DateTimeInterface) {
+            return $date;
         }
 
         if (is_scalar($date)) {

@@ -391,7 +391,7 @@ abstract class Dto implements Serializable
 
         $properties = [];
 
-        if (preg_match_all('/@property(-read|-write|)[^$]+\$([^\s]+)/i', $this->getComment(), $matches)) {
+        if (preg_match_all('/@property(-read|-write|)[^$]+\$([^\s]+)/i', $this->extractComment(), $matches)) {
             foreach ($matches[1] as $i => $type) {
                 if ($type === '-read') {
                     $type = self::PROP_TYPE_READ;
@@ -425,7 +425,7 @@ abstract class Dto implements Serializable
         self::$properties[static::class] = $properties;
     }
 
-    private function getComment(): string
+    private function extractComment(): string
     {
         $comment = '';
         $class = $this->reflector;

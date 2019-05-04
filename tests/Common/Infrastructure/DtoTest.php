@@ -12,6 +12,7 @@ use AlephTools\DDD\Common\Infrastructure\Dto;
  * @property int $prop2
  * @property-read bool $prop3
  * @property-write string $prop4
+ * @property-read string $docComment
  */
 class DtoTestObject extends Dto
 {
@@ -20,6 +21,7 @@ class DtoTestObject extends Dto
     private $prop3;
     protected $prop4;
     private $prop5 = 'private';
+    private $docComment;
 
     protected function getProp1()
     {
@@ -91,7 +93,8 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
+            'docComment' => 'text'
         ];
         $obj = new DtoTestObject($properties);
 
@@ -104,7 +107,8 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
+            'docComment' => 'comment1'
         ];
         $nestedObj = new DtoTestObject($nestedProperties);
 
@@ -112,7 +116,8 @@ class DtoTest extends TestCase
             'prop1' => $nestedObj,
             'prop2' => 7,
             'prop3' => false,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
+            'docComment' => 'comment2'
         ];
         $obj = new DtoTestObject($properties);
 
@@ -126,7 +131,8 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
+            'docComment' => 'text'
         ];
         $obj = new DtoTestObject($attributes);
 

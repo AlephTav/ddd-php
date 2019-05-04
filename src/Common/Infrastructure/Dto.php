@@ -391,7 +391,7 @@ abstract class Dto implements Serializable
 
         $properties = [];
 
-        if (preg_match_all('/@property(-read|-write|)[^$]+\$([^\s]+)/i', $this->extractComment(), $matches)) {
+        if (preg_match_all('/@property(-read|-write|)[^$]+\$([^\s]+)/i', $this->getDocComment(), $matches)) {
             foreach ($matches[1] as $i => $type) {
                 if ($type === '-read') {
                     $type = self::PROP_TYPE_READ;
@@ -402,19 +402,19 @@ abstract class Dto implements Serializable
                 }
 
                 $propertyName = $matches[2][$i];
-                if (!$this->reflector->hasProperty($propertyName)) {
+                if (!$this->hasPropertyField($propertyName)) {
                     throw new NonExistentPropertyException(
                         "Property \"$propertyName\" is not connected with the appropriate class field."
                     );
                 }
 
-                if (!$this->reflector->hasMethod($setter = $this->getSetterName($propertyName))) {
+                if (!$this->hasPropertyMethod($setter = $this->getSetterName($propertyName))) {
                     $setter = null;
                 }
-                if (!$this->reflector->hasMethod($getter = $this->getGetterName($propertyName))) {
+                if (!$this->hasPropertyMethod($getter = $this->getGetterName($propertyName))) {
                     $getter = null;
                 }
-                if (!$this->reflector->hasMethod($validator = $this->getValidatorName($propertyName))) {
+                if (!$this->hasPropertyMethod($validator = $this->getValidatorName($propertyName))) {
                     $validator = null;
                 }
 
@@ -425,7 +425,33 @@ abstract class Dto implements Serializable
         self::$properties[static::class] = $properties;
     }
 
-    private function extractComment(): string
+    private function hasPropertyField(string $name): bool
+    {
+        if ($this->reflector->hasProperty($name)) {
+            $property = $this->reflector->getProperty($name);
+            if ($property->isPrivate()) {
+                return $property->getDeclaringClass()->getName() === static::class;
+            }
+            return !$property->isStatic();
+        }
+
+        return false;
+    }
+
+    private function hasPropertyMethod(string $name): bool
+    {
+        if ($this->reflector->hasMethod($name)) {
+            $method = $this->reflector->getMethod($name);
+            if ($method->isPrivate()) {
+                return $method->getDeclaringClass()->getName() === static::class;
+            }
+            return !$method->isStatic();
+        }
+
+        return false;
+    }
+
+    private function getDocComment(): string
     {
         $comment = '';
         $class = $this->reflector;

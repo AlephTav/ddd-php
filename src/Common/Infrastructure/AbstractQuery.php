@@ -2,7 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use DateTime;
+use DateTimeInterface;
 
 /**
  * @property-read string|null $keyword
@@ -58,7 +58,7 @@ abstract class AbstractQuery extends WeakDto
         return false;
     }
 
-    protected function toDate($value): DateTime
+    protected function toDate($value): ?DateTimeInterface
     {
         return DateHelper::parse($value);
     }

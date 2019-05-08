@@ -46,12 +46,12 @@ abstract class EventSourcedEntity extends Entity
         return $oldProperties;
     }
 
-    private function computeNestedChanges(array $Properties1, array $Properties2): array
+    private function computeNestedChanges(array $properties1, array $properties2): array
     {
         $oldProperties = [];
         $newProperties = [];
-        foreach ($Properties2 as $property => $value2) {
-            $value1 = $Properties1[$property];
+        foreach ($properties2 as $property => $value2) {
+            $value1 = $properties1[$property];
             if ($value2 instanceof DomainObject) {
                 if (!$value2->equals($value1)) {
                     if ($value1 instanceof DomainObject) {

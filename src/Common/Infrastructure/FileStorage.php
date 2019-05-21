@@ -33,7 +33,7 @@ interface FileStorage
     public function getUrl($fileId): string;
 
     /**
-     * Returns the download link for a private file.
+     * Returns the download link for a file.
      *
      * @param mixed $fileId
      * @param int $expirationInSeconds
@@ -57,14 +57,6 @@ interface FileStorage
      * @return mixed
      */
     public function download($fileId);
-
-    /**
-     * Downloads a private file by link.
-     *
-     * @param string $downloadLink
-     * @return mixed
-     */
-    public function downloadByLink(string $downloadLink);
 
     /**
      * Deletes a file.

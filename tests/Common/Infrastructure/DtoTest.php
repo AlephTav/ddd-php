@@ -8,10 +8,10 @@ use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Infrastructure\Dto;
 
 /**
- * @property mixed $prop1
- * @property int $prop2
- * @property-read bool $prop3
- * @property-write string $prop4
+ * @property mixed $prop1@email
+ * @property int $prop2/23
+ * @property-read bool $prop3!
+ * @property-write string $prop4;
  * @property-read string $docComment
  */
 class DtoTestObject extends Dto

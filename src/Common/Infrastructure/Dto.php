@@ -391,7 +391,11 @@ abstract class Dto implements Serializable
 
         $properties = [];
 
-        if (preg_match_all('/@property(-read|-write|)[^$]+\$([^\s]+)/i', $this->getDocComment(), $matches)) {
+        if (preg_match_all(
+            '/@property(-read|-write|)[^$]+\$([a-zA-Z0-9_]+)/i',
+            $this->getDocComment(),
+            $matches
+        )) {
             foreach ($matches[1] as $i => $type) {
                 if ($type === '-read') {
                     $type = self::PROP_TYPE_READ;

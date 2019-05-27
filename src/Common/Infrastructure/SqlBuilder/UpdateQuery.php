@@ -8,7 +8,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
@@ -18,7 +17,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
 /**
  * Represents the UPDATE query.
  */
-class UpdateQuery extends AbstractExpression
+class UpdateQuery extends AbstractQuery
 {
     use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
 
@@ -29,22 +28,8 @@ class UpdateQuery extends AbstractExpression
      */
     private $assignment;
 
-    /**
-     * The query executor instance.
-     *
-     * @var QueryExecutor
-     */
-    private $executor;
-
-    /**
-     * Contains TRUE if the query has built.
-     *
-     * @var bool
-     */
-    private $built = false;
-
     public function __construct(
-        QueryExecutor $executor = null,
+        QueryExecutor $db = null,
         FromExpression $from = null,
         JoinExpression $join = null,
         AssignmentExpression $assignment = null,
@@ -53,18 +38,13 @@ class UpdateQuery extends AbstractExpression
         ?int $limit = null
     )
     {
-        $this->executor = $executor;
+        $this->db = $db;
         $this->from = $from;
         $this->where = $where;
         $this->join = $join;
         $this->assignment = $assignment;
         $this->order = $order;
         $this->limit = $limit;
-    }
-
-    public function getQueryExecutor(): QueryExecutor
-    {
-        return $this->executor;
     }
 
     //region FROM
@@ -90,22 +70,16 @@ class UpdateQuery extends AbstractExpression
 
     //region Execution
 
+    /**
+     * Executes this update query.
+     *
+     * @return int
+     * @throws RuntimeException
+     */
     public function exec(): int
     {
         $this->validateAndBuild();
-        return $this->executor->execute($this->toSql(), $this->getParams());
-    }
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    private function validateAndBuild(): void
-    {
-        if ($this->executor === null) {
-            throw new RuntimeException('The query executor instance must not be null.');
-        }
-        $this->build();
+        return $this->db->execute($this->toSql(), $this->getParams());
     }
 
     //endregion
@@ -179,16 +153,4 @@ class UpdateQuery extends AbstractExpression
     }
 
     //endregion
-
-    public function toSql(): string
-    {
-        $this->build();
-        return parent::toSql();
-    }
-
-    public function getParams(): array
-    {
-        $this->build();
-        return parent::getParams();
-    }
 }

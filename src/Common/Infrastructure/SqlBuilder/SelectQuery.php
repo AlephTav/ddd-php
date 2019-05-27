@@ -9,7 +9,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\GroupExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\HavingExpression;
@@ -21,7 +20,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
 /**
  * Represents the SELECT query.
  */
-class Query extends AbstractExpression
+class SelectQuery extends AbstractQuery
 {
     use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
 
@@ -59,23 +58,9 @@ class Query extends AbstractExpression
     private $union;
 
     /**
-     * The query executor instance.
-     *
-     * @var QueryExecutor
-     */
-    private $executor;
-
-    /**
-     * Contains TRUE if the query has built.
-     *
-     * @var bool
-     */
-    private $built = false;
-
-    /**
      * Constructor.
      *
-     * @param QueryExecutor|null $executor
+     * @param QueryExecutor|null $db
      * @param FromExpression|null $from
      * @param SelectExpression|null $select
      * @param JoinExpression|null $join
@@ -87,7 +72,7 @@ class Query extends AbstractExpression
      * @param int|null $offset
      */
     public function __construct(
-        QueryExecutor $executor = null,
+        QueryExecutor $db = null,
         FromExpression $from = null,
         SelectExpression $select = null,
         JoinExpression $join = null,
@@ -99,7 +84,7 @@ class Query extends AbstractExpression
         int $offset = null
     )
     {
-        $this->executor = $executor;
+        $this->db = $db;
         $this->from = $from;
         $this->select = $select;
         $this->where = $where;
@@ -111,14 +96,9 @@ class Query extends AbstractExpression
         $this->offset = $offset;
     }
 
-    public function getQueryExecutor(): QueryExecutor
-    {
-        return $this->executor;
-    }
-
     //region SELECT
 
-    public function select($column, $alias = null): Query
+    public function select($column, $alias = null): SelectQuery
     {
         $this->select = $this->select ?? new SelectExpression();
         $this->select->append($column, $alias);
@@ -130,7 +110,7 @@ class Query extends AbstractExpression
 
     //region GROUP BY
 
-    public function groupBy($column, $order = null): Query
+    public function groupBy($column, $order = null): SelectQuery
     {
         $this->group = $this->group ?? new GroupExpression();
         $this->group->append($column, $order);
@@ -142,17 +122,17 @@ class Query extends AbstractExpression
 
     //region HAVING
 
-    public function andHaving($column, $operator = null, $value = null): Query
+    public function andHaving($column, $operator = null, $value = null): SelectQuery
     {
         return $this->having($column, $operator, $value, 'AND');
     }
 
-    public function orHaving($column, $operator = null, $value = null): Query
+    public function orHaving($column, $operator = null, $value = null): SelectQuery
     {
         return $this->having($column, $operator, $value, 'OR');
     }
 
-    public function having($column, $operator = null, $value = null, string $connector = 'AND'): Query
+    public function having($column, $operator = null, $value = null, string $connector = 'AND'): SelectQuery
     {
         $this->having = $this->having ?? new HavingExpression();
         $this->having->with($column, $operator, $value, $connector);
@@ -164,14 +144,14 @@ class Query extends AbstractExpression
 
     //region LIMIT & OFFSET
 
-    public function offset(?int $offset): Query
+    public function offset(?int $offset): SelectQuery
     {
         $this->offset = $offset;
         $this->built = false;
         return $this;
     }
 
-    public function paginate(int $page, int $size): Query
+    public function paginate(int $page, int $size): SelectQuery
     {
         $this->offset = $size * $page;
         $this->limit = $size;
@@ -183,28 +163,28 @@ class Query extends AbstractExpression
 
     //region UNION
 
-    public function union(Query $query): Query
+    public function union(SelectQuery $query): SelectQuery
     {
         return $this->typeUnion('UNION', $query);
     }
 
-    public function unionAll(Query $query): Query
+    public function unionAll(SelectQuery $query): SelectQuery
     {
         return $this->typeUnion('UNION ALL', $query);
     }
 
-    public function unionDistinct(Query $query): Query
+    public function unionDistinct(SelectQuery $query): SelectQuery
     {
         return $this->typeUnion('UNION DISTINCT', $query);
     }
 
-    private function typeUnion(string $type, Query $query): Query
+    private function typeUnion(string $type, SelectQuery $query): SelectQuery
     {
         if ($this->union) {
             $this->union[] = [$type, $query];
         } else {
             $self = new self(
-                $this->executor,
+                $this->db,
                 $this->from,
                 $this->select,
                 $this->join,
@@ -244,7 +224,7 @@ class Query extends AbstractExpression
     public function rows(): array
     {
         $this->validateAndBuild();
-        return $this->executor->rows($this->toSql(), $this->getParams());
+        return $this->db->rows($this->toSql(), $this->getParams());
     }
 
     /**
@@ -254,7 +234,7 @@ class Query extends AbstractExpression
     public function row(): array
     {
         $this->validateAndBuild();
-        return $this->executor->row($this->toSql(), $this->getParams());
+        return $this->db->row($this->toSql(), $this->getParams());
     }
 
     /**
@@ -274,7 +254,7 @@ class Query extends AbstractExpression
             return $result;
         }
         $this->validateAndBuild();
-        return $this->executor->column($this->toSql(), $this->getParams());
+        return $this->db->column($this->toSql(), $this->getParams());
     }
 
     /**
@@ -294,7 +274,7 @@ class Query extends AbstractExpression
             return $result;
         }
         $this->validateAndBuild();
-        return $this->executor->scalar($this->toSql(), $this->getParams());
+        return $this->db->scalar($this->toSql(), $this->getParams());
     }
 
     /**
@@ -340,23 +320,11 @@ class Query extends AbstractExpression
         }
     }
 
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    private function validateAndBuild(): void
-    {
-        if ($this->executor === null) {
-            throw new RuntimeException('The query executor instance must not be null.');
-        }
-        $this->build();
-    }
-
     //endregion
 
     //region Query Building
 
-    public function build(): Query
+    public function build(): SelectQuery
     {
         if ($this->built) {
             return $this;
@@ -466,16 +434,4 @@ class Query extends AbstractExpression
     }
 
     //endregion
-
-    public function toSql(): string
-    {
-        $this->build();
-        return parent::toSql();
-    }
-
-    public function getParams(): array
-    {
-        $this->build();
-        return parent::getParams();
-    }
 }

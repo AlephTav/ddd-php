@@ -4,12 +4,12 @@ namespace AlephTools\DDD\Common\Infrastructure;
 
 use RuntimeException;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 abstract class AbstractQueryService
 {
-    protected function applySelection(Query $query, ?array $fields, ?array $selectFields): Query
+    protected function applySelection(SelectQuery $query, ?array $fields, ?array $selectFields): SelectQuery
     {
         $selectFields = $selectFields ?: [];
 
@@ -30,7 +30,7 @@ abstract class AbstractQueryService
         return $query;
     }
 
-    protected function applySorting(Query $query, ?array $sort, ?array $sortFields): Query
+    protected function applySorting(SelectQuery $query, ?array $sort, ?array $sortFields): SelectQuery
     {
         if ($sort) {
             $sortFields = $sortFields ?: [];
@@ -47,7 +47,7 @@ abstract class AbstractQueryService
         return $query;
     }
 
-    protected function applyPagination(Query $query, AbstractQuery $request): Query
+    protected function applyPagination(SelectQuery $query, AbstractQuery $request): SelectQuery
     {
         if ($request->limit !== null) {
             $query->limit($request->limit);

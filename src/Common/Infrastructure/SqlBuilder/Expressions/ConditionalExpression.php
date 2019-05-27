@@ -2,7 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 
 class ConditionalExpression extends AbstractExpression
 {
@@ -60,7 +60,7 @@ class ConditionalExpression extends AbstractExpression
 
     private function convertOperandToString($expression): string
     {
-        if ($expression instanceof Query || $expression instanceof self) {
+        if ($expression instanceof SelectQuery || $expression instanceof self) {
             $sql = '(' . $expression->toSql() . ')';
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
@@ -90,7 +90,7 @@ class ConditionalExpression extends AbstractExpression
 
     private function convertValueToString($expression, string $operator): string
     {
-        if ($expression instanceof Query) {
+        if ($expression instanceof SelectQuery) {
             $sql = '(' . $expression->toSql() . ')';
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {

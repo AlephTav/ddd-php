@@ -8,7 +8,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\OrderExpression;
@@ -17,7 +16,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
 /**
  * Represents the DELETE query.
  */
-class DeleteQuery extends AbstractExpression
+class DeleteQuery extends AbstractQuery
 {
     use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
 
@@ -29,23 +28,9 @@ class DeleteQuery extends AbstractExpression
     private $using;
 
     /**
-     * The query executor instance.
-     *
-     * @var QueryExecutor
-     */
-    private $executor;
-
-    /**
-     * Contains TRUE if the query has built.
-     *
-     * @var bool
-     */
-    private $built = false;
-
-    /**
      * Constructor.
      *
-     * @param QueryExecutor|null $executor
+     * @param QueryExecutor|null $db
      * @param FromExpression|null $from
      * @param FromExpression|null $using
      * @param JoinExpression|null $join
@@ -54,7 +39,7 @@ class DeleteQuery extends AbstractExpression
      * @param int|null $limit
      */
     public function __construct(
-        QueryExecutor $executor = null,
+        QueryExecutor $db = null,
         FromExpression $from = null,
         FromExpression $using = null,
         JoinExpression $join = null,
@@ -63,18 +48,13 @@ class DeleteQuery extends AbstractExpression
         int $limit = null
     )
     {
-        $this->executor = $executor;
+        $this->db = $db;
         $this->from = $from;
         $this->using = $using;
         $this->where = $where;
         $this->join = $join;
         $this->order = $order;
         $this->limit = $limit;
-    }
-
-    public function getQueryExecutor(): QueryExecutor
-    {
-        return $this->executor;
     }
 
     //region USING
@@ -91,22 +71,16 @@ class DeleteQuery extends AbstractExpression
 
     //region Execution
 
+    /**
+     * Executes this delete query.
+     *
+     * @return int
+     * @throws RuntimeException
+     */
     public function exec(): int
     {
         $this->validateAndBuild();
-        return $this->executor->execute($this->toSql(), $this->getParams());
-    }
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    private function validateAndBuild(): void
-    {
-        if ($this->executor === null) {
-            throw new RuntimeException('The query executor instance must not be null.');
-        }
-        $this->build();
+        return $this->db->execute($this->toSql(), $this->getParams());
     }
 
     //endregion
@@ -179,16 +153,4 @@ class DeleteQuery extends AbstractExpression
     }
 
     //endregion
-
-    public function toSql(): string
-    {
-        $this->build();
-        return parent::toSql();
-    }
-
-    public function getParams(): array
-    {
-        $this->build();
-        return parent::getParams();
-    }
 }

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder\QueryTestAware;
 use AlephTools\DDD\Common\Infrastructure\AbstractQuery;
 use AlephTools\DDD\Common\Infrastructure\AbstractQueryService;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 /**
@@ -34,7 +34,7 @@ class QueryServiceTestObject extends AbstractQueryService
 {
     public function apply(ApplyQueryTestObject $request)
     {
-        $query = new Query();
+        $query = new SelectQuery();
         $query->from('tb');
 
         $this->applySelection($query, $request->fields, [

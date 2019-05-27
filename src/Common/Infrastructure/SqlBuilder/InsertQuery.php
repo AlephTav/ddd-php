@@ -4,7 +4,6 @@ namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder;
 
 use RuntimeException;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\FromAware;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AbstractExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ListExpression;
@@ -13,7 +12,7 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpress
 /**
  * Represents the INSERT query.
  */
-class InsertQuery extends AbstractExpression
+class InsertQuery extends AbstractQuery
 {
     use FromAware;
 
@@ -34,7 +33,7 @@ class InsertQuery extends AbstractExpression
     /**
      * The SELECT query.
      *
-     * @var Query
+     * @var SelectQuery
      */
     private $query;
 
@@ -53,39 +52,30 @@ class InsertQuery extends AbstractExpression
     private $assignment;
 
     /**
-     * The query executor instance.
+     * Constructor.
      *
-     * @var QueryExecutor
+     * @param QueryExecutor|null $db
+     * @param FromExpression|null $from
+     * @param ValueListExpression|null $values
+     * @param SelectQuery|null $query
+     * @param AssignmentExpression|null $assignment
+     * @param ListExpression|null $indexColumns
      */
-    private $executor;
-
-    /**
-     * Contains TRUE if the query has built.
-     *
-     * @var bool
-     */
-    private $built = false;
-
     public function __construct(
-        QueryExecutor $executor = null,
+        QueryExecutor $db = null,
         FromExpression $from = null,
         ValueListExpression $values = null,
-        Query $query = null,
+        SelectQuery $query = null,
         AssignmentExpression $assignment = null,
         ListExpression $indexColumns = null
     )
     {
-        $this->executor = $executor;
+        $this->db = $db;
         $this->from = $from;
         $this->values = $values;
         $this->query = $query;
         $this->assignment = $assignment;
         $this->indexColumns = $indexColumns;
-    }
-
-    public function getQueryExecutor(): QueryExecutor
-    {
-        return $this->executor;
     }
 
     //region FROM
@@ -138,7 +128,7 @@ class InsertQuery extends AbstractExpression
 
     //region SELECT
 
-    public function select(Query $query): InsertQuery
+    public function select(SelectQuery $query): InsertQuery
     {
         $this->query = $query;
         $this->built = false;
@@ -177,28 +167,17 @@ class InsertQuery extends AbstractExpression
     //region Execution
 
     /**
-     * Executes an insert query.
+     * Executes this insert query.
      *
      * @param string|null $sequence Name of the sequence object from which the ID should be returned.
      * @return mixed Returns the ID of the last inserted row or sequence value.
+     * @throws RuntimeException
      */
     public function exec(string $sequence = null)
     {
         $this->validateAndBuild();
         $sql = $this->toSql() . ($sequence !== null ? ' RETURNING ' . $sequence : '');
-        return $this->executor->insert($sql, $this->getParams(), $sequence);
-    }
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    private function validateAndBuild(): void
-    {
-        if ($this->executor === null) {
-            throw new RuntimeException('The query executor instance must not be null.');
-        }
-        $this->build();
+        return $this->db->insert($sql, $this->getParams(), $sequence);
     }
 
     //endregion
@@ -279,16 +258,4 @@ class InsertQuery extends AbstractExpression
     }
 
     //endregion
-
-    public function toSql(): string
-    {
-        $this->build();
-        return parent::toSql();
-    }
-
-    public function getParams(): array
-    {
-        $this->build();
-        return parent::getParams();
-    }
 }

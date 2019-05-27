@@ -2,7 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Query;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 
 class ListExpression extends AbstractExpression
 {
@@ -31,7 +31,7 @@ class ListExpression extends AbstractExpression
 
     private function convertNameToString($expression): string
     {
-        if ($expression instanceof Query) {
+        if ($expression instanceof SelectQuery) {
             $sql = '(' . $expression->toSql() . ')';
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {

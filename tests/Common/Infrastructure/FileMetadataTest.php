@@ -19,6 +19,7 @@ class FileMetadataTest extends TestCase
             'baseName' => 'test',
             'extension' => 'txt',
             'suggestedExtension' => 'json',
+            'path' => 'a/b/c',
             'size' => 10000,
             'url' => 'http://some.url',
             'downloadLink' => 'http://download.link'

@@ -14,6 +14,7 @@ use AlephTools\DDD\Common\Model\Assets\FileId;
  * @property-read string $baseName
  * @property-read string $extension
  * @property-read string $suggestedExtension
+ * @property-read string $path
  * @property-read int $size
  * @property-read string|null $url
  * @property-read string|null $downloadLink
@@ -30,6 +31,7 @@ class FileMetadata extends StrictDto
     private $baseName;
     private $extension;
     private $suggestedExtension;
+    private $path;
     private $size;
     private $url;
     private $downloadLink;
@@ -45,6 +47,7 @@ class FileMetadata extends StrictDto
         string $baseName,
         string $extension,
         string $suggestedExtension,
+        string $path,
         int $size,
         string $url = null,
         string $downloadLink = null
@@ -59,6 +62,7 @@ class FileMetadata extends StrictDto
             'baseName' => $baseName,
             'extension' => $extension,
             'suggestedExtension' => $suggestedExtension,
+            'path' => $path,
             'size' => $size,
             'url' => $url,
             'downloadLink' => $downloadLink

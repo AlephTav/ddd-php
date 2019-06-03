@@ -58,9 +58,10 @@ interface FileStorage
      * @param mixed $file
      * @param bool $isPrivate
      * @param string $path Optional path to the file in the storage.
-     * @return FileId
+     * @param int $downloadLinkExpiration
+     * @return FileMetadata
      */
-    public function upload($file, bool $isPrivate, string $path = ''): FileId;
+    public function upload($file, bool $isPrivate, string $path = '', int $downloadLinkExpiration = 0): FileMetadata;
 
     /**
      * Downloads a private file.

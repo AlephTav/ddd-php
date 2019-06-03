@@ -2,21 +2,23 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use DateTime;
+use DateTimeImmutable;
 use AlephTools\DDD\Common\Model\Assets\FileId;
 
 /**
- * @property FileId $id
- * @property bool $isPrivate
- * @property DateTime $createdAt
- * @property string $contentType
- * @property string $name
- * @property string $baseName
- * @property string $extension
- * @property string $suggestedExtension
- * @property int $size
+ * @property-read FileId $id
+ * @property-read bool $isPrivate
+ * @property-read DateTimeImmutable $createdAt
+ * @property-read string $contentType
+ * @property-read string $name
+ * @property-read string $baseName
+ * @property-read string $extension
+ * @property-read string $suggestedExtension
+ * @property-read int $size
+ * @property-read string $url
+ * @property-read string|null $downloadLink
  */
-class FileMetadata extends Dto
+class FileMetadata extends StrictDto
 {
     //region Properties
 
@@ -29,55 +31,37 @@ class FileMetadata extends Dto
     private $extension;
     private $suggestedExtension;
     private $size;
+    private $url;
+    private $downloadLink;
 
     //endregion
 
-    //region Setters
-
-    public function setId(FileId $id): void
+    public function __construct(
+        FileId $id,
+        bool $isPrivate,
+        DateTimeImmutable $createdAt,
+        string $contentType,
+        string $name,
+        string $baseName,
+        string $extension,
+        string $suggestedExtension,
+        int $size,
+        string $url,
+        string $downloadLink = null
+    )
     {
-        $this->id = $id;
+        parent::__construct([
+            'id' => $id,
+            'isPrivate' => $isPrivate,
+            'createdAt' => $createdAt,
+            'contentType' => $contentType,
+            'name' => $name,
+            'baseName' => $baseName,
+            'extension' => $extension,
+            'suggestedExtension' => $suggestedExtension,
+            'size' => $size,
+            'url' => $url,
+            'downloadLink' => $downloadLink
+        ]);
     }
-
-    public function setIsPrivate(bool $isPrivate): void
-    {
-        $this->isPrivate = $isPrivate;
-    }
-
-    public function setCreatedAt(DateTime $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function setContentType(string $contentType): void
-    {
-        $this->contentType = $contentType;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function setBaseName(string $baseName): void
-    {
-        $this->baseName = $baseName;
-    }
-
-    public function setExtension(string $extension): void
-    {
-        $this->extension = $extension;
-    }
-
-    public function setSuggestedExtension(string $suggestedExtension): void
-    {
-        $this->suggestedExtension = $suggestedExtension;
-    }
-
-    public function setSize(int $size): void
-    {
-        $this->size = $size;
-    }
-
-    //endregion
 }

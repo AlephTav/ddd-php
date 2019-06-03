@@ -8,6 +8,16 @@ use AlephTools\DDD\Common\Model\Exceptions\EntityNotFoundException;
 interface FileStorage
 {
     /**
+     * Returns the list of files metadata by their unique identifiers.
+     *
+     * @param array $ids File identifiers.
+     * @param int $downloadLinkExpiration
+     * @return FileMetadata[]
+     * @throws EntityNotFoundException
+     */
+    public function getMetadataList(array $ids, int $downloadLinkExpiration = 0): array;
+
+    /**
      * Returns TRUE if file with the given identifier exists in our storage.
      *
      * @param mixed $fileId
@@ -19,10 +29,11 @@ interface FileStorage
      * Returns the file metadata by its unique identifier.
      *
      * @param mixed $fileId
+     * @param int $downloadLinkExpiration
      * @return FileMetadata
      * @throws EntityNotFoundException
      */
-    public function getMetadata($fileId): FileMetadata;
+    public function getMetadata($fileId, int $downloadLinkExpiration = 0): FileMetadata;
 
     /**
      * Returns a url to access the given public file.
@@ -46,9 +57,10 @@ interface FileStorage
      *
      * @param mixed $file
      * @param bool $isPrivate
+     * @param string $path Optional path to the file in the storage.
      * @return FileId
      */
-    public function upload($file, bool $isPrivate): FileId;
+    public function upload($file, bool $isPrivate, string $path = ''): FileId;
 
     /**
      * Downloads a private file.

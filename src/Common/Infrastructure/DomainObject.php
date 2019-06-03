@@ -65,7 +65,11 @@ abstract class DomainObject extends StrictDto implements Hashable
      */
     public function copyWith(array $properties = [])
     {
-        return new static(array_merge($this->toArray(), $properties));
+        /** @var static $instance */
+        $instance = (new ReflectionClass($this))->newInstanceWithoutConstructor();
+        $instance->init();
+        $instance->assignPropertiesAndValidate(array_merge($this->toArray(), $properties));
+        return $instance;
     }
 
     /**

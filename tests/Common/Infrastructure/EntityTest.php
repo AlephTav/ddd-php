@@ -3,14 +3,26 @@
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
 use AlephTools\DDD\Common\Infrastructure\DomainEvent;
-use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 use AlephTools\DDD\Common\Infrastructure\Entity;
-use AlephTools\DDD\Common\Infrastructure\EventDispatcher;
 
+/**
+ * @property mixed $prop1
+ * @property mixed $prop2
+ */
 class EntityTestObject extends Entity
 {
+    private $prop1;
+    private $prop2;
+
+    public function __construct($prop1 = null, $prop2 = null)
+    {
+        parent::__construct([
+            'prop1' => $prop1,
+            'prop2' => $prop2
+        ]);
+    }
+
     public function setIsEntityInstantiated(bool $flag): void
     {
         $this->isEntityInstantiated = $flag;
@@ -57,5 +69,15 @@ class EntityTest extends TestCase
         $entity->publish($event);
 
         $this->assertSame([], $this->publisher->getEvents());
+    }
+
+    public function testCopyEntity(): void
+    {
+        $entity = new EntityTestObject('abc', 123);
+        $copy = $entity->copyWith(['prop2' => '@@@']);
+
+        $this->assertSame($entity->prop1, $copy->prop1);
+        $this->assertSame('@@@', $copy->prop2);
+        $this->assertTrue($copy->isEntityInstantiated());
     }
 }

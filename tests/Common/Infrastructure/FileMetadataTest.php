@@ -10,20 +10,21 @@ class FileMetadataTest extends TestCase
 {
     public function testCreation(): void
     {
-        $id = FileId::create();
         $properties = [
-            'id' => $id,
+            'id' => FileId::create(),
             'isPrivate' => true,
-            'createdAt' => new \DateTime(),
+            'createdAt' => new \DateTimeImmutable(),
             'contentType' => 'application/json',
             'name' => 'test.txt',
             'baseName' => 'test',
             'extension' => 'txt',
             'suggestedExtension' => 'json',
-            'size' => 10000
+            'size' => 10000,
+            'url' => 'http://some.url',
+            'downloadLink' => 'http://download.link'
         ];
 
-        $data = new FileMetadata($properties);
+        $data = new FileMetadata(...array_values($properties));
 
         $this->assertSame($properties, $data->toArray());
     }

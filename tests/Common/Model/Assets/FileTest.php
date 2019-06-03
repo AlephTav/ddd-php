@@ -55,6 +55,7 @@ class FileTest extends TestCase
         /** @var MockBuilder $builder */
         $builder = $this->getMockBuilder(FileStorage::class);
         $storage = $builder->setMethods([
+            'getMetadataList',
             'exists',
             'getMetadata',
             'getUrl',

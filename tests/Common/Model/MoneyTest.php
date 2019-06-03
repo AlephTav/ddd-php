@@ -78,4 +78,13 @@ class MoneyTest extends TestCase
         $this->assertSame(-1, $currency->cmp('5.45'));
         $this->assertSame(0, $currency->cmp('3.33'));
     }
+
+    public function testCurrency(): void
+    {
+        $currency = Currency::RUB();
+
+        $this->assertSame('Russian ruble', $currency->getName());
+        $this->assertSame('643', $currency->getNumericCode());
+        $this->assertSame(2, $currency->getSubunits());
+    }
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace AlephTools\DDD\Common\Infrastructure;
+namespace AlephTools\DDD\Common\Application\Data;
 
 use DateTimeImmutable;
+use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Assets\FileId;
 
 /**

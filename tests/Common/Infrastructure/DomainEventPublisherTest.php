@@ -2,11 +2,11 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;
+use AlephTools\DDD\Common\Application\Subscriber\DomainEventSubscriber;
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DefaultDomainEventSubscriber;
-use AlephTools\DDD\Common\Infrastructure\DomainEvent;
 use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
-use AlephTools\DDD\Common\Infrastructure\DomainEventSubscriber;
 use AlephTools\DDD\Common\Infrastructure\EventDispatcher;
 
 class Event1TestObject extends DomainEvent {}

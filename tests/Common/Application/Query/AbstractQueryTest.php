@@ -1,21 +1,27 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace AlephTools\DDD\Tests\Common\Application\Query;
 
+use DateTime;
+use DateTimeImmutable;
+use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\AbstractQuery;
 
 class TestQueryTestObject extends AbstractQuery
 {
-
     public function castToBoolean($value): bool
     {
         return $this->toBoolean($value);
     }
 
-    public function castToDate($value): \DateTime
+    public function castToDate($value): DateTime
     {
         return $this->toDate($value);
+    }
+
+    public function castToImmutableDate($value): DateTimeImmutable
+    {
+        return $this->toImmutableDate($value);
     }
 }
 
@@ -72,6 +78,12 @@ class AbstractQueryTest extends TestCase
         $query = new TestQueryTestObject();
         $date = $query->castToDate('2018-10-01 21:30:00');
 
+        $this->assertInstanceOf(DateTime::class, $date);
+        $this->assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
+
+        $date = $query->castToImmutableDate('2018-10-01 21:30:00');
+
+        $this->assertInstanceOf(DateTimeImmutable::class, $date);
         $this->assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
     }
 

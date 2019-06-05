@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use ReflectionClass;
 
 abstract class Entity extends IdentifiedDomainObject

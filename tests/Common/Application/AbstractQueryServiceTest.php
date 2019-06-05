@@ -1,14 +1,14 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace AlephTools\DDD\Tests\Common\Application;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder\QueryTestAware;
-use AlephTools\DDD\Common\Infrastructure\AbstractQuery;
-use AlephTools\DDD\Common\Infrastructure\AbstractQueryService;
+use AlephTools\DDD\Common\Application\AbstractQueryService;
+use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder\QueryTestAware;
 
 /**
  * @property-read DateTime|null $from

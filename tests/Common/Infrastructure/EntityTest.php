@@ -2,8 +2,8 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DomainEvent;
 use AlephTools\DDD\Common\Infrastructure\Entity;
 
 /**

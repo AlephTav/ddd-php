@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use DateTime;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\DateHelper;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
@@ -22,7 +23,20 @@ class DateHelperTest extends TestCase
         }
 
         $date = DateHelper::parse($value);
-        $this->assertEquals($value, $format ? $date->format($format) : $date);
+        if ($format) {
+            $this->assertInstanceOf(DateTime::class, $date);
+            $this->assertEquals($value, $date->format($format));
+        } else {
+            $this->assertEquals($value, $date);
+        }
+
+        $date = DateHelper::parseImmutable($value);
+        if ($format) {
+            $this->assertInstanceOf(DateTimeImmutable::class, $date);
+            $this->assertEquals($value, $date->format($format));
+        } else {
+            $this->assertEquals($value, $date);
+        }
     }
 
     public function dateDataProvider(): array
@@ -41,6 +55,11 @@ class DateHelperTest extends TestCase
         $data = array_merge($data, [
             [
                 new DateTime(),
+                null,
+                false
+            ],
+            [
+                new DateTimeImmutable(),
                 null,
                 false
             ],

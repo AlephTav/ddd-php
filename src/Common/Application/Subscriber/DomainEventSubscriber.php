@@ -1,6 +1,8 @@
 <?php
 
-namespace AlephTools\DDD\Common\Infrastructure;
+namespace AlephTools\DDD\Common\Application\Subscriber;
+
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 
 interface DomainEventSubscriber
 {

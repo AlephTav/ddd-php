@@ -1,9 +1,9 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace AlephTools\DDD\Tests\Application\Data;
 
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\FileMetadata;
+use AlephTools\DDD\Common\Application\Data\FileMetadata;
 use AlephTools\DDD\Common\Model\Assets\FileId;
 
 class FileMetadataTest extends TestCase

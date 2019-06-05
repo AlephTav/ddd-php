@@ -1,6 +1,6 @@
 <?php
 
-namespace AlephTools\DDD\Common\Infrastructure;
+namespace AlephTools\DDD\Common\Application\Data;
 
 /**
  * @property-read array|null $items

@@ -2,7 +2,6 @@
 
 namespace AlephTools\DDD\Common\Model\Events;
 
-use AlephTools\DDD\Common\Infrastructure\DomainEvent;
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
 
 /**

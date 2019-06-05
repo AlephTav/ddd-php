@@ -1,9 +1,9 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace AlephTools\DDD\Tests\Common\Model\Events;
 
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DomainEvent;
 
 /**
  * @property mixed $prop

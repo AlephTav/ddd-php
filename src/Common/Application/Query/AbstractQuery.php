@@ -1,8 +1,11 @@
 <?php
 
-namespace AlephTools\DDD\Common\Infrastructure;
+namespace AlephTools\DDD\Common\Application\Query;
 
-use DateTimeInterface;
+use DateTime;
+use DateTimeImmutable;
+use AlephTools\DDD\Common\Infrastructure\DateHelper;
+use AlephTools\DDD\Common\Infrastructure\WeakDto;
 
 /**
  * @property-read string|null $keyword
@@ -19,7 +22,6 @@ abstract class AbstractQuery extends WeakDto
     //region Constants
 
     public const DEFAULT_PAGE_SIZE = 10;
-
     public const PAGE_MAX_SIZE = 100;
 
     //endregion
@@ -58,9 +60,14 @@ abstract class AbstractQuery extends WeakDto
         return false;
     }
 
-    protected function toDate($value): ?DateTimeInterface
+    protected function toDate($value): ?DateTime
     {
         return DateHelper::parse($value);
+    }
+
+    protected function toImmutableDate($value): ?DateTimeImmutable
+    {
+        return DateHelper::parseImmutable($value);
     }
 
     //region Setters

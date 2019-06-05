@@ -2,6 +2,8 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
+
 interface EventDispatcher
 {
     /**

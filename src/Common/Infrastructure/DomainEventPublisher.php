@@ -2,6 +2,8 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use ReflectionClass;
 
 class DomainEventPublisher

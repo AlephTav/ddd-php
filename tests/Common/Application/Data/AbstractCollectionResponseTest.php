@@ -1,9 +1,9 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace AlephTools\DDD\Tests\Common\Application\Data;
 
+use AlephTools\DDD\Common\Application\Data\AbstractCollectionResponse;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\AbstractCollectionResponse;
 
 class CollectionResponseTestObject extends AbstractCollectionResponse {}
 

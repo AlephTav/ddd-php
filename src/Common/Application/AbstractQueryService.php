@@ -1,7 +1,8 @@
 <?php
 
-namespace AlephTools\DDD\Common\Infrastructure;
+namespace AlephTools\DDD\Common\Application;
 
+use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 

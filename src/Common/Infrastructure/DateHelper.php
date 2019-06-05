@@ -3,7 +3,7 @@
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use DateTime;
-use DateTimeInterface;
+use DateTimeImmutable;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 class DateHelper
@@ -25,17 +25,41 @@ class DateHelper
         return self::$dateFormats;
     }
 
-    public static function parse($date): ?DateTimeInterface
+    public static function parseImmutable($date): ?DateTimeImmutable
     {
-        if ($date === null || $date instanceof DateTimeInterface) {
+        if ($date === null || $date instanceof DateTimeImmutable) {
             return $date;
         }
+        if ($date instanceof DateTime) {
+            return DateTimeImmutable::createFromMutable($date);
+        }
+        return self::parseInternal($date, DateTimeImmutable::class);
+    }
 
+    public static function parse($date): ?DateTime
+    {
+        if ($date === null || $date instanceof DateTime) {
+            return $date;
+        }
+        if ($date instanceof DateTimeImmutable) {
+            DateTime::createFromImmutable($date);
+        }
+        return self::parseInternal($date, DateTime::class);
+    }
+
+    /**
+     * @param $date
+     * @param string $class
+     * @return DateTime|DateTimeImmutable
+     */
+    private static function parseInternal($date, string $class)
+    {
         if (is_scalar($date)) {
             $date = Sanitizer::sanitizeName($date);
 
             foreach (static::getAvailableDateFormats() as $format) {
-                $d = DateTime::createFromFormat($format, $date);
+                /** @noinspection PhpUndefinedMethodInspection */
+                $d = $class::createFromFormat($format, $date);
                 if ($d !== false) {
                     return $d;
                 }

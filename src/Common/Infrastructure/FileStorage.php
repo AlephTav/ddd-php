@@ -2,7 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Model\Assets\FileId;
+use AlephTools\DDD\Common\Application\Data\FileMetadata;
 use AlephTools\DDD\Common\Model\Exceptions\EntityNotFoundException;
 
 interface FileStorage

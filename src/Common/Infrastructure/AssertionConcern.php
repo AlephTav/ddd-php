@@ -2,8 +2,9 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use DateTime;
 use Throwable;
+use DateTime;
+use DateTimeInterface;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidStateException;
 
@@ -118,14 +119,14 @@ trait AssertionConcern
         }
     }
 
-    protected function assertArgumentNotInFuture(DateTime $date, string $msg): void
+    protected function assertArgumentNotInFuture(DateTimeInterface $date, string $msg): void
     {
         if ($date > new DateTime()) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    protected function assertArgumentNotInPast(DateTime $date, string $msg): void
+    protected function assertArgumentNotInPast(DateTimeInterface $date, string $msg): void
     {
         if ($date < new DateTime('-1 second')) {
             throw new InvalidArgumentException($msg);

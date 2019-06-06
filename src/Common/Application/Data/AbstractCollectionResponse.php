@@ -13,7 +13,10 @@ abstract class AbstractCollectionResponse extends AbstractDataResponse
 
     public function __construct(?array $items = [], ?int $count = 0)
     {
-        parent::__construct(['items' => $items, 'count' => $count]);
+        parent::__construct([
+            'items' => $items,
+            'count' => $count
+        ]);
     }
 
     public function toArray(): array

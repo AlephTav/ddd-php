@@ -303,6 +303,9 @@ class SelectQuery extends AbstractQuery
      */
     public function pages(int $size = 1000, int $page = 0): Generator
     {
+        if ($size <= 0) {
+            return;
+        }
         while (true) {
             $rows = $this
                 ->paginate($page, $size)
@@ -311,6 +314,33 @@ class SelectQuery extends AbstractQuery
             $count = count($rows);
             if ($count > 0) {
                 yield from $rows;
+            }
+            if ($count < $size) {
+                break;
+            }
+
+            ++$page;
+        }
+    }
+
+    /**
+     * @param int $size
+     * @param int $page
+     * @return Generator|array[]
+     */
+    public function batches(int $size = 1000, int $page = 0): Generator
+    {
+        if ($size <= 0) {
+            return;
+        }
+        while (true) {
+            $rows = $this
+                ->paginate($page, $size)
+                ->rows();
+
+            $count = count($rows);
+            if ($count > 0) {
+                yield $rows;
             }
             if ($count < $size) {
                 break;

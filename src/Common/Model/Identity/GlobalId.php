@@ -49,7 +49,7 @@ class GlobalId extends AbstractId
      * @param mixed $identity
      * @throws Exception
      */
-    public function __construct($identity = null)
+    public function __construct($identity)
     {
         parent::__construct(['identity' => $this->parse($identity)]);
     }

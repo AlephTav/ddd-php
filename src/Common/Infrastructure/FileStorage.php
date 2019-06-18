@@ -39,9 +39,10 @@ interface FileStorage
      * Returns a url to access the given public file.
      *
      * @param mixed $fileId
+     * @param int $expirationInSeconds
      * @return string
      */
-    public function getUrl($fileId): string;
+    public function getUrl($fileId, int $expirationInSeconds = 0): string;
 
     /**
      * Returns the download link for a file.

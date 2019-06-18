@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder;
 
+use RuntimeException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\QueryExecutor;
@@ -1100,9 +1101,7 @@ class SelectQueryTest extends TestCase
 
     public function testCount(): void
     {
-        $executor = $this->getMockBuilder(QueryExecutor::class)
-            ->setMethods(['rows', 'row', 'column', 'scalar', 'insert', 'execute'])
-            ->getMock();
+        $executor = $this->getMockQueryExecutor();
 
         $result = null;
         $executor->method('scalar')
@@ -1132,23 +1131,112 @@ class SelectQueryTest extends TestCase
 
     public function testGetQueryExecutor(): void
     {
-        $executor = $this->getMockBuilder(QueryExecutor::class)
-            ->getMock();
+        $executor = $this->getMockQueryExecutor();
         $q = new SelectQuery($executor);
 
         $this->assertSame($executor, $q->getQueryExecutor());
     }
 
-    private function getMockQueryExecutor(string $method): MockObject
+    public function testRowsByKey(): void
+    {
+        $executor = $this->getMockQueryExecutor();
+
+        $executor->method('rows')
+            ->willReturnCallback(function(string $sql, array $params) {
+                return [
+                    ['key' => 1, 'data' => 'a'],
+                    ['key' => 2, 'data' => 'b'],
+                    ['key' => 3, 'data' => 'c']
+                ];
+            });
+
+        $rows = (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByKey('key');
+
+        $this->assertSame([
+            1 => ['key' => 1, 'data' => 'a'],
+            2 => ['key' => 2, 'data' => 'b'],
+            3 => ['key' => 3, 'data' => 'c']
+        ], $rows);
+
+        $rows = (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByKey('key', true);
+
+        $this->assertSame([
+            1 => ['data' => 'a'],
+            2 => ['data' => 'b'],
+            3 => ['data' => 'c']
+        ], $rows);
+
+        $this->expectException(RuntimeException::class);
+
+        (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByKey('foo');
+    }
+
+    public function testRowsByGroup(): void
+    {
+        $executor = $this->getMockQueryExecutor();
+
+        $executor->method('rows')
+            ->willReturnCallback(function(string $sql, array $params) {
+                return [
+                    ['key' => 1, 'data' => 'a'],
+                    ['key' => 1, 'data' => 'b'],
+                    ['key' => 2, 'data' => 'c']
+                ];
+            });
+
+        $rows = (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByGroup('key');
+
+        $this->assertSame([
+            1 => [
+                ['key' => 1, 'data' => 'a'],
+                ['key' => 1, 'data' => 'b']
+            ],
+            2 => [
+                ['key' => 2, 'data' => 'c']
+            ]
+        ], $rows);
+
+        $rows = (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByGroup('key', true);
+
+        $this->assertSame([
+            1 => [
+                ['data' => 'a'],
+                ['data' => 'b']
+            ],
+            2 => [
+                ['data' => 'c']
+            ]
+        ], $rows);
+
+        $this->expectException(RuntimeException::class);
+
+        (new SelectQuery($executor))
+            ->from('table')
+            ->rowsByGroup('foo');
+    }
+
+    private function getMockQueryExecutor(string $method = null): MockObject
     {
         $executor = $this->getMockBuilder(QueryExecutor::class)
             ->setMethods(['rows', 'row', 'column', 'scalar', 'insert', 'execute'])
             ->getMock();
 
-        $executor->method($method)
-            ->willReturnCallback(function(string $sql, array $params) {
-                return [$sql, $params];
-            });
+        if ($method) {
+            $executor->method($method)
+                ->willReturnCallback(function (string $sql, array $params) {
+                    return [$sql, $params];
+                });
+        }
 
         return $executor;
     }

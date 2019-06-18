@@ -228,6 +228,60 @@ class SelectQuery extends AbstractQuery
     }
 
     /**
+     * @param string $key
+     * @param bool $removeKeyFromRow
+     * @return array
+     * @throws RuntimeException
+     */
+    public function rowsByKey(string $key, bool $removeKeyFromRow = false): array
+    {
+        $result = [];
+        $rows = $this->rows();
+        if ($rows && !array_key_exists($key, $rows[0])) {
+            throw new RuntimeException("Key \"$key\" is not found in the row set.");
+        }
+        if ($removeKeyFromRow) {
+            foreach ($rows as $row) {
+                $keyValue = $row[$key];
+                unset($row[$key]);
+                $result[$keyValue] = $row;
+            }
+        } else {
+            foreach ($rows as $row) {
+                $result[$row[$key]] = $row;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $key
+     * @param bool $removeKeyFromRow
+     * @return array
+     * @throws RuntimeException
+     */
+    public function rowsByGroup(string $key, bool $removeKeyFromRow = false): array
+    {
+        $result = [];
+        $rows = $this->rows();
+        if ($rows && !array_key_exists($key, $rows[0])) {
+            throw new RuntimeException("Key \"$key\" is not found in the row set.");
+        }
+        if ($removeKeyFromRow) {
+            foreach ($rows as $row) {
+                $keyValue = $row[$key];
+                unset($row[$key]);
+                $result[$keyValue][] = $row;
+            }
+        } else {
+            foreach ($rows as $row) {
+                $result[$row[$key]][] = $row;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return array
      * @throws RuntimeException
      */

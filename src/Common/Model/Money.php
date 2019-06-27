@@ -31,6 +31,57 @@ class Money extends ValueObject
         }
     }
 
+    public function isPositive(): bool
+    {
+        return $this->isGreaterThan('0');
+    }
+
+    public function isZero(): bool
+    {
+        return $this->equals('0');
+    }
+
+    public function isNegative(): bool
+    {
+        return $this->isLessThan('0');
+    }
+
+    public function isLessThan(string $amount): bool
+    {
+        return $this->cmp($amount) < 0;
+    }
+
+    public function isLessOrEqualThan(string $amount): bool
+    {
+        return $this->cmp($amount) <= 0;
+    }
+
+    public function isGreaterThan(string $amount): bool
+    {
+        return $this->cmp($amount) > 0;
+    }
+
+    public function isGreaterOrEqualThan(string $amount): bool
+    {
+        return $this->cmp($amount) >= 0;
+    }
+
+    public function equals($other): bool
+    {
+        if (is_scalar($other)) {
+            return $this->cmp($other) === 0;
+        }
+        return parent::equals($other);
+    }
+
+    public function abs(): Money
+    {
+        if ($this->isNegative()) {
+            return $this->mul('-1');
+        }
+        return $this;
+    }
+
     public function cmp(string $amount): int
     {
         return bccomp($this->amount, $amount, $this->currency->getSubunits());

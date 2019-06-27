@@ -2,7 +2,9 @@
 
 namespace AlephTools\DDD\Common\Application;
 
+use RuntimeException;
 use AlephTools\DDD\Common\Application\Query\AbstractQuery;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ConditionalExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
@@ -59,14 +61,18 @@ abstract class AbstractQueryService
         return $query;
     }
 
-    protected function applyDateRangeFiltering(SelectQuery $query, string $column, AbstractQuery $request)
+    protected function applyDateRangeFiltering($query, string $column, AbstractQuery $request)
     {
-        if (isset($request->from) && isset($request->to)) {
-            $query->where($column, 'BETWEEN', [$request->from, $request->to]);
-        } else if (isset($request->from)) {
-            $query->where($column, '>=', $request->from);
-        } else if (isset($request->to)) {
-            $query->where($column, '<=', $request->to);
+        if ($query instanceof SelectQuery || $query instanceof ConditionalExpression) {
+            if (isset($request->from) && isset($request->to)) {
+                $query->where($column, 'BETWEEN', [$request->from, $request->to]);
+            } else if (isset($request->from)) {
+                $query->where($column, '>=', $request->from);
+            } else if (isset($request->to)) {
+                $query->where($column, '<=', $request->to);
+            }
+        } else {
+            throw new RuntimeException('Invalid query type.');
         }
     }
 }

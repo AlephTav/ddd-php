@@ -67,7 +67,7 @@ abstract class DomainObject extends StrictDto implements Hashable
     {
         /** @var static $instance */
         $instance = (new ReflectionClass($this))->newInstanceWithoutConstructor();
-        $instance->init();
+        $instance->__wakeup();
         $instance->assignPropertiesAndValidate(array_merge($this->toArray(), $properties));
         return $instance;
     }

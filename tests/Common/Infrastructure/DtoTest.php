@@ -367,7 +367,7 @@ class DtoTest extends TestCase
     public function testProcessingTypeError(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property "prop2" must be of the type integer, string given.');
+        $this->expectExceptionMessage('Property "prop2" must be of the type int, string given.');
 
         new DtoTestObject(['prop2' => 'test']);
     }

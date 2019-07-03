@@ -67,7 +67,7 @@ abstract class Dto implements Serializable
         $this->init();
     }
 
-    protected function init(): void
+    private function init(): void
     {
         $this->reflector = new ReflectionClass($this);
         $this->extractProperties();

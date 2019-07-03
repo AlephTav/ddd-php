@@ -31,9 +31,7 @@ abstract class Entity extends IdentifiedDomainObject
     public function copyWith(array $properties = [])
     {
         /** @var static $instance */
-        $instance = (new ReflectionClass($this))->newInstanceWithoutConstructor();
-        $instance->init();
-        $instance->assignPropertiesAndValidate(array_merge($this->toArray(), $properties));
+        $instance = parent::copyWith($properties);
         $instance->isEntityInstantiated = true;
         return $instance;
     }

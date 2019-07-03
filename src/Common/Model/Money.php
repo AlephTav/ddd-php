@@ -107,6 +107,11 @@ class Money extends ValueObject
         return $this->op($amount, 'bcdiv');
     }
 
+    public function sqrt(string $amount): Money
+    {
+        return $this->op($amount, 'bcsqrt');
+    }
+
     private function op(string $amount, string $operation): Money
     {
         $amount = $operation($this->amount, $amount, $this->currency->getSubunits());

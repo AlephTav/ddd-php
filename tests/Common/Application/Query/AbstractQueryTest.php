@@ -283,11 +283,11 @@ class AbstractQueryTest extends TestCase
 
     public function testSetPageSize(): void
     {
-        AbstractQuery::setMaxPageSize(10000);
+        AbstractQuery::setPageMaxSize(10000);
         $query1 = new TestQueryTestObject(['limit' => 50000]);
         $query2 = new TestQueryTestObject(['limit' => 35000]);
 
-        $this->assertSame(AbstractQuery::getMaxPageSize(), $query1->limit);
-        $this->assertSame(AbstractQuery::getMaxPageSize(), $query2->limit);
+        $this->assertSame(AbstractQuery::getPageMaxSize(), $query1->limit);
+        $this->assertSame(AbstractQuery::getPageMaxSize(), $query2->limit);
     }
 }

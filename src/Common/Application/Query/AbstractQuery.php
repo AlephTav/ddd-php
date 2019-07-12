@@ -28,7 +28,7 @@ abstract class AbstractQuery extends WeakDto
 
     //region Properties
 
-    protected static $maxPageSize = self::DEFAULT_PAGE_MAX_SIZE;
+    protected static $pageMaxSize = self::DEFAULT_PAGE_MAX_SIZE;
 
     protected $keyword;
     protected $limit = self::DEFAULT_PAGE_SIZE;
@@ -41,14 +41,14 @@ abstract class AbstractQuery extends WeakDto
 
     //endregion
 
-    public static function getMaxPageSize(): int
+    public static function getPageMaxSize(): int
     {
-        return static::$maxPageSize;
+        return static::$pageMaxSize;
     }
 
-    public static function setMaxPageSize(int $size = self::DEFAULT_PAGE_MAX_SIZE): void
+    public static function setPageMaxSize(int $size = self::DEFAULT_PAGE_MAX_SIZE): void
     {
-        static::$maxPageSize = $size;
+        static::$pageMaxSize = $size;
     }
 
     /**
@@ -93,8 +93,8 @@ abstract class AbstractQuery extends WeakDto
     {
         $this->limit = is_numeric($limit) ? abs((int)$limit) : static::DEFAULT_PAGE_SIZE;
 
-        if ($this->limit > static::$maxPageSize) {
-            $this->limit = static::$maxPageSize;
+        if ($this->limit > static::getPageMaxSize()) {
+            $this->limit = static::getPageMaxSize();
         }
     }
 

@@ -130,7 +130,7 @@ class AbstractQueryTest extends TestCase
             ['5', 5],
             [3.5, 3],
             ['6.7', 6],
-            [AbstractQuery::PAGE_MAX_SIZE + 1, AbstractQuery::PAGE_MAX_SIZE],
+            [AbstractQuery::DEFAULT_PAGE_MAX_SIZE + 1, AbstractQuery::DEFAULT_PAGE_MAX_SIZE],
             ['test', AbstractQuery::DEFAULT_PAGE_SIZE],
             [[], AbstractQuery::DEFAULT_PAGE_SIZE],
             [new \stdClass(), AbstractQuery::DEFAULT_PAGE_SIZE],
@@ -279,5 +279,15 @@ class AbstractQueryTest extends TestCase
         $query = new TestQueryTestObject();
         $this->assertTrue($query->containsField('f1'));
         $this->assertTrue($query->containsField('f4'));
+    }
+
+    public function testSetPageSize(): void
+    {
+        AbstractQuery::setMaxPageSize(10000);
+        $query1 = new TestQueryTestObject(['limit' => 50000]);
+        $query2 = new TestQueryTestObject(['limit' => 35000]);
+
+        $this->assertSame(AbstractQuery::getMaxPageSize(), $query1->limit);
+        $this->assertSame(AbstractQuery::getMaxPageSize(), $query2->limit);
     }
 }

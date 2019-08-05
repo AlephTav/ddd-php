@@ -37,6 +37,7 @@ class AbstractQueryTest extends TestCase
             'offset' => null,
             'page' => null,
             'sort' => null,
+            'group' => null,
             'fields' => null,
             'withoutCount' => false,
             'withoutItems' => false
@@ -248,6 +249,17 @@ class AbstractQueryTest extends TestCase
     {
         $query = new TestQueryTestObject(['fields' => $value]);
         $this->assertSame($fields, $query->fields);
+    }
+
+    /**
+     * @dataProvider fieldsDataProvider
+     * @param mixed $value
+     * @param array|null $fields
+     */
+    public function testSetGroup($value, ?array $fields): void
+    {
+        $query = new TestQueryTestObject(['group' => $value]);
+        $this->assertSame($fields, $query->group);
     }
 
     public function fieldsDataProvider(): array

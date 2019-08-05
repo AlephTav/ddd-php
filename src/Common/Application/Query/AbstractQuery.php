@@ -13,6 +13,7 @@ use AlephTools\DDD\Common\Infrastructure\WeakDto;
  * @property-read int|null $offset
  * @property-read int|null $page
  * @property-read string[]|null $sort
+ * @property-read string[]|null $group
  * @property-read string[]|null $fields
  * @property-read bool $withoutCount
  * @property-read bool $withoutItems
@@ -35,6 +36,7 @@ abstract class AbstractQuery extends WeakDto
     protected $offset;
     protected $page;
     protected $sort;
+    protected $group;
     protected $fields;
     protected $withoutCount = false;
     protected $withoutItems = false;
@@ -134,18 +136,14 @@ abstract class AbstractQuery extends WeakDto
         $this->sort = $items ?: null;
     }
 
+    protected function setGroup($fields): void
+    {
+        $this->group = $this->fieldsToArray($fields);
+    }
+
     protected function setFields($fields): void
     {
-        if (is_string($fields) && $fields !== '') {
-            $this->fields = [];
-            foreach (explode(',', $fields) as $field) {
-                $field = trim($field);
-                if ($field !== '') {
-                    $this->fields[] = $field;
-                }
-            }
-            $this->fields = $this->fields ?: null;
-        }
+        $this->fields = $this->fieldsToArray($fields);
     }
 
     protected function setWithoutCount($flag): void
@@ -159,4 +157,20 @@ abstract class AbstractQuery extends WeakDto
     }
 
     //endregion
+
+    private function fieldsToArray($fields): ?array
+    {
+        if (!is_string($fields) || $fields === '') {
+            return null;
+        }
+
+        $result = [];
+        foreach (explode(',', $fields) as $field) {
+            $field = trim($field);
+            if ($field !== '') {
+                $result[] = $field;
+            }
+        }
+        return $result ?: null;
+    }
 }

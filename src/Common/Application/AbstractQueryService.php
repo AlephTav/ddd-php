@@ -48,6 +48,23 @@ abstract class AbstractQueryService
         return $query;
     }
 
+    protected function applyGrouping(SelectQuery $query, ?array $group, ?array $groupFields): SelectQuery
+    {
+        if ($group) {
+            $groupFields = $groupFields ?: [];
+
+            foreach ($group as $column) {
+                if (isset($groupFields[$column])) {
+                    $query->groupBy($groupFields[$column]);
+                } else {
+                    throw new InvalidArgumentException("Incorrect group field: $column.");
+                }
+            }
+        }
+
+        return $query;
+    }
+
     protected function applyPagination(SelectQuery $query, AbstractQuery $request): SelectQuery
     {
         if ($request->limit !== null) {

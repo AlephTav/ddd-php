@@ -28,7 +28,9 @@ abstract class DomainEvent extends ValueObject
      */
     public function __construct(array $properties = [])
     {
-        $properties['occurredOn'] = new DateTimeImmutable();
+        if (!isset($properties['occurredOn'])) {
+            $properties['occurredOn'] = new DateTimeImmutable();
+        }
         parent::__construct($properties);
     }
 

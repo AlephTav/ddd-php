@@ -10,10 +10,12 @@ class DateHelper
 {
     private static $dateFormats = [
         DateTime::ATOM,
-        'Y-m-d\TH:i:s.uP',
         'Y-m-d H:i:s',
+        'Y-m-d H:i:sP',
+        'Y-m-d\TH:i:s.uP',
         'm/d/Y H:i:s',
         'Y-m-d',
+        'Y-m-dP',
         'm/d/Y',
         'm/d/y',
         'H:i:s',
@@ -42,7 +44,7 @@ class DateHelper
             return $date;
         }
         if ($date instanceof DateTimeImmutable) {
-            DateTime::createFromImmutable($date);
+            return DateTime::createFromImmutable($date);
         }
         return self::parseInternal($date, DateTime::class);
     }

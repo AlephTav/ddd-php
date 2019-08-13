@@ -39,6 +39,7 @@ class AbstractQueryTest extends TestCase
             'sort' => null,
             'group' => null,
             'fields' => null,
+            'timezone' => null,
             'withoutCount' => false,
             'withoutItems' => false
         ], $query->toArray());

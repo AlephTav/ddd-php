@@ -15,6 +15,7 @@ use AlephTools\DDD\Common\Infrastructure\WeakDto;
  * @property-read string[]|null $sort
  * @property-read string[]|null $group
  * @property-read string[]|null $fields
+ * @property-read int|null $timezone The desire timezone offset in minutes.
  * @property-read bool $withoutCount
  * @property-read bool $withoutItems
  */
@@ -38,6 +39,7 @@ abstract class AbstractQuery extends WeakDto
     protected $sort;
     protected $group;
     protected $fields;
+    protected $timezone;
     protected $withoutCount = false;
     protected $withoutItems = false;
 
@@ -144,6 +146,11 @@ abstract class AbstractQuery extends WeakDto
     protected function setFields($fields): void
     {
         $this->fields = $this->fieldsToArray($fields);
+    }
+
+    protected function setTimezone(?int $timezone): void
+    {
+        $this->timezone = $timezone;
     }
 
     protected function setWithoutCount($flag): void

@@ -8,17 +8,20 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\ReturningAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WithExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\OrderExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ReturningExpression;
 
 /**
  * Represents the DELETE query.
  */
 class DeleteQuery extends AbstractQuery
 {
-    use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
+    use FromAware, JoinAware, WhereAware, OrderAware, LimitAware, ReturningAware;
 
     /**
      * The USING expression instance.
@@ -36,6 +39,8 @@ class DeleteQuery extends AbstractQuery
      * @param JoinExpression|null $join
      * @param WhereExpression|null $where
      * @param OrderExpression|null $order
+     * @param ReturningExpression|null $returning
+     * @param WithExpression|null $with
      * @param int|null $limit
      */
     public function __construct(
@@ -45,6 +50,8 @@ class DeleteQuery extends AbstractQuery
         JoinExpression $join = null,
         WhereExpression $where = null,
         OrderExpression $order = null,
+        ReturningExpression $returning = null,
+        WithExpression $with = null,
         int $limit = null
     )
     {
@@ -55,6 +62,8 @@ class DeleteQuery extends AbstractQuery
         $this->join = $join;
         $this->order = $order;
         $this->limit = $limit;
+        $this->returning = $returning;
+        $this->with = $with;
     }
 
     //region USING
@@ -94,12 +103,14 @@ class DeleteQuery extends AbstractQuery
         }
         $this->sql = '';
         $this->params = [];
+        $this->buildWith();
         $this->buildFrom();
         $this->buildUsing();
         $this->buildJoin();
         $this->buildWhere();
         $this->buildOrderBy();
         $this->buildLimit();
+        $this->buildReturning();
         $this->built = true;
         return $this;
     }
@@ -118,37 +129,6 @@ class DeleteQuery extends AbstractQuery
         if ($this->using) {
             $this->sql .= ' USING ' . $this->from->toSql();
             $this->addParams($this->from->getParams());
-        }
-    }
-
-    private function buildJoin(): void
-    {
-        if ($this->join) {
-            $this->sql .= ' ' . $this->join->toSql();
-            $this->addParams($this->join->getParams());
-        }
-    }
-
-    private function buildWhere(): void
-    {
-        if ($this->where) {
-            $this->sql .= ' WHERE ' . $this->where->toSql();
-            $this->addParams($this->where->getParams());
-        }
-    }
-
-    private function buildOrderBy(): void
-    {
-        if ($this->order) {
-            $this->sql .= ' ORDER BY ' . $this->order->toSql();
-            $this->addParams($this->order->getParams());
-        }
-    }
-
-    private function buildLimit(): void
-    {
-        if ($this->limit !== null) {
-            $this->sql .= ' LIMIT ' . $this->limit;
         }
     }
 

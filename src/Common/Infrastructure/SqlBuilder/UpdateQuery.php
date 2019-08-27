@@ -8,18 +8,21 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\JoinAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\LimitAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\OrderAware;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\WhereAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\ReturningAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WithExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\OrderExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ReturningExpression;
 
 /**
  * Represents the UPDATE query.
  */
 class UpdateQuery extends AbstractQuery
 {
-    use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
+    use FromAware, JoinAware, WhereAware, OrderAware, LimitAware, ReturningAware;
 
     /**
      * The SET expression instance.
@@ -35,7 +38,9 @@ class UpdateQuery extends AbstractQuery
         AssignmentExpression $assignment = null,
         WhereExpression $where = null,
         OrderExpression $order = null,
-        ?int $limit = null
+        ReturningExpression $returning = null,
+        WithExpression $with = null,
+        int $limit = null
     )
     {
         $this->db = $db;
@@ -45,6 +50,8 @@ class UpdateQuery extends AbstractQuery
         $this->assignment = $assignment;
         $this->order = $order;
         $this->limit = $limit;
+        $this->returning = $returning;
+        $this->with = $with;
     }
 
     //region FROM
@@ -93,12 +100,14 @@ class UpdateQuery extends AbstractQuery
         }
         $this->sql = '';
         $this->params = [];
+        $this->buildWith();
         $this->buildFrom();
         $this->buildJoin();
         $this->buildAssignment();
         $this->buildWhere();
         $this->buildOrderBy();
         $this->buildLimit();
+        $this->buildReturning();
         $this->built = true;
         return $this;
     }
@@ -112,43 +121,12 @@ class UpdateQuery extends AbstractQuery
         }
     }
 
-    private function buildJoin(): void
-    {
-        if ($this->join) {
-            $this->sql .= ' ' . $this->join->toSql();
-            $this->addParams($this->join->getParams());
-        }
-    }
-
     private function buildAssignment(): void
     {
         if ($this->assignment) {
             $this->sql .= ' SET ';
             $this->sql .= $this->assignment->toSql();
             $this->addParams($this->assignment->getParams());
-        }
-    }
-
-    private function buildWhere(): void
-    {
-        if ($this->where) {
-            $this->sql .= ' WHERE ' . $this->where->toSql();
-            $this->addParams($this->where->getParams());
-        }
-    }
-
-    private function buildOrderBy(): void
-    {
-        if ($this->order) {
-            $this->sql .= ' ORDER BY ' . $this->order->toSql();
-            $this->addParams($this->order->getParams());
-        }
-    }
-
-    private function buildLimit(): void
-    {
-        if ($this->limit !== null) {
-            $this->sql .= ' LIMIT ' . $this->limit;
         }
     }
 

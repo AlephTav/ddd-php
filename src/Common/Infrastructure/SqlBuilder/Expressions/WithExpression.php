@@ -2,40 +2,37 @@
 
 namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\AbstractQuery;
 
-class ListExpression extends AbstractExpression
+class WithExpression extends AbstractExpression
 {
-    public function __construct($column = null, $order = null)
+    public function __construct($query = null, $alias = null, bool $recursive = false)
     {
-        if ($column !== null) {
-            $this->append($column, $order);
+        if ($query !== null) {
+            $this->append($query, $alias, $recursive);
         }
     }
 
-    public function append($column, $order = null): ListExpression
+    public function append($query, $alias = null, bool $recursive = false): WithExpression
     {
         if (strlen($this->sql) > 0) {
             $this->sql .= ', ';
         }
-        if ($order === null) {
-            $expression = $column;
-        } else if (is_object($column)) {
-            $expression = [[$column, $order]];
+        if ($alias === null) {
+            $expression = $query;
+        } else if (is_object($query)) {
+            $expression = [[$query, $alias]];
         } else {
-            $expression = [$column => $order];
+            $expression = [$query => $alias];
         }
-        $this->sql .= $this->convertNameToString($expression);
+        $this->sql .= ($recursive ? 'RECURSIVE ' : '' ) . $this->convertNameToString($expression);
         return $this;
     }
 
     private function convertNameToString($expression): string
     {
-        if ($expression instanceof SelectQuery) {
+        if ($expression instanceof AbstractQuery) {
             $sql = '(' . $expression->toSql() . ')';
-            $this->addParams($expression->getParams());
-        } else if ($expression instanceof ValueListExpression) {
-            $sql = '(VALUES ' . $expression->toSql() . ')';
             $this->addParams($expression->getParams());
         } else if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
@@ -52,7 +49,7 @@ class ListExpression extends AbstractExpression
                     }
                 }
                 $alias = $this->convertNameToString($value);
-                $list[] = $this->convertNameToString($key) . ($alias === '' ? '' : ' ' . $alias);
+                $list[] = ($alias === '' ? '' : $alias . ' AS ') . $this->convertNameToString($key);
             }
             $sql = implode(', ', $list);
         } else if ($expression === null) {

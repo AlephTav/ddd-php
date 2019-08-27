@@ -4,17 +4,20 @@ namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder;
 
 use RuntimeException;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\FromAware;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Traits\ReturningAware;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WithExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\FromExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ListExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\AssignmentExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ReturningExpression;
 
 /**
  * Represents the INSERT query.
  */
 class InsertQuery extends AbstractQuery
 {
-    use FromAware;
+    use FromAware, ReturningAware;
 
     /**
      * The list of columns.
@@ -60,6 +63,8 @@ class InsertQuery extends AbstractQuery
      * @param SelectQuery|null $query
      * @param AssignmentExpression|null $assignment
      * @param ListExpression|null $indexColumns
+     * @param ReturningExpression|null $returning
+     * @param WithExpression|null $with
      */
     public function __construct(
         QueryExecutor $db = null,
@@ -67,7 +72,9 @@ class InsertQuery extends AbstractQuery
         ValueListExpression $values = null,
         SelectQuery $query = null,
         AssignmentExpression $assignment = null,
-        ListExpression $indexColumns = null
+        ListExpression $indexColumns = null,
+        ReturningExpression $returning = null,
+        WithExpression $with = null
     )
     {
         $this->db = $db;
@@ -76,6 +83,8 @@ class InsertQuery extends AbstractQuery
         $this->query = $query;
         $this->assignment = $assignment;
         $this->indexColumns = $indexColumns;
+        $this->returning = $returning;
+        $this->with = $with;
     }
 
     //region FROM
@@ -191,12 +200,14 @@ class InsertQuery extends AbstractQuery
         }
         $this->sql = '';
         $this->params = [];
+        $this->buildWith();
         $this->buildFrom();
         $this->buildColumns();
         $this->buildValues();
         $this->buildQuery();
         $this->buildOnDuplicateKeyUpdate();
         $this->buildOnConflictDoUpdate();
+        $this->buildReturning();
         $this->built = true;
         return $this;
     }

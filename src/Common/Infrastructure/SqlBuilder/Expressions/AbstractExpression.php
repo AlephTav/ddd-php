@@ -40,6 +40,11 @@ class AbstractExpression
         return new ConditionalExpression();
     }
 
+    public static function valueList($values = null): ValueListExpression
+    {
+        return new ValueListExpression($values);
+    }
+
     //endregion
 
     public function __toString(): string

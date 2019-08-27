@@ -1002,6 +1002,135 @@ class SelectQueryTest extends TestCase
 
     //endregion
 
+    //region VALUES
+
+    public function testValueList(): void
+    {
+        $q = (new SelectQuery())
+            ->values([
+                [1, 'a'],
+                [2, 'b'],
+                [3, 'c']
+            ]);
+
+        $this->assertSame('VALUES (:p1, :p2), (:p3, :p4), (:p5, :p6)', $q->toSql());
+        $this->assertSame(['p1' => 1, 'p2' => 'a', 'p3' => 2, 'p4' => 'b', 'p5' => 3, 'p6' => 'c'], $q->getParams());
+    }
+
+    public function testValueListWithUnion(): void
+    {
+        $q = (new SelectQuery())
+            ->values([
+                [1, 'a'],
+                [2, 'b'],
+                [3, 'c']
+            ])
+            ->union((new SelectQuery())
+                ->from('tb')
+                ->where('id', '=', 1)
+            );
+
+        $this->assertSame(
+            '(VALUES (:p1, :p2), (:p3, :p4), (:p5, :p6)) UNION (SELECT * FROM tb WHERE id = :p7)',
+            $q->toSql()
+        );
+        $this->assertSame(
+            ['p1' => 1, 'p2' => 'a', 'p3' => 2, 'p4' => 'b', 'p5' => 3, 'p6' => 'c', 'p7' => 1],
+            $q->getParams()
+        );
+    }
+
+    //endregion
+
+    //region WITH
+
+    public function testWithSimpleQuery(): void
+    {
+        $q = (new SelectQuery())
+            ->with((new SelectQuery())->from('t1'), 'tb')
+            ->from('tb');
+
+        $this->assertSame('WITH tb AS (SELECT * FROM t1) SELECT * FROM tb', $q->toSql());
+    }
+
+    public function testWithSeveralQueries(): void
+    {
+        $q = (new SelectQuery())
+            ->with(
+                (new SelectQuery())
+                    ->from('orders')
+                    ->select([
+                        'region',
+                        'SUM(amount)' => 'total_sales'
+                    ])
+                    ->groupBy('region'),
+                'regional_sales'
+            )
+            ->with(
+                (new SelectQuery())
+                    ->from('regional_sales')
+                    ->select('region')
+                    ->where(
+                        'total_sales',
+                        '>',
+                        (new SelectQuery())
+                            ->from('regional_sales'))
+                            ->select('SUM(total_sales) / 10'),
+                'top_regions'
+            )
+            ->from('orders')
+            ->select([
+                'region',
+                'product',
+                'SUM(quantity)' => 'product_units',
+                'SUM(amount)' => 'product_sales'
+            ])
+            ->where(
+                'region',
+                'IN',
+                (new SelectQuery())
+                    ->from('top_regions')
+                    ->select('region')
+            )
+            ->orderBy(['region', 'product']);
+
+        $this->assertSame(
+            'WITH regional_sales AS (SELECT region, SUM(amount) total_sales FROM orders GROUP BY region), ' .
+            'top_regions AS (SELECT region, SUM(total_sales) / 10 FROM regional_sales WHERE total_sales > ' .
+            '(SELECT * FROM regional_sales)) SELECT region, product, SUM(quantity) product_units, ' .
+            'SUM(amount) product_sales FROM orders WHERE region IN (SELECT region FROM top_regions) ' .
+            'ORDER BY region, product',
+            $q->toSql()
+        );
+    }
+
+    public function testWithRecursiveQuery(): void
+    {
+        $q = (new SelectQuery())
+            ->withRecursive(
+                (new SelectQuery())
+                    ->values([1])
+                    ->unionAll(
+                        (new SelectQuery())
+                            ->from('t')
+                            ->select('n + 1')
+                            ->where('n', '<', 100)
+                    ),
+                't(n)'
+            )
+            ->from('t')
+            ->select('SUM(n)');
+
+        $this->assertSame(
+            'WITH RECURSIVE t(n) AS ((VALUES (:p1)) UNION ALL (SELECT n + 1 FROM t WHERE n < :p2)) ' .
+            'SELECT SUM(n) FROM t',
+            $q->toSql()
+        );
+        $this->assertSame(['p1' => 1, 'p2' => 100], $q->getParams());
+    }
+
+    //endregion
+
     //region Query Execution
 
     public function testQueryExecutorValidationForRows(): void

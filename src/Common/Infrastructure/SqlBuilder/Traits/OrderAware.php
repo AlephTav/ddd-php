@@ -20,4 +20,12 @@ trait OrderAware
         $this->built = false;
         return $this;
     }
+
+    private function buildOrderBy(): void
+    {
+        if ($this->order) {
+            $this->sql .= ' ORDER BY ' . $this->order->toSql();
+            $this->addParams($this->order->getParams());
+        }
+    }
 }

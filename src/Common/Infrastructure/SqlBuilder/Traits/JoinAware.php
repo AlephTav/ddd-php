@@ -80,4 +80,12 @@ trait JoinAware
         $this->built = false;
         return $this;
     }
+
+    private function buildJoin(): void
+    {
+        if ($this->join) {
+            $this->sql .= ' ' . $this->join->toSql();
+            $this->addParams($this->join->getParams());
+        }
+    }
 }

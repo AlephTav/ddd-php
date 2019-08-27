@@ -39,4 +39,34 @@ class UpdateQueryTest extends TestCase
     }
 
     //endregion
+
+    //region RETURNING
+
+    public function testReturningAllColumns(): void
+    {
+        $q = (new UpdateQuery())
+            ->table('tb')
+            ->assign('name', 'test')
+            ->returning();
+
+        $this->assertSame('UPDATE tb SET name = :p1 RETURNING *', $q->toSql());
+        $this->assertSame(['p1' => 'test'], $q->getParams());
+    }
+
+    public function testReturningSpecificColumns(): void
+    {
+        $q = (new UpdateQuery())
+            ->table('tb')
+            ->assign('name', 'test')
+            ->returning([
+                'c1',
+                'c2',
+                'c3' => 'col'
+            ]);
+
+        $this->assertSame('UPDATE tb SET name = :p1 RETURNING c1, c2, c3 col', $q->toSql());
+        $this->assertSame(['p1' => 'test'], $q->getParams());
+    }
+
+    //endregion
 }

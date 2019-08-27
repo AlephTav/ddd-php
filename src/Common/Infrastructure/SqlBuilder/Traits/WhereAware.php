@@ -30,4 +30,12 @@ trait WhereAware
         $this->built = false;
         return $this;
     }
+
+    private function buildWhere(): void
+    {
+        if ($this->where) {
+            $this->sql .= ' WHERE ' . $this->where->toSql();
+            $this->addParams($this->where->getParams());
+        }
+    }
 }

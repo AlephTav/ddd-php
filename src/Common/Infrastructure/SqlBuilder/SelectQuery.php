@@ -16,6 +16,8 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\JoinExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\OrderExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\SelectExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WhereExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\WithExpression;
 
 /**
  * Represents the SELECT query.
@@ -46,6 +48,13 @@ class SelectQuery extends AbstractQuery
     private $having;
 
     /**
+     * The VALUES expression instance.
+     *
+     * @var ValueListExpression
+     */
+    private $values;
+
+    /**
      * @var int
      */
     private $offset;
@@ -68,6 +77,8 @@ class SelectQuery extends AbstractQuery
      * @param GroupExpression|null $group
      * @param HavingExpression|null $having
      * @param OrderExpression|null $order
+     * @param ValueListExpression|null $values
+     * @param WithExpression|null $with
      * @param int|null $limit
      * @param int|null $offset
      */
@@ -80,6 +91,8 @@ class SelectQuery extends AbstractQuery
         GroupExpression $group = null,
         HavingExpression $having = null,
         OrderExpression $order = null,
+        ValueListExpression $values = null,
+        WithExpression $with = null,
         int $limit = null,
         int $offset = null
     )
@@ -92,6 +105,8 @@ class SelectQuery extends AbstractQuery
         $this->group = $group;
         $this->having = $having;
         $this->order = $order;
+        $this->values = $values;
+        $this->with = $with;
         $this->limit = $limit;
         $this->offset = $offset;
     }
@@ -142,6 +157,18 @@ class SelectQuery extends AbstractQuery
 
     //endregion
 
+    //region COLUMNS & VALUES
+
+    public function values($values): SelectQuery
+    {
+        $this->values = $this->values ?? new ValueListExpression();
+        $this->values->append($values);
+        $this->built = false;
+        return $this;
+    }
+
+    //endregion
+
     //region LIMIT & OFFSET
 
     public function offset(?int $offset): SelectQuery
@@ -178,6 +205,26 @@ class SelectQuery extends AbstractQuery
         return $this->typeUnion('UNION DISTINCT', $query);
     }
 
+    public function intersect(SelectQuery $query): SelectQuery
+    {
+        return $this->typeUnion('INTERSECT', $query);
+    }
+
+    public function intersectAll(SelectQuery $query): SelectQuery
+    {
+        return $this->typeUnion('INTERSECT ALL', $query);
+    }
+
+    public function except(SelectQuery $query): SelectQuery
+    {
+        return $this->typeUnion('EXCEPT', $query);
+    }
+
+    public function exceptAll(SelectQuery $query): SelectQuery
+    {
+        return $this->typeUnion('EXCEPT ALL', $query);
+    }
+
     private function typeUnion(string $type, SelectQuery $query): SelectQuery
     {
         if ($this->union) {
@@ -192,6 +239,8 @@ class SelectQuery extends AbstractQuery
                 $this->group,
                 $this->having,
                 $this->order,
+                $this->values,
+                $this->with,
                 $this->limit,
                 $this->offset
             );
@@ -206,6 +255,8 @@ class SelectQuery extends AbstractQuery
             $this->group = null;
             $this->having = null;
             $this->order = null;
+            $this->values = null;
+            $this->with = null;
             $this->limit = null;
             $this->offset = null;
         }
@@ -216,80 +267,6 @@ class SelectQuery extends AbstractQuery
     //endregion
 
     //region Data Fetching
-
-    /**
-     * @return array
-     * @throws RuntimeException
-     */
-    public function rows(): array
-    {
-        $this->validateAndBuild();
-        return $this->db->rows($this->toSql(), $this->getParams());
-    }
-
-    /**
-     * @param string $key
-     * @param bool $removeKeyFromRow
-     * @return array
-     * @throws RuntimeException
-     */
-    public function rowsByKey(string $key, bool $removeKeyFromRow = false): array
-    {
-        $result = [];
-        $rows = $this->rows();
-        if ($rows && !array_key_exists($key, $rows[0])) {
-            throw new RuntimeException("Key \"$key\" is not found in the row set.");
-        }
-        if ($removeKeyFromRow) {
-            foreach ($rows as $row) {
-                $keyValue = $row[$key];
-                unset($row[$key]);
-                $result[$keyValue] = $row;
-            }
-        } else {
-            foreach ($rows as $row) {
-                $result[$row[$key]] = $row;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param string $key
-     * @param bool $removeKeyFromRow
-     * @return array
-     * @throws RuntimeException
-     */
-    public function rowsByGroup(string $key, bool $removeKeyFromRow = false): array
-    {
-        $result = [];
-        $rows = $this->rows();
-        if ($rows && !array_key_exists($key, $rows[0])) {
-            throw new RuntimeException("Key \"$key\" is not found in the row set.");
-        }
-        if ($removeKeyFromRow) {
-            foreach ($rows as $row) {
-                $keyValue = $row[$key];
-                unset($row[$key]);
-                $result[$keyValue][] = $row;
-            }
-        } else {
-            foreach ($rows as $row) {
-                $result[$row[$key]][] = $row;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return array
-     * @throws RuntimeException
-     */
-    public function row(): array
-    {
-        $this->validateAndBuild();
-        return $this->db->row($this->toSql(), $this->getParams());
-    }
 
     /**
      * @param mixed $column
@@ -418,7 +395,12 @@ class SelectQuery extends AbstractQuery
         if ($this->union) {
             $this->buildUnion();
         } else {
-            $this->buildSelect();
+            $this->buildWith();
+            if ($this->values) {
+                $this->buildValues();
+            } else {
+                $this->buildSelect();
+            }
             $this->buildFrom();
             $this->buildJoin();
             $this->buildWhere();
@@ -455,27 +437,20 @@ class SelectQuery extends AbstractQuery
         }
     }
 
+    private function buildValues(): void
+    {
+        $this->sql .= 'VALUES ';
+        if ($this->values) {
+            $this->sql .= $this->values->toSql();
+            $this->addParams($this->values->getParams());
+        }
+    }
+
     private function buildFrom(): void
     {
         if ($this->from) {
             $this->sql .= ' FROM ' . $this->from->toSql();
             $this->addParams($this->from->getParams());
-        }
-    }
-
-    private function buildJoin(): void
-    {
-        if ($this->join) {
-            $this->sql .= ' ' . $this->join->toSql();
-            $this->addParams($this->join->getParams());
-        }
-    }
-
-    private function buildWhere(): void
-    {
-        if ($this->where) {
-            $this->sql .= ' WHERE ' . $this->where->toSql();
-            $this->addParams($this->where->getParams());
         }
     }
 
@@ -492,21 +467,6 @@ class SelectQuery extends AbstractQuery
         if ($this->group) {
             $this->sql .= ' GROUP BY ' . $this->group->toSql();
             $this->addParams($this->group->getParams());
-        }
-    }
-
-    private function buildOrderBy(): void
-    {
-        if ($this->order) {
-            $this->sql .= ' ORDER BY ' . $this->order->toSql();
-            $this->addParams($this->order->getParams());
-        }
-    }
-
-    private function buildLimit(): void
-    {
-        if ($this->limit !== null) {
-            $this->sql .= ' LIMIT ' . $this->limit;
         }
     }
 

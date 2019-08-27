@@ -40,9 +40,9 @@ class AbstractExpression
         return new ConditionalExpression();
     }
 
-    public static function valueList($values = null): ValueListExpression
+    public static function valueList($values = null, string $alias = ''): ValueListExpression
     {
-        return new ValueListExpression($values);
+        return new ValueListExpression($values, $alias);
     }
 
     //endregion

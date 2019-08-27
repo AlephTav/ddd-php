@@ -157,12 +157,12 @@ class SelectQuery extends AbstractQuery
 
     //endregion
 
-    //region COLUMNS & VALUES
+    //region VALUES
 
-    public function values($values): SelectQuery
+    public function values($values, string $alias = ''): SelectQuery
     {
         $this->values = $this->values ?? new ValueListExpression();
-        $this->values->append($values);
+        $this->values->append($values, $alias);
         $this->built = false;
         return $this;
     }

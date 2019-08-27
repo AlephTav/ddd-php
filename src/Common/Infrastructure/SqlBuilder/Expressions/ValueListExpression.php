@@ -4,14 +4,14 @@ namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
 class ValueListExpression extends AbstractExpression
 {
-    public function __construct($values = null)
+    public function __construct($values = null, string $alias = '')
     {
         if ($values !== null) {
-            $this->append($values);
+            $this->append($values, $alias);
         }
     }
 
-    public function append($values): ValueListExpression
+    public function append($values, string $alias = ''): ValueListExpression
     {
         if ($this->sql !== '') {
             $this->sql .= ', ';
@@ -24,6 +24,9 @@ class ValueListExpression extends AbstractExpression
             $this->sql .= '(';
             $this->sql .= $this->convertValueToString($values);
             $this->sql .= ')';
+        }
+        if ($alias !== '') {
+            $this->sql .= ' ' . $alias;
         }
         return $this;
     }

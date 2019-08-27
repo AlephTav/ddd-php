@@ -6,8 +6,9 @@ use RuntimeException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\QueryExecutor;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ConditionalExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ConditionalExpression;
+use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpression;
 
 class SelectQueryTest extends TestCase
 {
@@ -422,6 +423,32 @@ class SelectQueryTest extends TestCase
             $q->toSql()
         );
         $this->assertSame([], $q->getParams());
+    }
+
+    public function testJoinWithValues(): void
+    {
+        $q = (new SelectQuery())
+            ->from('t1')
+            ->rightJoin(
+                ValueListExpression::valueList([
+                    ['a', 1],
+                    ['b', 2],
+                    ['c', 3]
+                ], 't2 (name, id)'),
+                't1.id = t2.id'
+            )
+            ->where('t1.id', '>', 5);
+
+        $this->assertSame(
+            'SELECT * FROM t1 ' .
+            'RIGHT JOIN (VALUES (:p1, :p2), (:p3, :p4), (:p5, :p6) t2 (name, id)) ON t1.id = t2.id ' .
+            'WHERE t1.id > :p7',
+            $q->toSql()
+        );
+        $this->assertSame(
+            ['p1' => 'a', 'p2' => 1, 'p3' => 'b', 'p4' => 2, 'p5' => 'c', 'p6' => 3, 'p7' => 5],
+            $q->getParams()
+        );
     }
 
     //endregion

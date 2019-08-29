@@ -27,7 +27,9 @@ abstract class DomainObject extends StrictDto implements Hashable
         foreach ($properties1 as $property => $value1) {
             $value2 = $properties2[$property];
             if ($value1 instanceof DomainObject) {
-                return $value1->equals($value2);
+                if (!$value1->equals($value2)) {
+                    return false;
+                }
             }
             if ($value1 != $value2) {
                 return false;

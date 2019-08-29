@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Identity\GlobalId;
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\DomainObject;
 use AlephTools\DDD\Common\Infrastructure\Hash;
@@ -76,22 +77,24 @@ class DomainObjectTest extends TestCase
         $nestedObj1 = new DomainTestObject(['prop2' => 'boo']);
         $nestedObj2 = new DomainTestObject(['prop2' => 'boo']);
 
+        $id = GlobalId::create();
+
         $obj1 = new DomainTestObject([
             'prop1' => 5,
-            'prop2' => 'foo',
+            'prop2' => $id,
             'prop3' => true,
             'prop4' => $nestedObj1
         ]);
         $obj2 = new DomainTestObject([
             'prop1' => 5,
-            'prop2' => 'foo',
+            'prop2' => $id,
             'prop3' => true,
             'prop4' => $nestedObj2
         ]);
 
         $obj3 = new DomainTestObject([
             'prop1' => 5,
-            'prop2' => 'foo',
+            'prop2' => $id,
             'prop3' => false,
             'prop4' => $nestedObj1
         ]);

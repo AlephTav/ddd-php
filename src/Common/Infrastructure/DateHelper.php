@@ -12,6 +12,7 @@ class DateHelper
         DateTime::ATOM,
         'Y-m-d H:i:s',
         'Y-m-d H:i:sP',
+        'Y-m-d H:i:s.uP',
         'Y-m-d\TH:i:s.uP',
         'm/d/Y H:i:s',
         'Y-m-d',

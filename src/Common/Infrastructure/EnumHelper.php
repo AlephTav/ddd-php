@@ -11,14 +11,20 @@ class EnumHelper
      * Converts the given enum constant to the appropriate enum instance.
      *
      * @param string $enum
-     * @param string|null $value
+     * @param mixed $value
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public static function toEnum(string $enum, ?string $value)
+    public static function toEnum(string $enum, $value)
     {
+        if (is_object($value) && ($value instanceof $enum)) {
+            return $value;
+        }
+        if (!is_string($value)) {
+            throw new InvalidArgumentException("Constant of $enum must be a string, " . gettype($value) . ' given.');
+        }
         if (strlen($value) === 0) {
-            throw new InvalidArgumentException("Value of $enum must not be empty.");
+            throw new InvalidArgumentException("Constant of $enum must not be empty string.");
         }
 
         try {

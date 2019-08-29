@@ -16,13 +16,18 @@ class Money extends ValueObject
     /**
      * Constructor.
      *
-     * @param array|string|int|float $amount
+     * @param array|string|int|float|Money $amount
      * @param Currency|null $currency
      */
     public function __construct($amount, Currency $currency = null)
     {
         if (is_array($amount)) {
             parent::__construct($amount);
+        } else if ($amount instanceof Money) {
+            parent::__construct([
+                'amount' => $amount->amount,
+                'currency' => $amount->currency
+            ]);
         } else {
             parent::__construct([
                 'amount' => $amount,
@@ -125,9 +130,13 @@ class Money extends ValueObject
 
     //region Setters and Validators
 
-    private function setAmount(?string $amount): void
+    private function setAmount($amount): void
     {
-        $this->amount = $amount ?? '0';
+        $this->assertArgumentFalse(
+            $amount !== null && !is_scalar($amount),
+            'Money amount must be a scalar, ' . gettype($amount) . ' given.'
+        );
+        $this->amount = $amount ? (string)$amount : '0';
     }
 
     private function setCurrency(?Currency $currency): void

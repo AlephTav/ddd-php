@@ -125,7 +125,7 @@ class Money extends ValueObject
         return new Money($amount, $this->currency);
     }
 
-    public function asScaledString(): string
+    public function asScaledAmount(): string
     {
         return $this->bcround($this->amount, $this->currency->getSubunits());
     }

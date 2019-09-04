@@ -16,14 +16,14 @@ class MoneyTest extends TestCase
         $this->assertSame('123', $money->amount);
         $this->assertSame(Currency::USD(), $money->currency);
         $this->assertSame('123', $money->toString());
-        $this->assertSame('123.00', $money->asScaledAmount());
+        $this->assertSame('123.00', $money->toScaledAmount());
 
         $money = new Money(null, Currency::EUR());
 
         $this->assertSame('0', $money->amount);
         $this->assertSame(Currency::EUR(), $money->currency);
         $this->assertSame('0', $money->toString());
-        $this->assertSame('0.00', $money->asScaledAmount());
+        $this->assertSame('0.00', $money->toScaledAmount());
 
         $money = new Money([
             'amount' => 111.555,
@@ -33,14 +33,14 @@ class MoneyTest extends TestCase
         $this->assertSame('111.555', $money->amount);
         $this->assertSame(Currency::RUB(), $money->currency);
         $this->assertSame('111.555', $money->toString());
-        $this->assertSame('111.56', $money->asScaledAmount());
+        $this->assertSame('111.56', $money->toScaledAmount());
 
         $money = new Money($money, Currency::USD());
 
         $this->assertSame('111.555', $money->amount);
         $this->assertSame(Currency::RUB(), $money->currency);
         $this->assertSame('111.555', $money->toString());
-        $this->assertSame('111.56', $money->asScaledAmount());
+        $this->assertSame('111.56', $money->toScaledAmount());
     }
 
     public function testInvalidAmount(): void
@@ -66,7 +66,7 @@ class MoneyTest extends TestCase
         $money = (new Money('13.67'))->add('12.56');
 
         $this->assertSame('26.230000000000', $money->amount);
-        $this->assertSame('26.23', $money->asScaledAmount());
+        $this->assertSame('26.23', $money->toScaledAmount());
     }
 
     public function testSub(): void
@@ -74,7 +74,7 @@ class MoneyTest extends TestCase
         $money = (new Money('11.04'))->sub('12.96');
 
         $this->assertSame('-1.920000000000', $money->amount);
-        $this->assertSame('-1.92', $money->asScaledAmount());
+        $this->assertSame('-1.92', $money->toScaledAmount());
     }
 
     public function testMul(): void
@@ -82,7 +82,7 @@ class MoneyTest extends TestCase
         $money = (new Money('7.53'))->mul('17.79');
 
         $this->assertSame('133.958700000000', $money->amount);
-        $this->assertSame('133.96', $money->asScaledAmount());
+        $this->assertSame('133.96', $money->toScaledAmount());
     }
 
     public function testDiv(): void
@@ -90,7 +90,7 @@ class MoneyTest extends TestCase
         $money = (new Money('34.67'))->div('5.01');
 
         $this->assertSame('6.920159680638', $money->amount);
-        $this->assertSame('6.92', $money->asScaledAmount());
+        $this->assertSame('6.92', $money->toScaledAmount());
     }
 
     public function testCmp(): void

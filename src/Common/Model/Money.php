@@ -10,6 +10,8 @@ use AlephTools\DDD\Common\Infrastructure\ValueObject;
  */
 class Money extends ValueObject
 {
+    protected const PRECISION = 12;
+
     private $amount;
     private $currency;
 
@@ -89,7 +91,7 @@ class Money extends ValueObject
 
     public function cmp(string $amount): int
     {
-        return bccomp($this->amount, $amount, $this->currency->getSubunits());
+        return bccomp($this->amount, $amount, static::PRECISION);
     }
 
     public function add(string $amount): Money
@@ -119,8 +121,24 @@ class Money extends ValueObject
 
     private function op(string $amount, string $operation): Money
     {
-        $amount = $operation($this->amount, $amount, $this->currency->getSubunits());
+        $amount = $operation($this->amount, $amount, static::PRECISION);
         return new Money($amount, $this->currency);
+    }
+
+    public function asScaledString(): string
+    {
+        return $this->bcround($this->amount, $this->currency->getSubunits());
+    }
+
+    private function bcround($number, $precision = 0)
+    {
+        if (strpos($number, '.') !== false) {
+            if ($number[0] != '-') {
+                return bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            }
+            return bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+        }
+        return $number . '.' . str_repeat('0', $precision);
     }
 
     public function toString(): string

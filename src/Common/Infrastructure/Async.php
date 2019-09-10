@@ -8,7 +8,8 @@ interface Async
      * Asynchronously executes (in background) a callback.
      *
      * @param callable $callback
+     * @param array $params
      * @return void
      */
-    public function run(callable $callback): void;
+    public function run(callable $callback, array $params = []): void;
 }

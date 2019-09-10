@@ -28,6 +28,11 @@ class DateHelper
         return self::$dateFormats;
     }
 
+    public static function setAvailableDateFormats(array $formats): void
+    {
+        self::$dateFormats = $formats;
+    }
+
     public static function parseImmutable($date): ?DateTimeImmutable
     {
         if ($date === null || $date instanceof DateTimeImmutable) {

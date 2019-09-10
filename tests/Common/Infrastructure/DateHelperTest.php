@@ -10,6 +10,16 @@ use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 class DateHelperTest extends TestCase
 {
+    public function testGetSetFormats(): void
+    {
+        $defaultFormats = DateHelper::getAvailableDateFormats();
+        DateHelper::setAvailableDateFormats(['a', 'b', 'c']);
+        $formats = DateHelper::getAvailableDateFormats();
+
+        DateHelper::setAvailableDateFormats($defaultFormats);
+        $this->assertSame(['a', 'b', 'c'], $formats);
+    }
+
     /**
      * @dataProvider dateDataProvider
      * @param $value

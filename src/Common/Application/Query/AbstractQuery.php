@@ -66,6 +66,28 @@ abstract class AbstractQuery extends WeakDto
         return !$this->fields || in_array($field, $this->fields);
     }
 
+    /**
+     * Returns TRUE if the given sort field exists within this request.
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function containsSortField(string $field): bool
+    {
+        return $this->sort && isset($this->sort[$field]);
+    }
+
+    /**
+     * Returns TRUE if the given field is passed with this request as sort or regular field..
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function usesField(string $field): bool
+    {
+        return $this->containsField($field) || $this->containsSortField($field);
+    }
+
     protected function toBoolean($value): bool
     {
         if (is_scalar($value)) {

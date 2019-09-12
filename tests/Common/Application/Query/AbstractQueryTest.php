@@ -294,6 +294,37 @@ class AbstractQueryTest extends TestCase
         $this->assertTrue($query->containsField('f4'));
     }
 
+    public function testContainingSortField(): void
+    {
+        $query = new TestQueryTestObject(['sort' => '+f1,-f2, f3']);
+
+        $this->assertTrue($query->containsSortField('f1'));
+        $this->assertTrue($query->containsSortField('f2'));
+        $this->assertTrue($query->containsSortField('f3'));
+        $this->assertFalse($query->containsSortField('f5'));
+
+        $query = new TestQueryTestObject();
+        $this->assertFalse($query->containsSortField('f1'));
+        $this->assertFalse($query->containsSortField('f4'));
+    }
+
+    public function testUseField(): void
+    {
+        $query = new TestQueryTestObject([
+            'sort' => '+f1,-f2',
+            'fields' => 'f1,f3'
+        ]);
+
+        $this->assertTrue($query->usesField('f1'));
+        $this->assertTrue($query->usesField('f2'));
+        $this->assertTrue($query->usesField('f3'));
+        $this->assertFalse($query->usesField('f5'));
+
+        $query = new TestQueryTestObject();
+        $this->assertTrue($query->usesField('f1'));
+        $this->assertTrue($query->usesField('f4'));
+    }
+
     public function testSetPageSize(): void
     {
         AbstractQuery::setPageMaxSize(10000);

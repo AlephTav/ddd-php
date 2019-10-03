@@ -6,13 +6,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\AbstractQuery;
 
 class WithExpression extends AbstractExpression
 {
-    public function __construct($query = null, $alias = null, bool $recursive = false)
-    {
-        if ($query !== null) {
-            $this->append($query, $alias, $recursive);
-        }
-    }
-
     public function append($query, $alias = null, bool $recursive = false): WithExpression
     {
         if (strlen($this->sql) > 0) {

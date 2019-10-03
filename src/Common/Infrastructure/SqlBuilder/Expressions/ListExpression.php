@@ -6,13 +6,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 
 class ListExpression extends AbstractExpression
 {
-    public function __construct($column = null, $order = null)
-    {
-        if ($column !== null) {
-            $this->append($column, $order);
-        }
-    }
-
     public function append($column, $order = null): ListExpression
     {
         if (strlen($this->sql) > 0) {

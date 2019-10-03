@@ -127,8 +127,8 @@ class DeleteQuery extends AbstractQuery
     private function buildUsing(): void
     {
         if ($this->using) {
-            $this->sql .= ' USING ' . $this->from->toSql();
-            $this->addParams($this->from->getParams());
+            $this->sql .= ' USING ' . $this->using->toSql();
+            $this->addParams($this->using->getParams());
         }
     }
 

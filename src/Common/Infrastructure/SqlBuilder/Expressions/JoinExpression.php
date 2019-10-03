@@ -4,13 +4,6 @@ namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
 class JoinExpression extends AbstractExpression
 {
-    public function __construct(?string $type = null, $table = null, $conditions = null)
-    {
-        if ($type !== null && $table !== null) {
-            $this->append($type, $table, $conditions);
-        }
-    }
-
     public function append(string $type, $table, $conditions = null): JoinExpression
     {
         if ($this->sql !== '') {
@@ -18,7 +11,7 @@ class JoinExpression extends AbstractExpression
         }
         $this->sql .= $type . ' ';
 
-        $tb = new ListExpression($table);
+        $tb = (new ListExpression())->append($table);
         if (is_array($table) && \count($table) > 1) {
             $this->sql .= '(' . $tb->toSql() . ')';
         } else {
@@ -32,10 +25,10 @@ class JoinExpression extends AbstractExpression
                 $conditions instanceof ConditionalExpression ||
                 is_string($conditions)
             ) {
-                $conditions = new ConditionalExpression($conditions);
+                $conditions = (new ConditionalExpression())->with($conditions);
                 $this->sql .= ' ON ' . $conditions->toSql();
             } else {
-                $conditions = new ListExpression($conditions);
+                $conditions = (new ListExpression())->append($conditions);
                 $this->sql .= ' USING (' . $conditions->toSql() . ')';
             }
             $this->addParams($conditions->getParams());

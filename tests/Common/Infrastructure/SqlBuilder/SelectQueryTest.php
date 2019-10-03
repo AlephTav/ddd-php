@@ -1093,7 +1093,7 @@ class SelectQueryTest extends TestCase
         $q = (new SelectQuery())
             ->with('(SELECT * FROM t1)', 'tb')
             ->with(SelectQuery::raw('n1 AS NULL'))
-            ->with(null, 'n2')
+            ->with([null], 'n2')
             ->from('tb');
 
         $this->assertSame('WITH tb AS (SELECT * FROM t1), n1 AS NULL, n2 AS NULL SELECT * FROM tb', $q->toSql());

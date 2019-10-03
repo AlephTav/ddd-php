@@ -6,13 +6,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 
 class ConditionalExpression extends AbstractExpression
 {
-    public function __construct($column = null, $operator = null, $value = null, string $connector = 'AND')
-    {
-        if ($column !== null) {
-            $this->with($column, $operator, $value, $connector);
-        }
-    }
-
     public function andWhere($column, $operator = null, $value = null): ConditionalExpression
     {
         return $this->with($column, $operator, $value, 'AND');

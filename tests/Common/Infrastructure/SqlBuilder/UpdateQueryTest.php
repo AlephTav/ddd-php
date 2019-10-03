@@ -112,11 +112,15 @@ class UpdateQueryTest extends TestCase
     {
         $executor = $this->getMockQueryExecutor('execute');
 
-        $affectedRows = (new UpdateQuery($executor))->table('t')->assign([
-            'f1' => 'v1',
-            'f2' => 'v2',
-            'f3' => 'v3'
-        ])->where('f1', '=', 10)->exec();
+        $affectedRows = (new UpdateQuery($executor))
+            ->table('t')
+            ->assign([
+                'f1' => 'v1',
+                'f2' => 'v2',
+                'f3' => 'v3'
+            ])
+            ->where('f1', '=', 10)
+            ->exec();
 
         $this->assertSame(
             [

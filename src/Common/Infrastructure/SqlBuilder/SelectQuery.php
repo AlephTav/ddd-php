@@ -277,7 +277,7 @@ class SelectQuery extends AbstractQuery
     {
         if ($column !== '') {
             $prevSelect = $this->select;
-            $this->select = new SelectExpression($column);
+            $this->select = (new SelectExpression())->append($column);
             $this->built = false;
             $result = $this->column();
             $this->select = $prevSelect;
@@ -297,7 +297,7 @@ class SelectQuery extends AbstractQuery
     {
         if ($column !== '') {
             $prevSelect = $this->select;
-            $this->select = new SelectExpression($column);
+            $this->select = (new SelectExpression())->append($column);
             $this->built = false;
             $result = $this->scalar();
             $this->select = $prevSelect;

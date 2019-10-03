@@ -42,7 +42,7 @@ class AbstractExpression
 
     public static function valueList($values = null, string $alias = ''): ValueListExpression
     {
-        return new ValueListExpression($values, $alias);
+        return (new ValueListExpression())->append($values, $alias);
     }
 
     //endregion

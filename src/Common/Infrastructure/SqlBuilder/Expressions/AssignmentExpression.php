@@ -6,13 +6,6 @@ use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 
 class AssignmentExpression extends AbstractExpression
 {
-    public function __construct($column = null, $value = null)
-    {
-        if ($column !== null) {
-            $this->append($column, $value);
-        }
-    }
-
     public function append($column, $value = null): AssignmentExpression
     {
         if ($this->sql !== '') {

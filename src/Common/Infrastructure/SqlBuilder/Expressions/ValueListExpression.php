@@ -4,13 +4,6 @@ namespace AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions;
 
 class ValueListExpression extends AbstractExpression
 {
-    public function __construct($values = null, string $alias = '')
-    {
-        if ($values !== null) {
-            $this->append($values, $alias);
-        }
-    }
-
     public function append($values, string $alias = ''): ValueListExpression
     {
         if ($this->sql !== '') {

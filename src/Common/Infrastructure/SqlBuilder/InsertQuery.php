@@ -150,11 +150,8 @@ class InsertQuery extends AbstractQuery
 
     public function onDuplicateKeyUpdate($column, $value = null): InsertQuery
     {
-        if ($this->assignment === null) {
-            $this->assignment = new AssignmentExpression($column, $value);
-        } else {
-            $this->assignment->append($column, $value);
-        }
+        $this->assignment = $this->assignment ?? new AssignmentExpression();
+        $this->assignment->append($column, $value);
         $this->built = false;
         return $this;
     }

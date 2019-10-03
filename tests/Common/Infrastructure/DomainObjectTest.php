@@ -85,6 +85,7 @@ class DomainObjectTest extends TestCase
             'prop3' => true,
             'prop4' => $nestedObj1
         ]);
+
         $obj2 = new DomainTestObject([
             'prop1' => 5,
             'prop2' => $id,
@@ -99,12 +100,20 @@ class DomainObjectTest extends TestCase
             'prop4' => $nestedObj1
         ]);
 
+        $obj4 = new DomainTestObject([
+            'prop1' => 5,
+            'prop2' => $id,
+            'prop3' => true,
+            'prop4' => 'foo'
+        ]);
+
         $this->assertFalse($obj1->equals(null));
         $this->assertFalse($obj1->equals('foo'));
         $this->assertFalse($obj1->equals(123));
         $this->assertFalse($obj1->equals(new \stdClass()));
         $this->assertFalse($obj1->equals($obj3));
         $this->assertTrue($obj1->equals($obj2));
+        $this->assertFalse($obj1->equals($obj4));
     }
 
     public function testDomainName(): void

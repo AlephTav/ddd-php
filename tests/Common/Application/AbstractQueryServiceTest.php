@@ -49,11 +49,22 @@ class QueryServiceTestObject extends AbstractQueryService
             'f3' => 'field3'
         ]);
 
+        $this->applyGrouping($query, $request->group, [
+            'f1' => 'field1',
+            'f2' => 'field2',
+            'f3' => 'field3'
+        ]);
+
         $this->applyPagination($query, $request);
 
         $this->applyDateRangeFiltering($query, 'dt', $request);
 
         return $query;
+    }
+
+    public function applyDateRangeFilteringForObject($object, ApplyQueryTestObject $request): void
+    {
+        $this->applyDateRangeFiltering($object, 'dt', $request);
     }
 }
 
@@ -110,6 +121,26 @@ class AbstractQueryServiceTest extends TestCase
 
         $service = new QueryServiceTestObject();
         $service->apply(new ApplyQueryTestObject(['fields' => 'f1', 'sort' => 'f3,-f4']));
+    }
+
+    public function testWithGrouping(): void
+    {
+        $service = new QueryServiceTestObject();
+        $query = $service->apply(new ApplyQueryTestObject(['fields' => 'f1', 'group' => 'f3,f2']));
+
+        $this->assertSame(
+            'SELECT field1 f1 FROM tb GROUP BY field3, field2 LIMIT ' . AbstractQuery::DEFAULT_PAGE_SIZE,
+            $query->toSql()
+        );
+    }
+
+    public function testWithIncorrectGroupField(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Incorrect group field: f4.');
+
+        $service = new QueryServiceTestObject();
+        $service->apply(new ApplyQueryTestObject(['fields' => 'f1', 'group' => 'f3,f4']));
     }
 
     public function testWithLimit(): void
@@ -209,5 +240,14 @@ class AbstractQueryServiceTest extends TestCase
             'p1' => DateTime::createFromFormat('Y-m-d H:i:s', $from),
             'p2' => DateTime::createFromFormat('Y-m-d H:i:s', $to)
         ], $query->getParams());
+    }
+
+    public function testWithDateRangeFilteringForInvalidQueryType(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid query type.');
+
+        $service = new QueryServiceTestObject();
+        $service->applyDateRangeFilteringForObject(new DateTime(), new ApplyQueryTestObject());
     }
 }

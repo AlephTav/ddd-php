@@ -67,8 +67,11 @@ class UpdateQuery extends AbstractQuery
 
     public function assign($column, $value = null): UpdateQuery
     {
-        $this->assignment = $this->assignment ?? new AssignmentExpression();
-        $this->assignment->append($column, $value);
+        if ($this->assignment === null) {
+            $this->assignment = new AssignmentExpression($column, $value);
+        } else {
+            $this->assignment->append($column, $value);
+        }
         $this->built = false;
         return $this;
     }

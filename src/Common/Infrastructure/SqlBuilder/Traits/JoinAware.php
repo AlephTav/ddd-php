@@ -75,8 +75,11 @@ trait JoinAware
 
     private function typeJoin(string $type, $table, $conditions = null): self
     {
-        $this->join = $this->join ?? new JoinExpression();
-        $this->join->append($type, $table, $conditions);
+        if ($this->join === null) {
+            $this->join = new JoinExpression($type, $table, $conditions);
+        } else {
+            $this->join->append($type, $table, $conditions);
+        }
         $this->built = false;
         return $this;
     }

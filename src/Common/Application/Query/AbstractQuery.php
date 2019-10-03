@@ -170,9 +170,9 @@ abstract class AbstractQuery extends WeakDto
         $this->fields = $this->fieldsToArray($fields);
     }
 
-    protected function setTimezone(?int $timezone): void
+    protected function setTimezone($timezone): void
     {
-        $this->timezone = $timezone;
+        $this->timezone = is_numeric($timezone) ? (int)$timezone : null;
     }
 
     protected function setWithoutCount($flag): void

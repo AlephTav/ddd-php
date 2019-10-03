@@ -80,7 +80,7 @@ abstract class AbstractQueryService
 
     protected function applyDateRangeFiltering($query, string $column, AbstractQuery $request)
     {
-        if ($query instanceof SelectQuery || $query instanceof ConditionalExpression) {
+        if (method_exists($query, 'where')) {
             if (isset($request->from) && isset($request->to)) {
                 $query->where($column, 'BETWEEN', [$request->from, $request->to]);
             } else if (isset($request->from)) {

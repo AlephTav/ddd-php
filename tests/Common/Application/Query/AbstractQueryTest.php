@@ -191,6 +191,31 @@ class AbstractQueryTest extends TestCase
     }
 
     /**
+     * @dataProvider timezoneDataProvider
+     * @param $value
+     * @param int|null $timezone
+     */
+    public function testSetTimezone($value, ?int $timezone): void
+    {
+        $query = new TestQueryTestObject(['timezone' => $value]);
+        $this->assertSame($timezone, $query->timezone);
+    }
+
+    public function timezoneDataProvider(): array
+    {
+        return [
+            [10, 10],
+            ['5', 5],
+            [-3.5, -3],
+            ['-6.7', -6],
+            ['test', null],
+            [[], null],
+            [new \stdClass(), null],
+            [null, null]
+        ];
+    }
+
+    /**
      * @dataProvider booleanDataProvider
      * @param mixed $value
      * @param bool $result

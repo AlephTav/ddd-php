@@ -3,9 +3,7 @@
 namespace AlephTools\DDD\Tests\Common\Infrastructure\SqlBuilder;
 
 use RuntimeException;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\SqlBuilder\QueryExecutor;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\SelectQuery;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ConditionalExpression;
 use AlephTools\DDD\Common\Infrastructure\SqlBuilder\Expressions\ValueListExpression;
@@ -288,7 +286,7 @@ class SelectQueryTest extends TestCase
             ->from('tab1 t1')
             ->join('tab2 t2', 't2.id = t1.tab1_id');
 
-        $this->assertSame('SELECT * FROM tab1 t1 JOIN tab2 t2 ON t2.id = t1.tab1_id', $q->toSql());
+        $this->assertSame('SELECT * FROM tab1 t1 JOIN tab2 t2 ON t2.id = t1.tab1_id', (string)$q);
         $this->assertSame([], $q->getParams());
     }
 
@@ -512,8 +510,8 @@ class SelectQueryTest extends TestCase
             ->from('t')
             ->where('f1', 'BETWEEN', [1, 2])
             ->where(function(ConditionalExpression $cond) { $cond
-                ->with('f2', '=', 1)
-                ->or(function(ConditionalExpression $cond) { $cond
+                ->andWhere('f2', '=', 1)
+                ->orWhere(function(ConditionalExpression $cond) { $cond
                     ->with('f3', 'IN', [1, 2])
                     ->and('f4', '<', 5)
                     ->or('f5', '>', 6);
@@ -537,7 +535,7 @@ class SelectQueryTest extends TestCase
             ->from('t')
             ->where('f1', 'BETWEEN', [1, 2])
             ->where(SelectQuery::condition()
-                ->with('f2', '=', 1)
+                ->where('f2', '=', 1)
                 ->and('NOT', true)
                 ->or('NOT', false)
                 ->or(SelectQuery::condition()
@@ -1018,11 +1016,21 @@ class SelectQueryTest extends TestCase
             ->from('t1')
             ->unionAll((new SelectQuery())->from('t2'))
             ->unionDistinct((new SelectQuery())->from('t3'))
+            ->intersect((new SelectQuery())->from('t4'))
+            ->intersectAll((new SelectQuery())->from('t5'))
+            ->except((new SelectQuery())->from('t6'))
+            ->exceptAll((new SelectQuery())->from('t7'))
             ->paginate(10, 5);
 
         $this->assertSame(
-            '(SELECT * FROM t1) UNION ALL (SELECT * FROM t2) UNION DISTINCT ' .
-            '(SELECT * FROM t3) LIMIT 5 OFFSET 50',
+            '(SELECT * FROM t1) ' .
+            'UNION ALL (SELECT * FROM t2) ' .
+            'UNION DISTINCT (SELECT * FROM t3) ' .
+            'INTERSECT (SELECT * FROM t4) ' .
+            'INTERSECT ALL (SELECT * FROM t5) ' .
+            'EXCEPT (SELECT * FROM t6) ' .
+            'EXCEPT ALL (SELECT * FROM t7) ' .
+            'LIMIT 5 OFFSET 50',
             $q->toSql()
         );
     }
@@ -1078,6 +1086,17 @@ class SelectQueryTest extends TestCase
             ->from('tb');
 
         $this->assertSame('WITH tb AS (SELECT * FROM t1) SELECT * FROM tb', $q->toSql());
+    }
+
+    public function testWithRawExpression(): void
+    {
+        $q = (new SelectQuery())
+            ->with('(SELECT * FROM t1)', 'tb')
+            ->with(SelectQuery::raw('n1 AS NULL'))
+            ->with(null, 'n2')
+            ->from('tb');
+
+        $this->assertSame('WITH tb AS (SELECT * FROM t1), n1 AS NULL, n2 AS NULL SELECT * FROM tb', $q->toSql());
     }
 
     public function testWithSeveralQueries(): void
@@ -1381,20 +1400,74 @@ class SelectQueryTest extends TestCase
             ->rowsByGroup('foo');
     }
 
-    private function getMockQueryExecutor(string $method = null): MockObject
+    public function testPages(): void
     {
-        $executor = $this->getMockBuilder(QueryExecutor::class)
-            ->setMethods(['rows', 'row', 'column', 'scalar', 'insert', 'execute'])
-            ->getMock();
+        $executor = $this->getMockQueryExecutor();
 
-        if ($method) {
-            $executor->method($method)
-                ->willReturnCallback(function (string $sql, array $params) {
-                    return [$sql, $params];
-                });
+        $executor->method('rows')
+            ->willReturnCallback(function(string $sql, array $params) {
+                preg_match_all('/LIMIT ([0-9]+) OFFSET ([0-9]+)/', $sql, $matches);
+                return array_slice([
+                    ['f1' => 0, 'f2' => 'a'],
+                    ['f1' => 1, 'f2' => 'b'],
+                    ['f1' => 2, 'f2' => 'c'],
+                    ['f1' => 3, 'f2' => 'd']
+                ], $matches[2][0], $matches[1][0]);
+            });
+
+        $pages = (new SelectQuery($executor))->from('t')->pages(2, 0);
+        $this->assertInstanceOf(\Generator::class, $pages);
+        $n = -1;
+        foreach ($pages as $row) {
+            ++$n;
+            $this->assertSame(['f1' => $n, 'f2' => chr(97 + $n)], $row);
         }
+        $this->assertSame(3, $n);
 
-        return $executor;
+        $pages = (new SelectQuery($executor))->from('t')->pages(1, 1);
+        $n = 0;
+        foreach ($pages as $row) {
+            ++$n;
+            $this->assertSame(['f1' => $n, 'f2' => chr(97 + $n)], $row);
+        }
+        $this->assertSame(3, $n);
+
+        $pages = (new SelectQuery($executor))->from('t')->pages(0, 1);
+        $this->assertSame(0, count(iterator_to_array($pages)));
+    }
+
+    public function testBatches(): void
+    {
+        $executor = $this->getMockQueryExecutor();
+
+        $executor->method('rows')
+            ->willReturnCallback(function(string $sql, array $params) {
+                preg_match_all('/LIMIT ([0-9]+) OFFSET ([0-9]+)/', $sql, $matches);
+                return array_slice([
+                    ['f1' => 0, 'f2' => 'a'],
+                    ['f1' => 1, 'f2' => 'b'],
+                    ['f1' => 2, 'f2' => 'c'],
+                    ['f1' => 3, 'f2' => 'd']
+                ], $matches[2][0], $matches[1][0]);
+            });
+
+        $batches = (new SelectQuery($executor))->from('t')->batches(2, 0);
+        $this->assertInstanceOf(\Generator::class, $batches);
+        $n = -2;
+        foreach ($batches as $rows) {
+            $n += 2;
+            $this->assertSame([
+                ['f1' => $n, 'f2' => chr(97 + $n)],
+                ['f1' => $n + 1, 'f2' => chr(98 + $n)],
+            ], $rows);
+        }
+        $this->assertSame(2, $n);
+
+        $batches = (new SelectQuery($executor))->from('t')->batches(3, 1);
+        $this->assertSame([[['f1' => 3, 'f2' => 'd']]], iterator_to_array($batches));
+
+        $batches = (new SelectQuery($executor))->from('t')->batches(0, 1);
+        $this->assertSame(0, count(iterator_to_array($batches)));
     }
 
     //endregion

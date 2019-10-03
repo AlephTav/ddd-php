@@ -43,8 +43,11 @@ abstract class AbstractQuery extends AbstractExpression
      */
     public function with($query, $alias = null)
     {
-        $this->with = $this->with ?? new WithExpression();
-        $this->with->append($query, $alias);
+        if ($this->with === null) {
+            $this->with = new WithExpression($query, $alias);
+        } else {
+            $this->with->append($query, $alias);
+        }
         $this->built = false;
         return $this;
     }
@@ -56,8 +59,11 @@ abstract class AbstractQuery extends AbstractExpression
      */
     public function withRecursive($query, $alias = null)
     {
-        $this->with = $this->with ?? new WithExpression();
-        $this->with->append($query, $alias, true);
+        if ($this->with === null) {
+            $this->with = new WithExpression($query, $alias, true);
+        } else {
+            $this->with->append($query, $alias, true);
+        }
         $this->built = false;
         return $this;
     }

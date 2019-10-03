@@ -10,12 +10,17 @@ abstract class AbstractApplicationService
 {
     protected function runAsync(callable $callback, array $params = []): void
     {
-        ApplicationContext::get(Async::class)->run($callback, $params);
+        $this->async()->run($callback, $params);
     }
 
     protected function executeAtomically(callable $callback)
     {
         return $this->unitOfWork()->execute($callback);
+    }
+    
+    protected function async(): Async
+    {
+        return ApplicationContext::get(Async::class);
     }
 
     protected function unitOfWork(): UnitOfWork

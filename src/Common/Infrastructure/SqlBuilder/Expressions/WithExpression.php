@@ -23,6 +23,9 @@ class WithExpression extends AbstractExpression
         } else if (is_object($query)) {
             $expression = [[$query, $alias]];
         } else {
+            if (!is_scalar($query)) {
+                $query = $this->convertNameToString($query);
+            }
             $expression = [$query => $alias];
         }
         $this->sql .= ($recursive ? 'RECURSIVE ' : '' ) . $this->convertNameToString($expression);

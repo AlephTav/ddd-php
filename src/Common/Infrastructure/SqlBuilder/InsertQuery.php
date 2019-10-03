@@ -150,8 +150,11 @@ class InsertQuery extends AbstractQuery
 
     public function onDuplicateKeyUpdate($column, $value = null): InsertQuery
     {
-        $this->assignment = $this->assignment ?? new AssignmentExpression();
-        $this->assignment->append($column, $value);
+        if ($this->assignment === null) {
+            $this->assignment = new AssignmentExpression($column, $value);
+        } else {
+            $this->assignment->append($column, $value);
+        }
         $this->built = false;
         return $this;
     }
@@ -185,8 +188,7 @@ class InsertQuery extends AbstractQuery
     public function exec(string $sequence = null)
     {
         $this->validateAndBuild();
-        $sql = $this->toSql() . ($sequence !== null ? ' RETURNING ' . $sequence : '');
-        return $this->db->insert($sql, $this->getParams(), $sequence);
+        return $this->db->insert($this->toSql(), $this->getParams(), $sequence);
     }
 
     //endregion
@@ -223,12 +225,12 @@ class InsertQuery extends AbstractQuery
 
     private function buildColumns(): void
     {
-        $this->sql .= ' (';
         if ($this->columns) {
+            $this->sql .= ' (';
             $this->sql .= $this->columns->toSql();
             $this->addParams($this->columns->getParams());
+            $this->sql .= ')';
         }
-        $this->sql .= ')';
     }
 
     private function buildValues(): void
@@ -245,7 +247,7 @@ class InsertQuery extends AbstractQuery
     private function buildQuery(): void
     {
         if ($this->query) {
-            $this->sql .= $this->query->toSql();
+            $this->sql .= ' ' . $this->query->toSql();
             $this->addParams($this->query->getParams());
         }
     }
@@ -262,9 +264,13 @@ class InsertQuery extends AbstractQuery
     private function buildOnConflictDoUpdate(): void
     {
         if ($this->indexColumns) {
-            $this->sql .= ' ON CONFLICT(' . $this->indexColumns->toSql() . ') DO UPDATE ';
-            $this->sql .= $this->assignment ? 'SET ' . $this->assignment->toSql() : 'NOTHING';
-            $this->addParams($this->assignment->getParams());
+            $this->sql .= ' ON CONFLICT (' . $this->indexColumns->toSql() . ') DO ';
+            if ($this->assignment) {
+                $this->sql .= 'UPDATE SET ' . $this->assignment->toSql();
+                $this->addParams($this->assignment->getParams());
+            } else {
+                $this->sql .= 'NOTHING';
+            }
         }
     }
 

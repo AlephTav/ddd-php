@@ -18,16 +18,20 @@ class AssignmentExpression extends AbstractExpression
         if ($this->sql !== '') {
             $this->sql .= ', ';
         }
-        $this->sql .= $this->convertNameToString($value === null ? $column : [$column => $value]);
+        if ($value === null) {
+            $this->sql .= $this->convertNameToString($column);
+        } else {
+            if (is_object($column)) {
+                $column = $this->convertNameToString($column);
+            }
+            $this->sql .= $this->convertNameToString([$column => $value]);
+        }
         return $this;
     }
 
     private function convertNameToString($expression): string
     {
-        if ($expression instanceof SelectQuery) {
-            $sql = '(' . $expression->toSql() . ')';
-            $this->addParams($expression->getParams());
-        } else if ($expression instanceof RawExpression) {
+        if ($expression instanceof RawExpression) {
             $sql = $expression->toSql();
             $this->addParams($expression->getParams());
         } else if (is_array($expression)) {
@@ -41,8 +45,6 @@ class AssignmentExpression extends AbstractExpression
                 }
             }
             $sql = implode(', ', $list);
-        } else if ($expression === null) {
-            $sql = 'NULL';
         } else {
             $sql = (string)$expression;
         }

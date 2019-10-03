@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Common\Model;
 
+use UnexpectedValueException;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
@@ -10,6 +11,10 @@ use AlephTools\DDD\Common\Infrastructure\ValueObject;
  */
 class Money extends ValueObject
 {
+    public const SCALE_FUNC_ROUND = 'round';
+    public const SCALE_FUNC_FLOOR = 'floor';
+    public const SCALE_FUNC_CEIL = 'ceil';
+
     protected const PRECISION = 12;
 
     private $amount;
@@ -37,6 +42,13 @@ class Money extends ValueObject
             ]);
         }
     }
+
+    public function toString(): string
+    {
+        return $this->amount;
+    }
+
+    //region Comparison
 
     public function isPositive(): bool
     {
@@ -78,8 +90,20 @@ class Money extends ValueObject
         if (is_scalar($other)) {
             return $this->cmp($other) === 0;
         }
-        return parent::equals($other);
+        if ($other instanceof Money) {
+            return $this->cmp($other->amount) === 0 && $this->currency->is($other->currency);
+        }
+        return false;
     }
+
+    public function cmp(string $amount): int
+    {
+        return bccomp($this->amount, $amount, static::PRECISION);
+    }
+
+    //endregion
+
+    //region Basic Operation
 
     public function abs(): Money
     {
@@ -87,11 +111,6 @@ class Money extends ValueObject
             return $this->mul('-1');
         }
         return $this;
-    }
-
-    public function cmp(string $amount): int
-    {
-        return bccomp($this->amount, $amount, static::PRECISION);
     }
 
     public function add(string $amount): Money
@@ -114,9 +133,9 @@ class Money extends ValueObject
         return $this->op($amount, 'bcdiv');
     }
 
-    public function sqrt(string $amount): Money
+    public function sqrt(): Money
     {
-        return $this->op($amount, 'bcsqrt');
+        return new Money(bcsqrt($this->amount, static::PRECISION), $this->currency);
     }
 
     private function op(string $amount, string $operation): Money
@@ -125,12 +144,37 @@ class Money extends ValueObject
         return new Money($amount, $this->currency);
     }
 
-    public function toScaledAmount(): string
+    //endregion
+
+    //region Scaling
+
+    public function toRoundAmount(): string
     {
-        return $this->bcround($this->amount, $this->currency->getSubunits());
+        return $this->toScaledAmount(self::SCALE_FUNC_ROUND);
     }
 
-    private function bcround($number, $precision = 0)
+    public function toFloorAmount(): string
+    {
+        return $this->toScaledAmount(self::SCALE_FUNC_FLOOR);
+    }
+
+    public function toCeilAmount(): string
+    {
+        return $this->toScaledAmount(self::SCALE_FUNC_CEIL);
+    }
+
+    public function toScaledAmount(string $scaleFunction = self::SCALE_FUNC_ROUND): string
+    {
+        if ($scaleFunction !== self::SCALE_FUNC_ROUND &&
+            $scaleFunction !== self::SCALE_FUNC_FLOOR &&
+            $scaleFunction !== self::SCALE_FUNC_CEIL
+        ) {
+            throw new UnexpectedValueException("Unexpected scale function: $scaleFunction.");
+        }
+        return $this->{$scaleFunction}($this->amount, $this->currency->getSubunits());
+    }
+
+    private function round(string $number, int $precision): string
     {
         if (strpos($number, '.') !== false) {
             if ($number[0] != '-') {
@@ -141,10 +185,29 @@ class Money extends ValueObject
         return $number . '.' . str_repeat('0', $precision);
     }
 
-    public function toString(): string
+    private function floor(string $number, int $precision): string
     {
-        return $this->amount;
+        if (strpos($number, '.') !== false) {
+            if ($number[0] != '-') {
+                return bcadd($number, '0', $precision);
+            }
+            return bcsub($number, '0.' . str_repeat('0', $precision) . '9', $precision);
+        }
+        return $number . '.' . str_repeat('0', $precision);
     }
+
+    private function ceil(string $number, int $precision): string
+    {
+        if (strpos($number, '.') !== false) {
+            if ($number[0] != '-') {
+                return bcadd($number, '0.' . str_repeat('0', $precision) . '9', $precision);
+            }
+            return bcsub($number, '0', $precision);
+        }
+        return $number . '.' . str_repeat('0', $precision);
+    }
+
+    //endregion
 
     //region Setters and Validators
 

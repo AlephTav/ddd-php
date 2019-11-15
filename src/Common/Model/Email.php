@@ -33,7 +33,7 @@ class Email extends ValueObject
 
     protected function setAddress(?string $address): void
     {
-        $this->address = Sanitizer::sanitizeEmail($address);
+        $this->address = mb_strtolower(Sanitizer::sanitizeEmail($address));
     }
 
     protected function validateAddress(): void

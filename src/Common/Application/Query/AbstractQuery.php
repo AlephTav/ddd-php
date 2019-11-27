@@ -2,9 +2,7 @@
 
 namespace AlephTools\DDD\Common\Application\Query;
 
-use DateTime;
-use DateTimeImmutable;
-use AlephTools\DDD\Common\Infrastructure\DateHelper;
+use AlephTools\DDD\Common\Application\TypeConversionAware;
 use AlephTools\DDD\Common\Infrastructure\WeakDto;
 
 /**
@@ -21,6 +19,8 @@ use AlephTools\DDD\Common\Infrastructure\WeakDto;
  */
 abstract class AbstractQuery extends WeakDto
 {
+    use TypeConversionAware;
+
     //region Constants
 
     public const DEFAULT_PAGE_SIZE = 10;
@@ -86,26 +86,6 @@ abstract class AbstractQuery extends WeakDto
     public function usesField(string $field): bool
     {
         return $this->containsField($field) || $this->containsSortField($field);
-    }
-
-    protected function toBoolean($value): bool
-    {
-        if (is_scalar($value)) {
-            $value = strtolower(trim($value));
-            return $value === 'true' || $value === '1' || $value === 'on';
-        }
-
-        return false;
-    }
-
-    protected function toDate($value): ?DateTime
-    {
-        return DateHelper::parse($value);
-    }
-
-    protected function toImmutableDate($value): ?DateTimeImmutable
-    {
-        return DateHelper::parseImmutable($value);
     }
 
     //region Setters

@@ -27,10 +27,12 @@ class IdentifiedDomainObjectTest extends TestCase
 
         $this->assertSame($id, $obj->id);
         $this->assertSame(1, $obj->toIdentity());
+        $this->assertSame('1', $obj->toIdentityString());
 
         $obj = new IdentifiedDomainObjectTestObject();
         $this->assertNull($obj->id);
         $this->assertNull($obj->toIdentity());
+        $this->assertNUll($obj->toIdentityString());
     }
 
     public function testComparison(): void

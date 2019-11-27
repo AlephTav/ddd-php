@@ -35,6 +35,16 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     }
 
     /**
+     * Converts an object to its identity string.
+     *
+     * @return null|string
+     */
+    public function toIdentityString(): ?string
+    {
+        return $this->id ? $this->id->toString() : null;
+    }
+
+    /**
      * Compares two domain objects.
      *
      * @param mixed $other

@@ -50,7 +50,16 @@ class DateHelper
             return $date;
         }
         if ($date instanceof DateTimeImmutable) {
-            return DateTime::createFromImmutable($date);
+            if (method_exists(DateTime::class, 'createFromImmutable')) {
+                return DateTime::createFromImmutable($date);
+            }
+            return (new DateTime($date->format('c')))
+                ->setTime(
+                    $date->format('H'),
+                    $date->format('i'),
+                    $date->format('s'),
+                    $date->format('u')
+                );
         }
         return self::parseInternal($date, DateTime::class);
     }

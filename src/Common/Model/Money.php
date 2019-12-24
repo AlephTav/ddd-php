@@ -209,7 +209,7 @@ class Money extends ValueObject
 
     //endregion
 
-    //region Setters and Validators
+    //region Setters
 
     private function setAmount($amount): void
     {
@@ -225,9 +225,22 @@ class Money extends ValueObject
         $this->currency = $currency;
     }
 
+    //endregion
+
+    //region Validators
+
     private function validateCurrency(): void
     {
         $this->assertArgumentNotNull($this->currency, 'Currency must not be null.');
+    }
+
+    private function validateAmount(): void
+    {
+        $this->assertArgumentPatternMatch(
+            $this->amount,
+            '/^[+-]?[0-9]+(\.[0-9]+)?$/',
+            'Invalid money format.'
+        );
     }
 
     //endregion

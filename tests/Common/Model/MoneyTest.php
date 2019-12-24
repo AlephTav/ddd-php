@@ -39,12 +39,58 @@ class MoneyTest extends TestCase
         $this->assertSame('111.555', $money->toString());
     }
 
-    public function testInvalidAmount(): void
+    /**
+     * @dataProvider invalidMoneyTypes
+     * @param mixed $value
+     * @param string $error
+     */
+    public function testInvalidAmountType($value, string $error): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Money amount must be a scalar, array given.');
+        $this->expectExceptionMessage($error);
 
-        new Money(['amount' => ['value']]);
+        new Money(['amount' => $value]);
+    }
+
+    public function invalidMoneyTypes(): array
+    {
+        return [
+            [
+                ['value'],
+                'Money amount must be a scalar, array given.'
+            ],
+            [
+                new \stdClass(),
+                'Money amount must be a scalar, object given.'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider  invalidMoneyValues
+     * @param mixed $value
+     */
+    public function testInvalidMoneyFormat($value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid money format.');
+
+        new Money(['amount' => '0,10']);
+    }
+
+    public function invalidMoneyValues(): array
+    {
+        return [
+            [''],
+            ['0.'],
+            ['.0'],
+            ['.'],
+            ['+'],
+            ['-'],
+            ['+.'],
+            ['+0.'],
+            ['-.0']
+        ];
     }
 
     public function testCurrencyCodeValidation(): void

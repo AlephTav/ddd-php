@@ -20,38 +20,42 @@ interface FileStorage
      *
      * @param mixed $fileId
      * @param int $linksExpirationInSeconds
+     * @param mixed $ownerId The file owner.
      * @return FileMetadata
      * @throws EntityNotFoundException
      */
-    public function getMetadata($fileId, int $linksExpirationInSeconds = 0): FileMetadata;
+    public function getMetadata($fileId, int $linksExpirationInSeconds = 0, $ownerId = null): FileMetadata;
 
     /**
      * Returns the list of files metadata by their unique identifiers.
      *
      * @param array $ids File identifiers.
      * @param int $linksExpirationInSeconds
+     * @param mixed $ownerId The file owner.
      * @return FileMetadata[]
      * @throws EntityNotFoundException
      */
-    public function getMetadataList(array $ids, int $linksExpirationInSeconds = 0): array;
+    public function getMetadataList(array $ids, int $linksExpirationInSeconds = 0, $ownerId = null): array;
 
     /**
      * Returns a url to access the given public file.
      *
      * @param mixed $fileId
      * @param int $expirationInSeconds
+     * @param mixed $ownerId The file owner.
      * @return string
      */
-    public function getUrl($fileId, int $expirationInSeconds = 0): string;
+    public function getUrl($fileId, int $expirationInSeconds = 0, $ownerId = null): string;
 
     /**
      * Returns the download link for a file.
      *
      * @param mixed $fileId
      * @param int $expirationInSeconds
+     * @param mixed $ownerId The file owner.
      * @return string
      */
-    public function getDownloadLink($fileId, int $expirationInSeconds): string;
+    public function getDownloadLink($fileId, int $expirationInSeconds, $ownerId = null): string;
 
     /**
      * Upload a file to storage.
@@ -60,22 +64,32 @@ interface FileStorage
      * @param bool $isPrivate
      * @param string $path Optional path to the file in the storage.
      * @param int $linksExpirationInSeconds
+     * @param mixed $ownerId The file owner.
      * @return FileMetadata
      */
-    public function upload($file, bool $isPrivate, string $path = '', int $linksExpirationInSeconds = 0): FileMetadata;
+    public function upload(
+        $file,
+        bool $isPrivate,
+        string $path = '',
+        int $linksExpirationInSeconds = 0,
+        $ownerId = null
+    ): FileMetadata;
 
     /**
      * Downloads a private file.
      *
      * @param mixed $fileId
+     * @param mixed $ownerId The file owner.
      * @return mixed
      */
-    public function download($fileId);
+    public function download($fileId, $ownerId = null);
 
     /**
      * Deletes a file.
      *
      * @param mixed $fileId
+     * @param mixed $ownerId The file owner.
+     * @return void
      */
-    public function delete($fileId): void;
+    public function delete($fileId, $ownerId = null): void;
 }

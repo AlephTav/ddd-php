@@ -11,9 +11,10 @@ interface FileStorage
      * Returns TRUE if file with the given identifier exists in our storage.
      *
      * @param mixed $fileId
+     * @param mixed $ownerId
      * @return bool
      */
-    public function exists($fileId): bool;
+    public function exists($fileId, $ownerId = null): bool;
 
     /**
      * Returns the file metadata by its unique identifier.

@@ -8,7 +8,6 @@ use AlephTools\DDD\Common\Model\Assets\FileId;
 
 /**
  * @property-read FileId $id
- * @property-read mixed|null $ownerId
  * @property-read bool $isPrivate
  * @property-read DateTimeImmutable $createdAt
  * @property-read string $contentType
@@ -20,11 +19,11 @@ use AlephTools\DDD\Common\Model\Assets\FileId;
  * @property-read int $size
  * @property-read string|null $url
  * @property-read string|null $downloadLink
+ * @property-read mixed|null $ownerId
  */
 class FileMetadata extends StrictDto
 {
     private $id;
-    private $ownerId;
     private $isPrivate;
     private $createdAt;
     private $contentType;
@@ -36,6 +35,7 @@ class FileMetadata extends StrictDto
     private $size;
     private $url;
     private $downloadLink;
+    private $ownerId;
 
     public function __construct(
         FileId $id,

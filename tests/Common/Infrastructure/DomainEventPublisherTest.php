@@ -45,7 +45,7 @@ class DomainEventPublisherTest extends TestCase
      */
     private $result;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->result = [];
 

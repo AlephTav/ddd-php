@@ -27,7 +27,7 @@ class AssertionConcernTest extends TestCase
      */
     private static $obj;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$obj = new AssertionConcernTestObject();
     }

@@ -183,6 +183,16 @@ abstract class AbstractEnum implements JsonSerializable
      *
      * @return string
      */
+    public function toString(): string
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * Converts the enum instance to a string.
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->getConstantName();

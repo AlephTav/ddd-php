@@ -14,7 +14,7 @@ trait DomainEventPublisherAware
      */
     protected $publisher;
 
-    public function setUp()
+    public function setUp(): void
     {
         /** @var MockBuilder $dispatcher */
         $dispatcher = $this->getMockBuilder(EventDispatcher::class);

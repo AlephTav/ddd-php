@@ -8,6 +8,14 @@ use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\DateHelper;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
+class DateHelperTestObject extends DateHelper
+{
+    protected static function dateTimeHasCreateFromImmutable(): bool
+    {
+        return false;
+    }
+}
+
 class DateHelperTest extends TestCase
 {
     public function testGetSetFormats(): void
@@ -91,5 +99,14 @@ class DateHelperTest extends TestCase
         ]);
 
         return $data;
+    }
+
+    public function testParseDateTimeImmutableForOldPhpVersions(): void
+    {
+        $date = new DateTimeImmutable();
+
+        $parsedDate = DateHelperTestObject::parse($date);
+
+        $this->assertSame($date->format('Y-m-d H:i:s.u'), $parsedDate->format('Y-m-d H:i:s.u'));
     }
 }

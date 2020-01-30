@@ -50,7 +50,7 @@ class DateHelper
             return $date;
         }
         if ($date instanceof DateTimeImmutable) {
-            if (method_exists(DateTime::class, 'createFromImmutable')) {
+            if (static::dateTimeHasCreateFromImmutable()) {
                 return DateTime::createFromImmutable($date);
             }
             return (new DateTime($date->format('c')))
@@ -62,6 +62,11 @@ class DateHelper
                 );
         }
         return self::parseInternal($date, DateTime::class);
+    }
+
+    protected static function dateTimeHasCreateFromImmutable(): bool
+    {
+        return method_exists(DateTime::class, 'createFromImmutable');
     }
 
     /**

@@ -22,7 +22,8 @@ class FileMetadataTest extends TestCase
             'path' => 'a/b/c',
             'size' => 10000,
             'url' => 'http://some.url',
-            'downloadLink' => 'http://download.link'
+            'downloadLink' => 'http://download.link',
+            'ownerId' => 123
         ];
 
         $data = new FileMetadata(...array_values($properties));

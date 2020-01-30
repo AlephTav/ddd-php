@@ -31,7 +31,7 @@ class ApplicationServiceTestObject extends AbstractApplicationService
 
 class AbstractApplicationServiceTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         ApplicationContext::set(function(string $abstract = null, array $parameters = []) {
             if ($abstract === UnitOfWork::class) {

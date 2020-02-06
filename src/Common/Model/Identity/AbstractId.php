@@ -37,7 +37,7 @@ abstract class AbstractId extends ValueObject
      */
     public function hash(): string
     {
-        return Hash::of($this->toString());
+        return Hash::of(get_class($this) . $this->toString());
     }
 
     /**

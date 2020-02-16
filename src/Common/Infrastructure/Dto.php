@@ -38,17 +38,10 @@ abstract class Dto implements Serializable
     private static $properties;
 
     /**
-     * The class reflector.
-     *
-     * @var ReflectionClass
-     */
-    private $reflector;
-
-    /**
      * Constructor.
      *
      * @param array $properties
-     * @param bool $strict  Determines whether to throw exception for non-existing properties (TRUE).
+     * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
      */
     public function __construct(array $properties = [], bool $strict = true)
     {
@@ -69,8 +62,12 @@ abstract class Dto implements Serializable
 
     private function init(): void
     {
-        $this->reflector = new ReflectionClass($this);
         $this->extractProperties();
+    }
+
+    private function reflector()
+    {
+        return new ReflectionClass($this);
     }
 
     /**
@@ -174,7 +171,7 @@ abstract class Dto implements Serializable
         if ($getter === null) {
             return $this->propertyValue($property);
         }
-        $method = $this->reflector->getMethod($getter);
+        $method = $this->reflector()->getMethod($getter);
         if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
             return $this->{$getter}();
         }
@@ -201,9 +198,9 @@ abstract class Dto implements Serializable
         if ($setter === null) {
             $this->assignValueToProperty($property, $value);
         } else {
-            $method = $this->reflector->getMethod($setter);
+            $method = $this->reflector()->getMethod($setter);
             if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
-                $this->invokeWithTypeErrorProcessing(function() use($setter, $value) {
+                $this->invokeWithTypeErrorProcessing(function () use ($setter, $value) {
                     $this->{$setter}($value);
                 });
             } else {
@@ -270,8 +267,10 @@ abstract class Dto implements Serializable
     {
         if ($strict) {
             $this->checkPropertyExistence($property);
-        } else if (!isset($this->properties()[$property])) {
-            return;
+        } else {
+            if (!isset($this->properties()[$property])) {
+                return;
+            }
         }
 
         $setter = $this->properties()[$property][self::PROP_SETTER];
@@ -329,37 +328,37 @@ abstract class Dto implements Serializable
 
     private function propertyValue(string $property)
     {
-        $property = $this->reflector->getProperty($property);
+        $property = $this->reflector()->getProperty($property);
         $property->setAccessible(true);
         return $property->getValue($this);
     }
 
     private function assignValueToProperty(string $property, $value)
     {
-        $property = $this->reflector->getProperty($property);
+        $property = $this->reflector()->getProperty($property);
         $property->setAccessible(true);
         $property->setValue($this, $value);
     }
 
     private function invokeGetter(string $getter)
     {
-        $method = $this->reflector->getMethod($getter);
+        $method = $this->reflector()->getMethod($getter);
         $method->setAccessible(true);
         return $method->invoke($this);
     }
 
     private function invokeSetter(string $setter, $value): void
     {
-        $method = $this->reflector->getMethod($setter);
+        $method = $this->reflector()->getMethod($setter);
         $method->setAccessible(true);
-        $this->invokeWithTypeErrorProcessing(function() use($method, $value) {
+        $this->invokeWithTypeErrorProcessing(function () use ($method, $value) {
             $method->invoke($this, $value);
         });
     }
 
     private function invokeValidator(string $validator): void
     {
-        $method = $this->reflector->getMethod($validator);
+        $method = $this->reflector()->getMethod($validator);
         $method->setAccessible(true);
         $method->invoke($this);
     }
@@ -399,10 +398,12 @@ abstract class Dto implements Serializable
             foreach ($matches[1] as $i => $type) {
                 if ($type === '-read') {
                     $type = self::PROP_TYPE_READ;
-                } else if ($type === '-write') {
-                    $type = self::PROP_TYPE_WRITE;
                 } else {
-                    $type = self::PROP_TYPE_READ_WRITE;
+                    if ($type === '-write') {
+                        $type = self::PROP_TYPE_WRITE;
+                    } else {
+                        $type = self::PROP_TYPE_READ_WRITE;
+                    }
                 }
 
                 $propertyName = $matches[2][$i];
@@ -431,8 +432,8 @@ abstract class Dto implements Serializable
 
     private function hasPropertyField(string $name): bool
     {
-        if ($this->reflector->hasProperty($name)) {
-            $property = $this->reflector->getProperty($name);
+        if ($this->reflector()->hasProperty($name)) {
+            $property = $this->reflector()->getProperty($name);
             if ($property->isPrivate()) {
                 return $property->getDeclaringClass()->getName() === static::class;
             }
@@ -444,8 +445,8 @@ abstract class Dto implements Serializable
 
     private function hasPropertyMethod(string $name): bool
     {
-        if ($this->reflector->hasMethod($name)) {
-            $method = $this->reflector->getMethod($name);
+        if ($this->reflector()->hasMethod($name)) {
+            $method = $this->reflector()->getMethod($name);
             if ($method->isPrivate()) {
                 return $method->getDeclaringClass()->getName() === static::class;
             }
@@ -458,7 +459,7 @@ abstract class Dto implements Serializable
     private function getDocComment(): string
     {
         $comment = '';
-        $class = $this->reflector;
+        $class = $this->reflector();
         while ($class) {
             $comment = $class->getDocComment() . $comment;
             $class = $class->getParentClass();

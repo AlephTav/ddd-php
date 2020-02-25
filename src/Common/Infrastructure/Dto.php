@@ -52,6 +52,7 @@ abstract class Dto implements Serializable
      */
     public function __construct(array $properties = [], bool $strict = true)
     {
+        $properties = array_merge($this->getDefaultPropertyValues(), $properties);
         $this->init();
         $this->assignPropertiesAndValidate($properties, $strict);
     }
@@ -314,6 +315,16 @@ abstract class Dto implements Serializable
                 $this->invokeValidator($validator);
             }
         }
+    }
+
+    /**
+     * Sets default values for DTO for complex non-nullable properties
+     *
+     * @return array
+     */
+    protected function getDefaultPropertyValues(): array
+    {
+        return [];
     }
 
     private function checkPropertyExistence(string $property): void

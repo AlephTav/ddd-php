@@ -52,7 +52,7 @@ abstract class Dto implements Serializable
      */
     public function __construct(array $properties = [], bool $strict = true)
     {
-        $properties = array_merge($this->getDefaultValues(), $properties);
+        $properties = array_merge($this->getDefaultPropertyValues(), $properties);
         $this->init();
         $this->assignPropertiesAndValidate($properties, $strict);
     }
@@ -322,7 +322,7 @@ abstract class Dto implements Serializable
      *
      * @return array
      */
-    protected function getDefaultValues(): array
+    protected function getDefaultPropertyValues(): array
     {
         return [];
     }

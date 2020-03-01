@@ -65,7 +65,7 @@ class GlobalId extends AbstractId
      * @param mixed $identity
      * @return null|UuidInterface
      */
-    private function parse($identity): ?UuidInterface
+    protected function parse($identity)
     {
         if ($identity !== null) {
             if ($identity instanceof GlobalId) {

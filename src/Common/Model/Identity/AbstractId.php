@@ -61,6 +61,7 @@ abstract class AbstractId extends ValueObject
             $data["\0*\0identity"] = $this->parse($data["\0*\0identity"]);
         }
         $this->identity = $data["\0*\0identity"];
+        $this->__wakeup();
     }
 
     /**

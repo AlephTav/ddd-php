@@ -3,7 +3,6 @@
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 use AlephTools\DDD\Common\Infrastructure\EventSourcedEntity;
 use AlephTools\DDD\Common\Model\Events\EntityCreated;
 use AlephTools\DDD\Common\Model\Events\EntityDeleted;

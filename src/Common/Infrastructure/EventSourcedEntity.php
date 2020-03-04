@@ -17,23 +17,23 @@ abstract class EventSourcedEntity extends Entity
     }
 
     /**
-     * Sets properties.
+     * Sets new properties and generates EntityUpdated event.
      *
      * @param array $newProperties
      * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
      * @return void
      */
-    protected function assignProperties(array $newProperties, bool $strict = true): void
+    protected function applyChanges(array $newProperties, bool $strict = true): void
     {
         if ($this->isEntityInstantiated) {
             $oldProperties = $this->getOldProperties($newProperties);
             [$oldNestedProperties, $newNestedProperties] = $this->computeNestedChanges($oldProperties, $newProperties);
             if ($newNestedProperties) {
-                parent::assignProperties($newProperties);
+                $this->assignProperties($newProperties, $strict);
                 $this->publishEntityUpdatedEvent($oldNestedProperties, $newNestedProperties);
             }
         } else {
-            parent::assignProperties($newProperties);
+            $this->assignProperties($newProperties, $strict);
         }
     }
 

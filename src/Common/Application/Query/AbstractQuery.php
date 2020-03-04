@@ -3,7 +3,9 @@
 namespace AlephTools\DDD\Common\Application\Query;
 
 use AlephTools\DDD\Common\Application\TypeConversionAware;
+use AlephTools\DDD\Common\Infrastructure\EnumHelper;
 use AlephTools\DDD\Common\Infrastructure\WeakDto;
+use AlephTools\DDD\Common\Model\Language;
 
 /**
  * @property-read string|null $keyword
@@ -14,6 +16,7 @@ use AlephTools\DDD\Common\Infrastructure\WeakDto;
  * @property-read string[]|null $group
  * @property-read string[]|null $fields
  * @property-read int|null $timezone The desire timezone offset in minutes.
+ * @property-read Language|null $language
  * @property-read bool $withoutCount
  * @property-read bool $withoutItems
  */
@@ -40,6 +43,7 @@ abstract class AbstractQuery extends WeakDto
     protected $group;
     protected $fields;
     protected $timezone;
+    protected $language;
     protected $withoutCount = false;
     protected $withoutItems = false;
 
@@ -153,6 +157,11 @@ abstract class AbstractQuery extends WeakDto
     protected function setTimezone($timezone): void
     {
         $this->timezone = is_numeric($timezone) ? (int)$timezone : null;
+    }
+
+    protected function setLanguage(?string $language): void
+    {
+        $this->language = $language !== null ? EnumHelper::toEnum(Language::class, strtoupper($language)) : null;
     }
 
     protected function setWithoutCount($flag): void

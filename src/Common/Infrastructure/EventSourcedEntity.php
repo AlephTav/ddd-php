@@ -8,7 +8,7 @@ use AlephTools\DDD\Common\Model\Events\EntityUpdated;
 
 abstract class EventSourcedEntity extends Entity
 {
-    public function __construct(array $properties = [], bool $suppressEntityCreatedEvent = false)
+    public function __construct(array $properties = [], bool $suppressEntityCreatedEvent = true)
     {
         parent::__construct($properties);
         if (!$suppressEntityCreatedEvent) {

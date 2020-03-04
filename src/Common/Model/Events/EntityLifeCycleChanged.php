@@ -8,7 +8,7 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  * @property-read AbstractId $id The entity identifier.
  * @property-read string $entity The entity class.
  */
-class EntityLifeCycleChangedEvent extends DomainEvent
+class EntityLifeCycleChanged extends DomainEvent
 {
     protected $id;
     protected $entity;

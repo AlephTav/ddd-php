@@ -2,6 +2,6 @@
 
 namespace AlephTools\DDD\Common\Model\Events;
 
-class EntityDeleted extends EntityLifeCycleChangedEvent
+class EntityDeleted extends EntityLifeCycleChanged
 {
 }

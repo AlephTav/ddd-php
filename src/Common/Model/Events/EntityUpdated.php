@@ -8,7 +8,7 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  * @property-read array $oldProperties The entity previous property values.
  * @property-read array $newProperties The entity new property values.
  */
-class EntityUpdated extends EntityLifeCycleChangedEvent
+class EntityUpdated extends EntityLifeCycleChanged
 {
     private $oldProperties;
     private $newProperties;

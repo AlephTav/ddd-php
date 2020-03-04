@@ -7,7 +7,7 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
 /**
  * @property-read array $properties The entity properties at the creation time.
  */
-class EntityCreated extends EntityLifeCycleChangedEvent
+class EntityCreated extends EntityLifeCycleChanged
 {
     private $properties;
 

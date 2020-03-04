@@ -73,6 +73,7 @@ class DomainEventPublisherTest extends TestCase
             });
 
         $publisher = new DomainEventPublisher($this->eventDispatcher);
+        $publisher->subscribe(DefaultDomainEventSubscriber::class);
         $publisher->queued(false);
 
         $publisher->subscribeAll([
@@ -115,6 +116,7 @@ class DomainEventPublisherTest extends TestCase
     {
         $event4 = new Event1TestObject();
         $publisher = new DomainEventPublisher($this->eventDispatcher);
+        $publisher->subscribe(DefaultDomainEventSubscriber::class);
 
         $this->eventDispatcher->method('dispatch')
             ->willReturnCallback(function(string $subscriber, DomainEvent $event) use($publisher, $event4) {;

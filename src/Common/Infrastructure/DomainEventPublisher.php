@@ -2,7 +2,6 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;
 use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use ReflectionClass;
 
@@ -23,7 +22,6 @@ class DomainEventPublisher
     public function __construct(EventDispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->subscribe(DefaultDomainEventSubscriber::class);
     }
 
     public function getEvents(): array

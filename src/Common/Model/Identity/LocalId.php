@@ -38,7 +38,7 @@ class LocalId extends AbstractId
      * @param $identity
      * @return int|null
      */
-    private function parse($identity): ?int
+    protected function parse($identity)
     {
         if ($identity !== null) {
             if ($identity instanceof LocalId) {

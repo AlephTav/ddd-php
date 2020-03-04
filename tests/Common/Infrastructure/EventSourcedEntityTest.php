@@ -23,7 +23,7 @@ class EventSourcedEntityTestObject extends EventSourcedEntity
 
     public function assign(array $properties)
     {
-        $this->assignProperties($properties);
+        $this->applyChanges($properties);
     }
 
     public function delete()

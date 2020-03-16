@@ -44,7 +44,7 @@ class EventSourcedEntityTest extends TestCase
             'prop2' => true,
             'prop3' => 123
         ];
-        new EventSourcedEntityTestObject($properties);
+        new EventSourcedEntityTestObject($properties, false);
 
         $events = $this->publisher->getEvents();
 

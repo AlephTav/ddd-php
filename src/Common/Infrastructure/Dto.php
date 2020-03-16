@@ -16,22 +16,37 @@ abstract class Dto implements Serializable
     use AssertionConcern;
 
     /**
-     * Offsets in $properties.
+     * Property attributes.
      */
-    private const PROP_TYPE = 0;
-    private const PROP_VALIDATOR = 1;
-    private const PROP_SETTER = 2;
-    private const PROP_GETTER = 3;
+    protected const PROP_READ = 1;
+    protected const PROP_WRITE = 2;
+    protected const PROP_VALIDATOR = 4;
+    protected const PROP_SETTER = 8;
+    protected const PROP_GETTER = 16;
+    protected const PROP_READ_WRITE = self::PROP_READ | self::PROP_WRITE;
+    protected const PROP_READ_SETTER = self::PROP_READ | self::PROP_SETTER;
+    protected const PROP_READ_GETTER = self::PROP_READ | self::PROP_GETTER;
+    protected const PROP_READ_VALIDATOR = self::PROP_READ | self::PROP_VALIDATOR;
+    protected const PROP_READ_SETTER_VALIDATOR = self::PROP_READ_SETTER | self::PROP_VALIDATOR;
+    protected const PROP_READ_GETTER_VALIDATOR = self::PROP_READ_GETTER | self::PROP_VALIDATOR;
+    protected const PROP_READ_SETTER_GETTER_VALIDATOR = self::PROP_READ_SETTER_VALIDATOR | self::PROP_GETTER;
+    protected const PROP_READ_WRITE_VALIDATOR = self::PROP_READ_WRITE | self::PROP_VALIDATOR;
+    protected const PROP_READ_WRITE_SETTER = self::PROP_READ_WRITE | self::PROP_SETTER;
+    protected const PROP_READ_WRITE_GETTER = self::PROP_READ_WRITE | self::PROP_GETTER;
+    protected const PROP_READ_WRITE_GETTER_VALIDATOR = self::PROP_READ_WRITE_GETTER | self::PROP_VALIDATOR;
+    protected const PROP_READ_WRITE_SETTER_VALIDATOR = self::PROP_READ_WRITE_SETTER | self::PROP_VALIDATOR;
+    protected const PROP_READ_WRITE_SETTER_GETTER_VALIDATOR = self::PROP_READ_WRITE_SETTER_VALIDATOR | self::PROP_GETTER;
 
     /**
-     * Property types.
+     * Offsets in $properties
      */
-    private const PROP_TYPE_READ = 0;
-    private const PROP_TYPE_WRITE = 1;
-    private const PROP_TYPE_READ_WRITE = 2;
+    private const PROP_OFFSET_TYPE = 0;
+    private const PROP_OFFSET_SETTER = 1;
+    private const PROP_OFFSET_GETTER = 2;
+    private const PROP_OFFSET_VALIDATOR = 3;
 
     /**
-     * The property cache.
+     * The property definitions.
      *
      * @var array
      */
@@ -45,6 +60,20 @@ abstract class Dto implements Serializable
     private static $reflectors = [];
 
     /**
+     * Returns the definitions of DTO's properties in format:
+     * [
+     *     'property_name' => property_attributes,
+     *     ...
+     * ]
+     *
+     * @return array|null
+     */
+    protected static function getPropertyDefinitions(): ?array
+    {
+        return null;
+    }
+
+    /**
      * Constructor.
      *
      * @param array $properties
@@ -52,9 +81,21 @@ abstract class Dto implements Serializable
      */
     public function __construct(array $properties = [], bool $strict = true)
     {
-        $properties = array_merge($this->getDefaultPropertyValues(), $properties);
-        $this->init();
-        $this->assignPropertiesAndValidate($properties, $strict);
+        self::init();
+        $this->assignPropertiesAndValidate(
+            array_merge($this->getDefaultPropertyValues(), $properties),
+            $strict
+        );
+    }
+
+    /**
+     * Sets default values for DTO for complex non-nullable properties
+     *
+     * @return array
+     */
+    protected function getDefaultPropertyValues(): array
+    {
+        return [];
     }
 
     /**
@@ -65,20 +106,17 @@ abstract class Dto implements Serializable
      */
     public function __wakeup()
     {
-        $this->init();
+        self::init();
     }
 
-    private function init(): void
+    private static function init(): void
     {
-        $this->extractProperties();
+        self::extractProperties();
     }
 
-    private function reflector(): ReflectionClass
+    private static function reflector(): ?ReflectionClass
     {
-        if (isset(self::$reflectors[static::class])) {
-            return self::$reflectors[static::class];
-        }
-        return self::$reflectors[static::class] = new ReflectionClass(static::class);
+        return self::$reflectors[static::class] ?? null;
     }
 
     /**
@@ -116,7 +154,7 @@ abstract class Dto implements Serializable
 
     private function extractPropertyValue(string $property, array $info)
     {
-        $getter = $info[self::PROP_GETTER];
+        $getter = $info[self::PROP_OFFSET_GETTER];
         if ($getter === null) {
             return $this->propertyValue($property);
         }
@@ -174,19 +212,22 @@ abstract class Dto implements Serializable
         $this->checkPropertyExistence($property);
 
         $info = $this->properties()[$property];
-        if ($info[self::PROP_TYPE] === self::PROP_TYPE_WRITE) {
-            throw new RuntimeException("Property \"$property\" is write only.");
+        if (!($info[self::PROP_OFFSET_TYPE] & self::PROP_READ)) {
+            throw new RuntimeException("Property \"$property\" is not readable.");
         }
 
-        $getter = $info[self::PROP_GETTER];
+        $getter = $info[self::PROP_OFFSET_GETTER];
         if ($getter === null) {
             return $this->propertyValue($property);
         }
-        $method = $this->reflector()->getMethod($getter);
-        if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
-            return $this->{$getter}();
+        if ($reflector = $this->reflector()) {
+            $method = $reflector->getMethod($getter);
+            if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
+                return $this->{$getter}();
+            }
+            throw new RuntimeException("Property \"$property\" does not have accessible getter.");
         }
-        throw new RuntimeException("Property \"$property\" does not have accessible getter.");
+        return $this->{$getter}();
     }
 
     /**
@@ -201,15 +242,15 @@ abstract class Dto implements Serializable
         $this->checkPropertyExistence($property);
 
         $info = $this->properties()[$property];
-        if ($info[self::PROP_TYPE] === self::PROP_TYPE_READ) {
-            throw new RuntimeException("Property \"$property\" is read only.");
+        if (!($info[self::PROP_OFFSET_TYPE] & self::PROP_WRITE)) {
+            throw new RuntimeException("Property \"$property\" is not writable.");
         }
 
-        $setter = $info[self::PROP_SETTER];
+        $setter = $info[self::PROP_OFFSET_SETTER];
         if ($setter === null) {
             $this->assignValueToProperty($property, $value);
-        } else {
-            $method = $this->reflector()->getMethod($setter);
+        } else if ($reflector = $this->reflector()) {
+            $method = $reflector->getMethod($setter);
             if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
                 $this->invokeWithTypeErrorProcessing(function() use($setter, $value) {
                     $this->{$setter}($value);
@@ -217,7 +258,20 @@ abstract class Dto implements Serializable
             } else {
                 throw new RuntimeException("Property \"$property\" does not have accessible setter.");
             }
+        } else {
+            $this->{$setter}($value);
         }
+    }
+
+    /**
+     * Returns true if the caller of this method is called from this class.
+     *
+     * @return bool
+     */
+    private function isCalledFromSameClass(): bool
+    {
+        $class = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2]['class'] ?? '';
+        return $class === static::class;
     }
 
     /**
@@ -282,7 +336,7 @@ abstract class Dto implements Serializable
             return;
         }
 
-        $setter = $this->properties()[$property][self::PROP_SETTER];
+        $setter = $this->properties()[$property][self::PROP_OFFSET_SETTER];
         if ($setter === null) {
             $this->assignValueToProperty($property, $value);
         } else {
@@ -311,20 +365,10 @@ abstract class Dto implements Serializable
     protected function validate(): void
     {
         foreach ($this->properties() as $attribute => $info) {
-            if (null !== $validator = $info[self::PROP_VALIDATOR]) {
+            if (null !== $validator = $info[self::PROP_OFFSET_VALIDATOR]) {
                 $this->invokeValidator($validator);
             }
         }
-    }
-
-    /**
-     * Sets default values for DTO for complex non-nullable properties
-     *
-     * @return array
-     */
-    protected function getDefaultPropertyValues(): array
-    {
-        return [];
     }
 
     private function checkPropertyExistence(string $property): void
@@ -334,52 +378,61 @@ abstract class Dto implements Serializable
         }
     }
 
-    /**
-     * Returns true if the caller of this method is called from this class.
-     *
-     * @return bool
-     */
-    private function isCalledFromSameClass(): bool
-    {
-        $class = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2]['class'] ?? '';
-        return $class === static::class;
-    }
-
     private function propertyValue(string $property)
     {
-        $property = $this->reflector()->getProperty($property);
-        $property->setAccessible(true);
-        return $property->getValue($this);
+        if ($reflector = $this->reflector()) {
+            $property = $reflector->getProperty($property);
+            $property->setAccessible(true);
+            return $property->getValue($this);
+        }
+        return $this->{$property};
     }
 
     private function assignValueToProperty(string $property, $value)
     {
-        $property = $this->reflector()->getProperty($property);
-        $property->setAccessible(true);
-        $property->setValue($this, $value);
+        if ($reflector = $this->reflector()) {
+            $property = $reflector->getProperty($property);
+            $property->setAccessible(true);
+            $property->setValue($this, $value);
+        } else {
+            $this->{$property} = $value;
+        }
     }
 
     private function invokeGetter(string $getter)
     {
-        $method = $this->reflector()->getMethod($getter);
-        $method->setAccessible(true);
-        return $method->invoke($this);
+        if ($reflector = $this->reflector()) {
+            $method = $reflector->getMethod($getter);
+            $method->setAccessible(true);
+            return $method->invoke($this);
+        }
+        return $this->{$getter}();
     }
 
     private function invokeSetter(string $setter, $value): void
     {
-        $method = $this->reflector()->getMethod($setter);
-        $method->setAccessible(true);
-        $this->invokeWithTypeErrorProcessing(function() use($method, $value) {
-            $method->invoke($this, $value);
-        });
+        if ($reflector = $this->reflector()) {
+            $method = $reflector->getMethod($setter);
+            $method->setAccessible(true);
+            $this->invokeWithTypeErrorProcessing(function () use ($method, $value) {
+                $method->invoke($this, $value);
+            });
+        } else {
+            $this->invokeWithTypeErrorProcessing(function () use ($setter, $value) {
+                $this->{$setter}($value);
+            });
+        }
     }
 
     private function invokeValidator(string $validator): void
     {
-        $method = $this->reflector()->getMethod($validator);
-        $method->setAccessible(true);
-        $method->invoke($this);
+        if ($reflector = $this->reflector()) {
+            $method = $reflector->getMethod($validator);
+            $method->setAccessible(true);
+            $method->invoke($this);
+        } else {
+            $this->{$validator}();
+        }
     }
 
     private function invokeWithTypeErrorProcessing(callable $callback)
@@ -401,56 +454,98 @@ abstract class Dto implements Serializable
      *
      * @return void
      */
-    private function extractProperties(): void
+    private static function extractProperties(): void
     {
         if (isset(self::$properties[static::class])) {
             return;
         }
 
+        if (null !== $properties = static::getPropertyDefinitions()) {
+            self::extractPropertiesFromUserDefinition($properties);
+        } else {
+            self::extractPropertiesFromClassDefinition();
+        }
+    }
+
+    private static function extractPropertiesFromUserDefinition(array $definitions): void
+    {
         $properties = [];
-
-        if (preg_match_all(
-            '/@property(-read|-write|)[^$]+\$([a-zA-Z0-9_]+)/i',
-            $this->getDocComment(),
-            $matches
-        )) {
-            foreach ($matches[1] as $i => $type) {
-                if ($type === '-read') {
-                    $type = self::PROP_TYPE_READ;
-                } else if ($type === '-write') {
-                    $type = self::PROP_TYPE_WRITE;
-                } else {
-                    $type = self::PROP_TYPE_READ_WRITE;
-                }
-
-                $propertyName = $matches[2][$i];
-                if (!$this->hasPropertyField($propertyName)) {
-                    throw new NonExistentPropertyException(
-                        "Property \"$propertyName\" is not connected with the appropriate class field."
-                    );
-                }
-
-                if (!$this->hasPropertyMethod($setter = $this->getSetterName($propertyName))) {
-                    $setter = null;
-                }
-                if (!$this->hasPropertyMethod($getter = $this->getGetterName($propertyName))) {
-                    $getter = null;
-                }
-                if (!$this->hasPropertyMethod($validator = $this->getValidatorName($propertyName))) {
-                    $validator = null;
-                }
-
-                $properties[$propertyName] = [$type, $validator, $setter, $getter];
+        foreach ($definitions as $propertyName => $definition) {
+            if ($definition & self::PROP_SETTER) {
+                $setter = self::getSetterName($propertyName);
+            } else {
+                $setter = null;
             }
+            if ($definition & self::PROP_GETTER) {
+                $getter = self::getGetterName($propertyName);
+            } else {
+                $getter = null;
+            }
+            if ($definition & self::PROP_VALIDATOR) {
+                $validator = self::getValidatorName($propertyName);
+            } else {
+                $validator = null;
+            }
+            $properties[$propertyName] = [$definition, $setter, $getter, $validator];
         }
 
         self::$properties[static::class] = $properties;
     }
 
-    private function hasPropertyField(string $name): bool
+    private static function extractPropertiesFromClassDefinition(): void
     {
-        if ($this->reflector()->hasProperty($name)) {
-            $property = $this->reflector()->getProperty($name);
+        $properties = [];
+        $reflector = new ReflectionClass(static::class);
+
+        if (preg_match_all(
+            '/@property(-read|-write|)[^$]+\$([a-zA-Z0-9_]+)/i',
+            self::getDocComment($reflector),
+            $matches
+        )) {
+            foreach ($matches[1] as $i => $type) {
+                if ($type === '-read') {
+                    $definition = self::PROP_READ;
+                } else if ($type === '-write') {
+                    $definition = self::PROP_WRITE;
+                } else {
+                    $definition = self::PROP_READ_WRITE;
+                }
+
+                $propertyName = $matches[2][$i];
+                if (!self::hasPropertyField($reflector, $propertyName)) {
+                    throw new NonExistentPropertyException(
+                        "Property \"$propertyName\" is not connected with the appropriate class field."
+                    );
+                }
+
+                if (self::hasPropertyMethod($reflector, $setter = self::getSetterName($propertyName))) {
+                    $definition |= self::PROP_SETTER;
+                } else {
+                    $setter = null;
+                }
+                if (self::hasPropertyMethod($reflector, $getter = self::getGetterName($propertyName))) {
+                    $definition |= self::PROP_GETTER;
+                } else {
+                    $getter = null;
+                }
+                if (self::hasPropertyMethod($reflector, $validator = self::getValidatorName($propertyName))) {
+                    $definition |= self::PROP_VALIDATOR;
+                } else {
+                    $validator = null;
+                }
+
+                $properties[$propertyName] = [$definition, $setter, $getter, $validator];
+            }
+        }
+
+        self::$properties[static::class] = $properties;
+        self::$reflectors[static::class] = $reflector;
+    }
+
+    private static function hasPropertyField(ReflectionClass $reflector, string $name): bool
+    {
+        if ($reflector->hasProperty($name)) {
+            $property = $reflector->getProperty($name);
             if ($property->isPrivate()) {
                 return $property->getDeclaringClass()->getName() === static::class;
             }
@@ -460,10 +555,10 @@ abstract class Dto implements Serializable
         return false;
     }
 
-    private function hasPropertyMethod(string $name): bool
+    private static function hasPropertyMethod(ReflectionClass $reflector, string $name): bool
     {
-        if ($this->reflector()->hasMethod($name)) {
-            $method = $this->reflector()->getMethod($name);
+        if ($reflector->hasMethod($name)) {
+            $method = $reflector->getMethod($name);
             if ($method->isPrivate()) {
                 return $method->getDeclaringClass()->getName() === static::class;
             }
@@ -473,10 +568,10 @@ abstract class Dto implements Serializable
         return false;
     }
 
-    private function getDocComment(): string
+    private static function getDocComment(ReflectionClass $reflector): string
     {
         $comment = '';
-        $class = $this->reflector();
+        $class = $reflector;
         while ($class) {
             $comment = $class->getDocComment() . $comment;
             $class = $class->getParentClass();
@@ -484,17 +579,17 @@ abstract class Dto implements Serializable
         return $comment;
     }
 
-    private function getValidatorName(string $attribute): string
+    private static function getValidatorName(string $attribute): string
     {
         return 'validate' . ucfirst($attribute);
     }
 
-    private function getGetterName(string $attribute): string
+    private static function getGetterName(string $attribute): string
     {
         return 'get' . ucfirst($attribute);
     }
 
-    private function getSetterName(string $attribute): string
+    private static function getSetterName(string $attribute): string
     {
         return 'set' . ucfirst($attribute);
     }

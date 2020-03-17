@@ -81,7 +81,7 @@ abstract class Dto implements Serializable
      */
     public function __construct(array $properties = [], bool $strict = true)
     {
-        self::init();
+        $this->init();
         $this->assignPropertiesAndValidate(
             array_merge($this->getDefaultPropertyValues(), $properties),
             $strict
@@ -106,10 +106,10 @@ abstract class Dto implements Serializable
      */
     public function __wakeup()
     {
-        self::init();
+        $this->init();
     }
 
-    private static function init(): void
+    private function init(): void
     {
         self::extractProperties();
     }

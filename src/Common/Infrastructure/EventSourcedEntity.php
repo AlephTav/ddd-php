@@ -12,7 +12,7 @@ abstract class EventSourcedEntity extends Entity
     {
         parent::__construct($properties);
         if (!$suppressEntityCreatedEvent) {
-            $this->publishEntityCreatedEvent($properties);
+            $this->publishEntityCreatedEvent($this->toArray());
         }
     }
 

@@ -97,8 +97,12 @@ class DomainEventPublisher
 
     public function publishAll(array $events): void
     {
-        foreach ($events as $event) {
-            $this->publish($event);
+        if ($this->queued) {
+            $this->events = array_merge($this->events, $events);
+        } else {
+            foreach ($events as $event) {
+                $this->dispatch($event);
+            }
         }
     }
 

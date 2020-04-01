@@ -18,8 +18,13 @@ abstract class Entity extends IdentifiedDomainObject
     protected function publishEvent(DomainEvent $event): void
     {
         if ($this->isEntityInstantiated) {
-            ApplicationContext::get(DomainEventPublisher::class)->publish($event);
+            $this->eventPublisher()->publish($event);
         }
+    }
+
+    protected function eventPublisher(): DomainEventPublisher
+    {
+        return ApplicationContext::get(DomainEventPublisher::class);
     }
 
     /**

@@ -45,7 +45,7 @@ abstract class AbstractId extends ValueObject
      *
      * @return array
      */
-    public function __serialize()
+    public function __serialize(): array
     {
         return ["\0*\0identity" => (string)$this->identity];
     }
@@ -53,15 +53,12 @@ abstract class AbstractId extends ValueObject
     /**
      * Unserialization of AbstractId
      *
-     * @param $data
+     * @param array $data
      */
-    public function __unserialize($data)
+    public function __unserialize(array $data): void
     {
-        if(is_string($data["\0*\0identity"])) {
-            $data["\0*\0identity"] = $this->parse($data["\0*\0identity"]);
-        }
-        $this->identity = $data["\0*\0identity"];
         $this->__wakeup();
+        $this->identity = $this->parse($data["\0*\0identity"]);
     }
 
     /**

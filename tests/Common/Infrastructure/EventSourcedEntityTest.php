@@ -18,11 +18,11 @@ class EventSourcedEntityTestObject extends EventSourcedEntity
 {
     private $prop1;
     private $prop2;
-    private $prop3;
+    private $prop3 = true;
 
     public function assign(array $properties)
     {
-        $this->applyChanges($properties);
+        $this->applyChangesAndValidate($properties);
     }
 
     public function delete()
@@ -41,10 +41,10 @@ class EventSourcedEntityTest extends TestCase
         $properties = [
             'id' => $id,
             'prop1' => 'a',
-            'prop2' => true,
-            'prop3' => 123
+            'prop2' => true
         ];
         new EventSourcedEntityTestObject($properties, false);
+        $properties['prop3'] = true;
 
         $events = $this->publisher->getEvents();
 
@@ -82,15 +82,17 @@ class EventSourcedEntityTest extends TestCase
         $properties = [
             'id' => $id,
             'prop1' => 'a',
-            'prop2' => true,
-            'prop3' => 123
+            'prop2' => true
         ];
         $entity = new EventSourcedEntityTestObject($properties, true);
 
         $entity->assign([
             'prop1' => 123,
-            'prop2' => 'b',
-            'prop3' => false
+            'prop2' => 'b'
+        ]);
+        $entity->assign([
+            'prop1' => 345,
+            'prop3' => 'abc'
         ]);
 
         $events = $this->publisher->getEvents();
@@ -99,8 +101,8 @@ class EventSourcedEntityTest extends TestCase
         $this->assertInstanceOf(EntityUpdated::class, $events[0]);
         $this->assertTrue($events[0]->id->equals($id));
         $this->assertSame(EventSourcedEntityTestObject::class, $events[0]->entity);
-        $this->assertSame(['prop1' => 'a', 'prop2' => true, 'prop3' => 123], $events[0]->oldProperties);
-        $this->assertSame(['prop1' => 123, 'prop2' => 'b', 'prop3' => false], $events[0]->newProperties);
+        $this->assertSame(['prop1' => 'a', 'prop2' => true, 'prop3' => true], $events[0]->oldProperties);
+        $this->assertSame(['prop1' => 345, 'prop2' => 'b', 'prop3' => 'abc'], $events[0]->newProperties);
     }
 
     public function testUpdateNestedProperties(): void
@@ -140,6 +142,11 @@ class EventSourcedEntityTest extends TestCase
             'prop2' => $entity2,
             'prop3' => $entity1
         ]);
+        $entity->assign([
+            'prop1' => $entity2,
+            'prop2' => $entity2,
+            'prop3' => $entity3
+        ]);
 
         $events = $this->publisher->getEvents();
 
@@ -148,20 +155,28 @@ class EventSourcedEntityTest extends TestCase
         $this->assertTrue($events[0]->id->equals($id));
         $this->assertSame(EventSourcedEntityTestObject::class, $events[0]->entity);
 
-        $this->assertSame([
+        $this->assertEquals([
             'prop1' => [
+                'id' => null,
+                'prop1' => 'a',
                 'prop2' => true,
                 'prop3' => 123
             ],
             'prop3' => 'test'
         ], $events[0]->oldProperties);
 
-        $this->assertSame([
+        $this->assertEquals([
             'prop1' => [
+                'prop1' => false,
+                'prop2' => 321,
+                'prop3' => 'b'
+            ],
+            'prop3' => [
+                'id' => null,
+                'prop1' => 'a',
                 'prop2' => false,
                 'prop3' => 'foo'
-            ],
-            'prop3' => $entity1
+            ]
         ], $events[0]->newProperties);
     }
 }

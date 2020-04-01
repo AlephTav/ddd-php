@@ -25,16 +25,25 @@ abstract class EventSourcedEntity extends Entity
      */
     protected function applyChanges(array $newProperties, bool $strict = true): void
     {
-        if ($this->isEntityInstantiated) {
-            $oldProperties = $this->getOldProperties($newProperties);
-            [$oldNestedProperties, $newNestedProperties] = $this->computeNestedChanges($oldProperties, $newProperties);
-            if ($newNestedProperties) {
-                $this->assignProperties($newProperties, $strict);
-                $this->publishEntityUpdatedEvent($oldNestedProperties, $newNestedProperties);
-            }
-        } else {
+        $oldProperties = $this->getOldProperties($newProperties);
+        [$oldNestedProperties, $newNestedProperties] = $this->computeNestedChanges($oldProperties, $newProperties);
+        if ($newNestedProperties) {
             $this->assignProperties($newProperties, $strict);
+            $this->publishEntityUpdatedEvent($oldNestedProperties, $newNestedProperties);
         }
+    }
+
+    /**
+     * Sets new properties, generates EntityUpdated event and validates those properties.
+     *
+     * @param array $newProperties
+     * @param bool $strict
+     * @return void
+     */
+    protected function applyChangesAndValidate(array $newProperties, bool $strict = true): void
+    {
+        $this->applyChanges($newProperties, $strict);
+        $this->validate();
     }
 
     private function getOldProperties(array $newProperties): array
@@ -55,16 +64,16 @@ abstract class EventSourcedEntity extends Entity
             if ($value2 instanceof DomainObject) {
                 if (!$value2->equals($value1)) {
                     if ($value1 instanceof DomainObject) {
-                        [$old, $new] = $this->computeNestedChanges($value1->toNestedArray(), $value2->toNestedArray());
+                        $old = $value1->toNestedArray();
                         $oldProperties[$property] = $old;
-                        $newProperties[$property] = $new;
+                        $newProperties[$property] = $this->computeNestedChanges($old, $value2->toNestedArray())[1];
                     } else {
                         $oldProperties[$property] = $value1;
-                        $newProperties[$property] = $value2;
+                        $newProperties[$property] = $value2->toNestedArray();
                     }
                 }
             } else if ($value2 !== $value1) {
-                $oldProperties[$property] = $value1;
+                $oldProperties[$property] = $value1 instanceof DomainObject ? $value1->toNestedArray() : $value1;
                 $newProperties[$property] = $value2;
             }
         }
@@ -78,7 +87,21 @@ abstract class EventSourcedEntity extends Entity
 
     protected function publishEntityUpdatedEvent(array $oldProperties, array $newProperties): void
     {
-        $this->publishEvent(new EntityUpdated(static::class, $this->id, $oldProperties, $newProperties));
+        $newUpdatedEvent = new EntityUpdated(static::class, $this->id, $oldProperties, $newProperties);
+
+        $eventPublisher = $this->eventPublisher();
+        $events = $eventPublisher->getEvents();
+        $eventPublisher->cleanEvents();
+
+        foreach ($events as &$event) {
+            if ($event instanceof EntityUpdated && $event->entity === static::class && $event->id->equals($this->id)) {
+                $event = $event->merge($newUpdatedEvent);
+                $eventPublisher->publishAll($events);
+                return;
+            }
+        }
+
+        $eventPublisher->publish($newUpdatedEvent);
     }
 
     protected function publishEntityDeletedEvent(): void

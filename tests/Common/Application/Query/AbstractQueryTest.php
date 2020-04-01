@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Tests\Common\Application\Query;
 
+use AlephTools\DDD\Common\Model\Language;
 use DateTime;
 use DateTimeImmutable;
 use AlephTools\DDD\Common\Application\Query\AbstractQuery;
@@ -143,7 +144,7 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider offsetDataProvider
-     * @param $value
+     * @param mixed $value
      * @param int|null $offset
      */
     public function testSetOffset($value, ?int $offset): void
@@ -168,7 +169,7 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider pageDataProvider
-     * @param $value
+     * @param mixed $value
      * @param int|null $page
      */
     public function testSetPage($value, ?int $page): void
@@ -193,7 +194,7 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider timezoneDataProvider
-     * @param $value
+     * @param mixed $value
      * @param int|null $timezone
      */
     public function testSetTimezone($value, ?int $timezone): void
@@ -212,6 +213,26 @@ class AbstractQueryTest extends TestCase
             ['test', null],
             [[], null],
             [new \stdClass(), null],
+            [null, null]
+        ];
+    }
+
+    /**
+     * @dataProvider languageDataProvider
+     * @param string|null $value
+     * @param Language|null $language
+     */
+    public function testSetLanguage(?string $value, ?Language $language): void
+    {
+        $query = new TestQueryTestObject(['language' => $value]);
+        $this->assertSame($language, $query->language);
+    }
+
+    public function languageDataProvider(): array
+    {
+        return [
+            ['ru', Language::RU()],
+            ['En', Language::EN()],
             [null, null]
         ];
     }

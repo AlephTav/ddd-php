@@ -10,14 +10,14 @@ class AbstractIdTest extends TestCase
     public function testSerialization(): void
     {
         $id = GlobalId::create();
-
         if ($this->phpVersion() < 704) {
             $serializedId = $id->__serialize();
+            $this->assertSame($id->toString(), current($serializedId));
         } else {
             $serializedId = serialize($id);
+            $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{s:11:\"\0*\0identity\";s:36:\"{$id}\";}";
+            $this->assertSame($expected, $serializedId);
         }
-
-        $this->assertSame($id->toString(), current($serializedId));
     }
 
     public function testUnserialization(): void

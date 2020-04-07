@@ -393,9 +393,13 @@ abstract class Dto implements Serializable
         if ($reflector = $this->reflector()) {
             $property = $reflector->getProperty($property);
             $property->setAccessible(true);
-            $property->setValue($this, $value);
+            $this->invokeWithTypeErrorProcessing(function () use ($property, $value) {
+                $property->setValue($this, $value);
+            });
         } else {
-            $this->{$property} = $value;
+            $this->invokeWithTypeErrorProcessing(function () use ($property, $value) {
+                $this->{$property} = $value;
+            });
         }
     }
 
@@ -441,9 +445,16 @@ abstract class Dto implements Serializable
             $callback();
         } catch (TypeError $e) {
             $error = $e->getMessage();
-            preg_match('/^.*::[a-z_0-9]+([A-Z][a-zA-Z_0-9]+)\(\)(.+given).*$/', $error, $matches);
-            if ($matches) {
-                $error = 'Property "' . lcfirst($matches[1]) . '"' . $matches[2] . '.';
+            if (strncmp('Typed property', $error, 14) === 0) {
+                preg_match('/^.*\$([a-zA-Z_0-9]+)(.+)$/', $error, $matches);
+                if ($matches) {
+                    $error = 'Property "' . $matches[1] . '"' . $matches[2] . '.';
+                }
+            } else {
+                preg_match('/^.*::[a-z_0-9]+([A-Z][a-zA-Z_0-9]+)\(\)(.+given).*$/', $error, $matches);
+                if ($matches) {
+                    $error = 'Property "' . lcfirst($matches[1]) . '"' . $matches[2] . '.';
+                }
             }
             throw new InvalidArgumentException($error);
         }

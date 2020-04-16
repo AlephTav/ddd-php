@@ -13,13 +13,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.4",
-        "ramsey/uuid": "^3.8",
+        "ramsey/uuid": "4.*",
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "8.*"
+        "phpunit/phpunit": "9.*"
     },
     "extra": {
         "branch-alias": {

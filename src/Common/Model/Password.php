@@ -20,8 +20,8 @@ class Password extends ValueObject
 
     //endregion
 
-    protected $hash;
-    protected $password;
+    protected ?string $hash = null;
+    protected ?string $password = null;
 
     /**
      * The cached hash value.
@@ -55,16 +55,6 @@ class Password extends ValueObject
     protected function encodePassword(?string $password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);
-    }
-
-    protected function setHash(?string $hash): void
-    {
-        $this->hash = $hash;
-    }
-
-    protected function setPassword(?string $password): void
-    {
-        $this->password = $password;
     }
 
     protected function validateHash(): void

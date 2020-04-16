@@ -11,8 +11,6 @@ use AlephTools\DDD\Common\Infrastructure\IdentifiedValueObject;
  */
 class File extends IdentifiedValueObject
 {
-    protected $id;
-
     public function __construct($id)
     {
         if (is_array($id)) {

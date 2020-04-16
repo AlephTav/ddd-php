@@ -14,15 +14,7 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
      *
      * @var AbstractId
      */
-    protected $id;
-
-    /**
-     * @return AbstractId|null
-     */
-    public function getId(): ?AbstractId
-    {
-        return $this->id;
-    }
+    protected ?AbstractId $id = null;
 
     /**
      * Converts an object to its identity.
@@ -56,7 +48,7 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
             return false;
         }
 
-        return $this->id || $other->getId() ? $this->id->equals($other->getId()) : parent::equals($other);
+        return $this->id || $other->id ? $this->id->equals($other->id) : parent::equals($other);
     }
 
     /**

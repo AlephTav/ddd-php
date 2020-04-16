@@ -17,8 +17,8 @@ class Money extends ValueObject
 
     protected const PRECISION = 12;
 
-    private $amount;
-    private $currency;
+    protected $amount;
+    protected ?Currency $currency = null;
 
     /**
      * Constructor.
@@ -211,7 +211,7 @@ class Money extends ValueObject
 
     //region Setters
 
-    private function setAmount($amount): void
+    protected function setAmount($amount): void
     {
         $this->assertArgumentFalse(
             $amount !== null && !is_scalar($amount),
@@ -220,21 +220,16 @@ class Money extends ValueObject
         $this->amount = $amount ? (string)$amount : '0';
     }
 
-    private function setCurrency(?Currency $currency): void
-    {
-        $this->currency = $currency;
-    }
-
     //endregion
 
     //region Validators
 
-    private function validateCurrency(): void
+    protected function validateCurrency(): void
     {
         $this->assertArgumentNotNull($this->currency, 'Currency must not be null.');
     }
 
-    private function validateAmount(): void
+    protected function validateAmount(): void
     {
         $this->assertArgumentPatternMatch(
             $this->amount,

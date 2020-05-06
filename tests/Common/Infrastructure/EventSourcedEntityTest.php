@@ -112,6 +112,10 @@ class EventSourcedEntityTest extends TestCase
             'prop2' => true,
             'prop3' => 123
         ];
+
+        // to generate EntityCreated event
+        new EventSourcedEntityTestObject($properties, false);
+
         $entity1 = new EventSourcedEntityTestObject($properties, true);
 
         $properties = [
@@ -150,10 +154,22 @@ class EventSourcedEntityTest extends TestCase
 
         $events = $this->publisher->getEvents();
 
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf(EntityUpdated::class, $events[0]);
-        $this->assertTrue($events[0]->id->equals($id));
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf(EntityCreated::class, $events[0]);
         $this->assertSame(EventSourcedEntityTestObject::class, $events[0]->entity);
+        $this->assertSame(
+            [
+                'id' => null,
+                'prop1' => 'a',
+                'prop2' => true,
+                'prop3' => 123
+            ],
+            $events[0]->properties
+        );
+
+        $this->assertInstanceOf(EntityUpdated::class, $events[1]);
+        $this->assertTrue($events[1]->id->equals($id));
+        $this->assertSame(EventSourcedEntityTestObject::class, $events[1]->entity);
 
         $this->assertEquals([
             'prop1' => [
@@ -163,7 +179,7 @@ class EventSourcedEntityTest extends TestCase
                 'prop3' => 123
             ],
             'prop3' => 'test'
-        ], $events[0]->oldProperties);
+        ], $events[1]->oldProperties);
 
         $this->assertEquals([
             'prop1' => [
@@ -177,6 +193,6 @@ class EventSourcedEntityTest extends TestCase
                 'prop2' => false,
                 'prop3' => 'foo'
             ]
-        ], $events[0]->newProperties);
+        ], $events[1]->newProperties);
     }
 }

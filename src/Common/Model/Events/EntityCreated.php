@@ -11,7 +11,7 @@ class EntityCreated extends EntityLifeCycleChanged
 {
     private $properties;
 
-    public function __construct(string $entity, AbstractId $id, array $properties)
+    public function __construct(string $entity, ?AbstractId $id, array $properties)
     {
         parent::__construct($entity, $id);
         $this->properties = $properties;

@@ -91,11 +91,11 @@ abstract class EventSourcedEntity extends Entity
 
         $eventPublisher = $this->eventPublisher();
         $events = $eventPublisher->getEvents();
-        $eventPublisher->cleanEvents();
 
         foreach ($events as &$event) {
             if ($event instanceof EntityUpdated && $event->entity === static::class && $event->id->equals($this->id)) {
                 $event = $event->merge($newUpdatedEvent);
+                $eventPublisher->cleanEvents();
                 $eventPublisher->publishAll($events);
                 return;
             }

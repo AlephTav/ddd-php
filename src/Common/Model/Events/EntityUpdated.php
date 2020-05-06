@@ -13,7 +13,7 @@ class EntityUpdated extends EntityLifeCycleChanged
     private $oldProperties;
     private $newProperties;
 
-    public function __construct(string $entity, AbstractId $id, array $oldProperties, array $newProperties)
+    public function __construct(string $entity, ?AbstractId $id, array $oldProperties, array $newProperties)
     {
         parent::__construct($entity, $id);
         $this->oldProperties = $oldProperties;

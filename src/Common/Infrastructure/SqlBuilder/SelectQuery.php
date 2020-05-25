@@ -404,8 +404,8 @@ class SelectQuery extends AbstractQuery
             $this->buildFrom();
             $this->buildJoin();
             $this->buildWhere();
-            $this->buildHaving();
             $this->buildGroupBy();
+            $this->buildHaving();
         }
         $this->buildOrderBy();
         $this->buildLimit();

@@ -120,10 +120,10 @@ class GlobalIdTest extends TestCase
     public function testSerialization(): void
     {
         $id = GlobalId::create();
-        $bytes = $id->identity->getFields()->getBytes();
+        $bytes = base64_encode($id->identity->getFields()->getBytes());
 
         $serializedId = serialize($id);
-        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{s:11:\"\0*\0identity\";s:16:\"{$bytes}\";}";
+        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{s:11:\"\0*\0identity\";s:24:\"{$bytes}\";}";
         $this->assertSame($expected, $serializedId);
     }
 

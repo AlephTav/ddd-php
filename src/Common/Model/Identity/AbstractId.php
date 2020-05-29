@@ -41,27 +41,6 @@ abstract class AbstractId extends ValueObject
     }
 
     /**
-     * Compact serialization of AbstractId
-     *
-     * @return array
-     */
-    public function __serialize(): array
-    {
-        return ["\0*\0identity" => (string)$this->identity];
-    }
-
-    /**
-     * Unserialization of AbstractId
-     *
-     * @param array $data
-     */
-    public function __unserialize(array $data): void
-    {
-        $this->__wakeup();
-        $this->identity = $this->parse($data["\0*\0identity"]);
-    }
-
-    /**
      * Parsing of raw value
      *
      * @param $identity

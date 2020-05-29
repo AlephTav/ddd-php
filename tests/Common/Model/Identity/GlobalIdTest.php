@@ -116,4 +116,23 @@ class GlobalIdTest extends TestCase
             ]
         ];
     }
+
+    public function testSerialization(): void
+    {
+        $id = GlobalId::create();
+        $bytes = $id->identity->getFields()->getBytes();
+
+        $serializedId = serialize($id);
+        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{s:11:\"\0*\0identity\";s:16:\"{$bytes}\";}";
+        $this->assertSame($expected, $serializedId);
+    }
+
+    public function testUnserialization(): void
+    {
+        $id = GlobalId::create();
+
+        $unserializedId = unserialize(serialize($id));
+
+        $this->assertTrue($id->equals($unserializedId));
+    }
 }

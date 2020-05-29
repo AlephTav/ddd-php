@@ -2,14 +2,15 @@
 
 namespace AlephTools\DDD\Common\Model\Identity;
 
-use Exception;
-use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 /**
  * The global identifier (an identifier which is unique within all applications).
+ *
+ * @property-read Uuid $identity
  */
 class GlobalId extends AbstractId
 {
@@ -17,7 +18,6 @@ class GlobalId extends AbstractId
      * Generates new global identifier.
      *
      * @return static
-     * @throws Exception
      */
     public static function create()
     {
@@ -47,11 +47,31 @@ class GlobalId extends AbstractId
      * Constructor.
      *
      * @param mixed $identity
-     * @throws Exception
      */
     public function __construct($identity)
     {
         parent::__construct(['identity' => $this->parse($identity)]);
+    }
+
+    /**
+     * Compact serialization of GlobalId
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return ["\0*\0identity" => $this->identity->getFields()->getBytes()];
+    }
+
+    /**
+     * Unserialization of GlobalId
+     *
+     * @param array $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->__wakeup();
+        $this->identity = $this->parse($data["\0*\0identity"]);
     }
 
     protected function setIdentity(?Uuid $identity): void

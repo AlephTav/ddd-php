@@ -4,6 +4,8 @@ namespace AlephTools\DDD\Common\Model\Identity;
 
 /**
  * The local identifier (an identifier which is unique within a single application).
+ *
+ * @property-read int $identity
  */
 class LocalId extends AbstractId
 {

@@ -60,7 +60,7 @@ class GlobalId extends AbstractId
      */
     public function __serialize(): array
     {
-        return ["\0*\0identity" => base64_encode($this->identity->getBytes())];
+        return [base64_encode($this->identity->getBytes())];
     }
 
     /**
@@ -71,7 +71,7 @@ class GlobalId extends AbstractId
     public function __unserialize(array $data): void
     {
         $this->__wakeup();
-        $this->identity = $this->parse(base64_decode($data["\0*\0identity"]));
+        $this->identity = $this->parse(base64_decode($data[0]));
     }
 
     protected function setIdentity(?Uuid $identity): void

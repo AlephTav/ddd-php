@@ -50,14 +50,14 @@ abstract class Dto implements Serializable
      *
      * @var array
      */
-    private static $properties = [];
+    private static array $properties = [];
 
     /**
      * The class reflector.
      *
      * @var ReflectionClass[]
      */
-    private static $reflectors = [];
+    private static array $reflectors = [];
 
     /**
      * Returns the definitions of DTO's properties in format:

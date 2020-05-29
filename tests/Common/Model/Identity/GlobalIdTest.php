@@ -123,7 +123,7 @@ class GlobalIdTest extends TestCase
         $bytes = base64_encode($id->identity->getBytes());
 
         $serializedId = serialize($id);
-        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{s:11:\"\0*\0identity\";s:24:\"{$bytes}\";}";
+        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{i:0;s:24:\"{$bytes}\";}";
         $this->assertSame($expected, $serializedId);
     }
 

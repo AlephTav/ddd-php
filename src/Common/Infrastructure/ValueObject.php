@@ -12,7 +12,7 @@ abstract class ValueObject extends DomainObject
      *
      * @var string
      */
-    private $computedHash;
+    private ?string $computedHash = null;
 
     /**
      * Generates a hash value for this domain object.

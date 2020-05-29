@@ -9,7 +9,7 @@ class IdentifiedValueObject extends IdentifiedDomainObject
      *
      * @var string
      */
-    private $computedHash;
+    private ?string $computedHash = null;
 
     /**
      * Generates a hash value for this domain object.

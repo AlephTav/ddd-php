@@ -3,7 +3,6 @@
 namespace AlephTools\DDD\Tests\Common\Model\Identity;
 
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;
 
@@ -19,7 +18,7 @@ class GlobalIdTest extends TestCase
 
     public function testToString(): void
     {
-        $identity = Uuid::uuid4()->toString();
+        $identity = 'bd2cbad1-6ccf-48e3-bb92-bc9961bc011e';
         $id = new GlobalId($identity);
 
         $this->assertSame($identity, $id->toString());
@@ -29,6 +28,7 @@ class GlobalIdTest extends TestCase
     public function testNewId(): void
     {
         $id = GlobalId::create();
+        echo $id;
 
         $this->assertInstanceOf(GlobalId::class, $id);
         $this->assertTrue(GlobalId::canBeId($id->identity));
@@ -36,10 +36,9 @@ class GlobalIdTest extends TestCase
 
     public function testCanBeId(): void
     {
-        $identity = Uuid::uuid4()->toString();
+        $identity = 'b5e2cf01-8bb6-4fcd-ad88-0efb611195da';
 
         $this->assertTrue(GlobalId::canBeId($identity));
-        $this->assertTrue(GlobalId::canBeId(Uuid::uuid4()));
         $this->assertTrue(GlobalId::canBeId(GlobalId::create()));
 
         $this->assertFalse(GlobalId::canBeId($identity . '0'));
@@ -57,30 +56,6 @@ class GlobalIdTest extends TestCase
         $this->assertSame($id->identity, $copy->identity);
     }
 
-    public function testParseUuid(): void
-    {
-        $identity = Uuid::uuid4();
-        $id = new GlobalId($identity);
-
-        $this->assertSame($identity, $id->identity);
-    }
-
-    public function testParseBytes(): void
-    {
-        $identity = Uuid::uuid4();
-        $id = new GlobalId($identity->getBytes());
-
-        $this->assertEquals($identity->toString(), $id->toString());
-    }
-
-    public function testParseString(): void
-    {
-        $identity = Uuid::uuid4()->toString();
-        $id = new GlobalId($identity);
-
-        $this->assertEquals($identity, $id->toString());
-    }
-
     /**
      * @dataProvider invalidIdentityProvider
      * @param string $error
@@ -96,7 +71,7 @@ class GlobalIdTest extends TestCase
 
     public function invalidIdentityProvider(): array
     {
-        $invalidIdentity = Uuid::uuid4()->toString() . '0';
+        $invalidIdentity = 'b11c9be1-b619-4ef5-be1b-a1cd9ef265b7' . '0';
         return [
             [
                 'Invalid UUID: identity must be a string.',
@@ -107,7 +82,7 @@ class GlobalIdTest extends TestCase
                 new \stdClass()
             ],
             [
-                'Invalid UUID: 123',
+                'Invalid UUID: identity must be a string.',
                 123
             ],
             [
@@ -115,24 +90,5 @@ class GlobalIdTest extends TestCase
                 $invalidIdentity
             ]
         ];
-    }
-
-    public function testSerialization(): void
-    {
-        $id = GlobalId::create();
-        $bytes = base64_encode($id->identity->getBytes());
-
-        $serializedId = serialize($id);
-        $expected = "O:45:\"AlephTools\DDD\Common\Model\Identity\GlobalId\":1:{i:0;s:24:\"{$bytes}\";}";
-        $this->assertSame($expected, $serializedId);
-    }
-
-    public function testUnserialization(): void
-    {
-        $id = GlobalId::create();
-
-        $unserializedId = unserialize(serialize($id));
-
-        $this->assertTrue($id->equals($unserializedId));
     }
 }

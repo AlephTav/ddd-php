@@ -2,6 +2,8 @@
 
 namespace AlephTools\DDD\Common\Model\Identity;
 
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+
 /**
  * The local identifier (an identifier which is unique within a single application).
  *
@@ -29,29 +31,26 @@ class LocalId extends AbstractId
         parent::__construct(['identity' => $this->parse($identity)]);
     }
 
-    protected function setIdentity(?int $identity): void
-    {
-        $this->identity = $identity;
-    }
-
     /**
      * Parses the identifier.
      *
-     * @param $identity
+     * @param mixed $identity
      * @return int|null
      */
-    protected function parse($identity)
+    protected function parse($identity): ?int
     {
-        if ($identity !== null) {
-            if ($identity instanceof LocalId) {
-                return $identity->identity;
-            }
-            $this->assertArgumentTrue(
-                is_string($identity) || is_numeric($identity),
-                'Invalid identifier: identity must be an integer.'
-            );
-            $this->assertArgumentTrue(is_numeric($identity), "Invalid identifier: $identity");
+        if ($identity === null) {
+            return null;
         }
-        return $identity;
+        if ($identity instanceof self) {
+            return $identity->identity;
+        }
+        if (is_numeric($identity)) {
+            return (int)$identity;
+        }
+        if (is_string($identity)) {
+            throw new InvalidArgumentException("Invalid identifier: $identity");
+        }
+        throw new InvalidArgumentException('Invalid identifier: identity must be an integer.');
     }
 }

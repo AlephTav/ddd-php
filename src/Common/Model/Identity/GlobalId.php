@@ -2,18 +2,15 @@
 
 namespace AlephTools\DDD\Common\Model\Identity;
 
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use Ramsey\Uuid\Exception\InvalidUuidStringException;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
-
 /**
  * The global identifier (an identifier which is unique within all applications).
  *
- * @property-read Uuid $identity
+ * @property-read string $identity
  */
 class GlobalId extends AbstractId
 {
+    public const UUID4_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
+
     /**
      * Generates new global identifier.
      *
@@ -21,7 +18,20 @@ class GlobalId extends AbstractId
      */
     public static function create()
     {
-        return new static(Uuid::uuid4());
+        return new static(self::uuid4());
+    }
+
+    /**
+     * Generates new uuid4
+     *
+     * @return string
+     */
+    private static function uuid4(): string
+    {
+        $bytes = random_bytes(16);
+        $bytes[6] = chr(ord($bytes[6]) & 0x0f | 0x40); // set version to 0100
+        $bytes[8] = chr(ord($bytes[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
     }
 
     /**
@@ -32,12 +42,12 @@ class GlobalId extends AbstractId
      */
     public static function canBeId($identity): bool
     {
-        if ($identity instanceof Uuid || $identity instanceof self) {
+        if ($identity instanceof self) {
             return true;
         }
 
         if (is_string($identity)) {
-            return preg_match('/' . Uuid::VALID_PATTERN . '/D', $identity);
+            return preg_match('/' . self::UUID4_PATTERN . '/D', $identity);
         }
 
         return false;
@@ -54,59 +64,21 @@ class GlobalId extends AbstractId
     }
 
     /**
-     * Compact serialization of GlobalId
-     *
-     * @return array
-     */
-    public function __serialize(): array
-    {
-        return [base64_encode($this->identity->getBytes())];
-    }
-
-    /**
-     * Unserialization of GlobalId
-     *
-     * @param array $data
-     */
-    public function __unserialize(array $data): void
-    {
-        $this->__wakeup();
-        $this->identity = $this->parse(base64_decode($data[0]));
-    }
-
-    protected function setIdentity(?Uuid $identity): void
-    {
-        $this->identity = $identity;
-    }
-
-    /**
      * Parses the identifier.
      *
      * @param mixed $identity
-     * @return null|UuidInterface
+     * @return null|string
      */
-    protected function parse($identity)
+    protected function parse($identity): ?string
     {
-        if ($identity !== null) {
-            if ($identity instanceof GlobalId) {
-                return $identity->identity;
-            }
-            if ($identity instanceof Uuid) {
-                return $identity;
-            }
-            $this->assertArgumentTrue(
-                is_string($identity) || is_numeric($identity),
-                'Invalid UUID: identity must be a string.'
-            );
-            try {
-                if (strlen($identity) === 16) {
-                    return Uuid::fromBytes($identity);
-                }
-                return Uuid::fromString($identity);
-            } catch (\InvalidArgumentException | InvalidUuidStringException $ignore) {
-                throw new InvalidArgumentException("Invalid UUID: $identity");
-            }
+        if ($identity === null) {
+            return null;
         }
+        if ($identity instanceof self) {
+            return $identity->identity;
+        }
+        $this->assertArgumentTrue(is_string($identity), 'Invalid UUID: identity must be a string.');
+        $this->assertArgumentTrue(static::canBeId($identity), "Invalid UUID: $identity");
         return $identity;
     }
 }

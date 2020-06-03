@@ -13,7 +13,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.4",
-        "ramsey/uuid": "4.*",
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-mbstring": "*"

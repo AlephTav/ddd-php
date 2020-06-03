@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Common\Model\Identity;
 
 use AlephTools\DDD\Common\Infrastructure\Hash;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use ReflectionException;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
@@ -56,7 +57,9 @@ abstract class AbstractId extends ValueObject
      */
     protected function validateIdentity(): void
     {
-        $domainName = $this->domainName();
-        $this->assertArgumentNotNull($this->identity, "Identity of $domainName must not be null.");
+        if ($this->identity === null) {
+            $domainName = $this->domainName();
+            throw new InvalidArgumentException("Identity of $domainName must not be null.");
+        }
     }
 }

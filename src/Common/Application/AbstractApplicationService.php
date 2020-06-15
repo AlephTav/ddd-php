@@ -8,7 +8,7 @@ use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 
 abstract class AbstractApplicationService
 {
-    protected function runAsync(callable $callback, array $params = []): void
+    protected function runAsync($callback, array $params = []): void
     {
         $this->async()->run($callback, $params);
     }

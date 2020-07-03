@@ -11,25 +11,25 @@ abstract class AbstractQuery extends AbstractExpression
     /**
      * The query executor instance.
      *
-     * @var QueryExecutor
+     * @var QueryExecutor|null
      */
-    protected $db;
+    protected ?QueryExecutor $db = null;
 
     /**
      * Contains TRUE if the query has built.
      *
      * @var bool
      */
-    protected $built = false;
+    protected bool $built = false;
 
     /**
      * The WITH expression instance.
      *
-     * @var WithExpression
+     * @var WithExpression|null
      */
-    protected $with;
+    protected ?WithExpression $with = null;
 
-    public function getQueryExecutor(): QueryExecutor
+    public function getQueryExecutor(): ?QueryExecutor
     {
         return $this->db;
     }

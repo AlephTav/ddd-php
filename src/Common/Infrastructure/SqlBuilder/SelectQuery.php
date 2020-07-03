@@ -310,21 +310,28 @@ class SelectQuery extends AbstractQuery
 
     /**
      * @param string $column
+     * @param bool $clearNonConditionalClauses
      * @return int
      */
-    public function count(string $column = '*'): int
+    public function count(string $column = '*', bool $clearNonConditionalClauses = true): int
     {
-        $prevLimit = $this->limit;
-        $prevOffset = $this->offset;
-        $prevOrder = $this->order;
-        $this->limit = $this->offset = $this->order = null;
         $this->built = false;
-        $total = (int)$this->scalar("COUNT($column)");
-        $this->order = $prevOrder;
-        $this->limit = $prevLimit;
-        $this->offset = $prevOffset;
+        if ($clearNonConditionalClauses) {
+            $prevLimit = $this->limit;
+            $prevOffset = $this->offset;
+            $prevOrder = $this->order;
+            $prevGroup = $this->group;
+            $this->limit = $this->offset = $this->order = $this->group = null;
+            $total = $this->scalar("COUNT($column)");
+            $this->order = $prevOrder;
+            $this->limit = $prevLimit;
+            $this->offset = $prevOffset;
+            $this->group = $prevGroup;
+        } else {
+            $total = $this->scalar("COUNT($column)");
+        }
         $this->built = false;
-        return $total;
+        return (int)$total;
     }
 
     /**

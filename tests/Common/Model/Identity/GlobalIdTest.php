@@ -28,7 +28,6 @@ class GlobalIdTest extends TestCase
     public function testNewId(): void
     {
         $id = GlobalId::create();
-        echo $id;
 
         $this->assertInstanceOf(GlobalId::class, $id);
         $this->assertTrue(GlobalId::canBeId($id->identity));

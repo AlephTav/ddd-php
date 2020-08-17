@@ -7,7 +7,7 @@ use ReflectionClass;
 
 abstract class Entity extends IdentifiedDomainObject
 {
-    protected $isEntityInstantiated = false;
+    protected bool $isEntityInstantiated = false;
 
     public function __construct(array $properties = [])
     {

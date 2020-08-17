@@ -16,16 +16,16 @@ class FullName extends ValueObject
     public const LAST_NAME_MAX_LENGTH = 50;
     public const MIDDLE_NAME_MAX_LENGTH = 50;
 
-    protected $firstName;
-    protected $lastName;
-    protected $middleName;
+    protected string $firstName = '';
+    protected string $lastName = '';
+    protected string $middleName = '';
 
     /**
      * Parses the full name from the given format.
      * The available formats: f, l, m, fl, lf, flm, fml, lfm, lmf, mfl, mlf, where
      * "f" - the first name, "l" - the last name and "m" - the middle name.
      *
-     * @param string $fullName
+     * @param string|null $fullName
      * @param string $format
      * @return static
      */

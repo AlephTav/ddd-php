@@ -10,19 +10,9 @@ use AlephTools\DDD\Common\Infrastructure\ValueObject;
  */
 class Phone extends ValueObject
 {
-    //region Constants
-
     public const NUMBER_MAX_LENGTH = 20;
 
-    //endregion
-
-    //region Properties
-
     protected $number;
-
-    //endregion
-
-    //region Constructors
 
     /**
      * Constructor. Available formats:
@@ -43,18 +33,10 @@ class Phone extends ValueObject
         }
     }
 
-    //endregion
-
-    //region Setters
-
     protected function setNumber(?string $number): void
     {
         $this->number = Sanitizer::sanitizePhone($number);
     }
-
-    //endregion
-
-    //region Property Validators
 
     protected function validateNumber(): void
     {
@@ -64,6 +46,4 @@ class Phone extends ValueObject
             'Phone number must be at most ' . static::NUMBER_MAX_LENGTH . ' characters.'
         );
     }
-
-    //endregion
 }

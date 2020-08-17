@@ -18,17 +18,16 @@ class DateHelperTestObject extends DateHelper
 
 class DateHelperTest extends TestCase
 {
-    public function testGetSetFormats(): void
+    public function testParseDateFormats(): void
     {
         $defaultFormats = DateHelper::getAvailableDateFormats();
-        DateHelper::setAvailableDateFormats(['a', 'b', 'c']);
-        $formats = DateHelper::getAvailableDateFormats();
-
         DateHelper::setAvailableDateFormats($defaultFormats);
-        $this->assertSame(['a', 'b', 'c'], $formats);
+
+        $this->assertSame($defaultFormats, DateHelper::getAvailableDateFormats());
     }
 
     /**
+     * @depends testParseDateFormats
      * @dataProvider dateDataProvider
      * @param $value
      * @param string|null $format

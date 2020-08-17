@@ -7,10 +7,7 @@ use AlephTools\DDD\Common\Model\Events\DomainEvent;
 
 class DefaultDomainEventSubscriber implements DomainEventSubscriber
 {
-    /**
-     * @var EventStore
-     */
-    private $eventStore;
+    private EventStore $eventStore;
 
     /**
      * Constructor.

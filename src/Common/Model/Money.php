@@ -17,7 +17,7 @@ class Money extends ValueObject
 
     protected const PRECISION = 12;
 
-    protected $amount;
+    protected string $amount = '0';
     protected ?Currency $currency = null;
 
     /**

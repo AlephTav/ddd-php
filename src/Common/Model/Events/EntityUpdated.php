@@ -10,8 +10,8 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  */
 class EntityUpdated extends EntityLifeCycleChanged
 {
-    private $oldProperties;
-    private $newProperties;
+    private array $oldProperties = [];
+    private array $newProperties = [];
 
     public function __construct(string $entity, ?AbstractId $id, array $oldProperties, array $newProperties)
     {

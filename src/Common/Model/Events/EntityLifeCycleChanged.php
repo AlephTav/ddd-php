@@ -10,8 +10,8 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  */
 class EntityLifeCycleChanged extends DomainEvent
 {
-    protected $id;
-    protected $entity;
+    protected ?AbstractId $id = null;
+    protected string $entity = '';
 
     public function __construct(string $entity, ?AbstractId $id)
     {

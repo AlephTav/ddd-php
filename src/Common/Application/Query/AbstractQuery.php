@@ -24,18 +24,12 @@ abstract class AbstractQuery extends WeakDto
 {
     use TypeConversionAware;
 
-    //region Constants
-
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_PAGE_MAX_SIZE = 1000;
 
-    //endregion
+    protected static int $pageMaxSize = self::DEFAULT_PAGE_MAX_SIZE;
 
-    //region Properties
-
-    protected static $pageMaxSize = self::DEFAULT_PAGE_MAX_SIZE;
-
-    protected $keyword;
+    protected ?string $keyword = null;
     protected $limit = self::DEFAULT_PAGE_SIZE;
     protected $offset;
     protected $page;
@@ -46,8 +40,6 @@ abstract class AbstractQuery extends WeakDto
     protected $language;
     protected $withoutCount = false;
     protected $withoutItems = false;
-
-    //endregion
 
     public static function getPageMaxSize(): int
     {

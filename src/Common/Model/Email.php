@@ -12,7 +12,7 @@ class Email extends ValueObject
 {
     public const ADDRESS_MAX_LENGTH = 255;
 
-    protected $address;
+    protected string $address = '';
 
     /**
      * Constructor. Available formats:

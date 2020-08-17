@@ -18,21 +18,21 @@ abstract class AbstractEnum implements JsonSerializable
      *
      * @var array
      */
-    private static $constants = [];
+    private static array $constants = [];
 
     /**
      * The enum instances.
      *
      * @var array
      */
-    private static $instances = [];
+    private static array $instances = [];
 
     /**
      * The name of an enum constant associated with the given enum instance.
      *
      * @var string
      */
-    protected $constant = '';
+    protected string $constant = '';
 
     /**
      * Returns the class's constants.

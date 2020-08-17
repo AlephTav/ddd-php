@@ -342,9 +342,9 @@ class Currency extends AbstractEnum
     private const ZMW = ['Zambian kwacha', '967', 2];
     private const ZWL = ['Zimbabwean dollar', '932', 2];
 
-    private $name;
-    private $numericCode;
-    private $subunits;
+    private string $name;
+    private string $numericCode;
+    private int $subunits;
 
     protected function __construct(string $name, string $numericCode, int $subunits)
     {

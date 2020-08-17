@@ -9,7 +9,7 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  */
 class EntityCreated extends EntityLifeCycleChanged
 {
-    private $properties;
+    private array $properties = [];
 
     public function __construct(string $entity, ?AbstractId $id, array $properties)
     {

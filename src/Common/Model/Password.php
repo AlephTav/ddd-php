@@ -11,14 +11,10 @@ use AlephTools\DDD\Common\Infrastructure\ValueObject;
  */
 class Password extends ValueObject
 {
-    //region Constants
-
     public const HASH_MAX_LENGTH = 255;
     public const PASSWORD_MIN_LENGTH = 1;
     public const PASSWORD_MAX_LENGTH = 255;
     public const RANDOM_PASSWORD_LENGTH = 32;
-
-    //endregion
 
     protected ?string $hash = null;
     protected ?string $password = null;
@@ -26,9 +22,9 @@ class Password extends ValueObject
     /**
      * The cached hash value.
      *
-     * @var string
+     * @var string|null
      */
-    private $computedHash;
+    private ?string $computedHash = null;
 
     /**
      * Generates the random password.

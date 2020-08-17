@@ -12,7 +12,7 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     /**
      * The object identifier.
      *
-     * @var AbstractId
+     * @var AbstractId|null
      */
     protected ?AbstractId $id = null;
 

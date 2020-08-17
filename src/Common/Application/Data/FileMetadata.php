@@ -23,18 +23,18 @@ use AlephTools\DDD\Common\Model\Assets\FileId;
  */
 class FileMetadata extends StrictDto
 {
-    private $id;
-    private $isPrivate;
-    private $createdAt;
-    private $contentType;
-    private $name;
-    private $baseName;
-    private $extension;
-    private $suggestedExtension;
-    private $path;
-    private $size;
-    private $url;
-    private $downloadLink;
+    private FileId $id;
+    private bool $isPrivate;
+    private DateTimeImmutable $createdAt;
+    private string $contentType;
+    private string $name;
+    private string $baseName;
+    private string $extension;
+    private string $suggestedExtension;
+    private string $path;
+    private int $size;
+    private string $url;
+    private string $downloadLink;
     private $ownerId;
 
     public function __construct(

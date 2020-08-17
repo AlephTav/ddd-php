@@ -17,9 +17,9 @@ abstract class DomainEvent extends ValueObject
     /**
      * The event creation date and time.
      *
-     * @var DateTimeImmutable
+     * @var DateTimeImmutable|null
      */
-    protected $occurredOn;
+    protected ?DateTimeImmutable $occurredOn = null;
 
     /**
      * Constructor.

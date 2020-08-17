@@ -15,7 +15,7 @@ class Language extends AbstractEnum
     private const UA = 'uk_UA';
     private const EN = 'en_US';
 
-    private $locale;
+    private string $locale;
 
     protected function __construct(string $locale)
     {

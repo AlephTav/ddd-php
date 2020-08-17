@@ -7,7 +7,7 @@ class IdentifiedValueObject extends IdentifiedDomainObject
     /**
      * The cached hash value.
      *
-     * @var string
+     * @var string|null
      */
     private ?string $computedHash = null;
 

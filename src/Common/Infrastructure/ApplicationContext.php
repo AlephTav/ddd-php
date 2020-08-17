@@ -25,7 +25,7 @@ final class ApplicationContext
     /**
      * Resolves the given type from the container.
      *
-     * @param string $abstract
+     * @param string|null $abstract
      * @param array $parameters
      * @return mixed
      */

@@ -8,8 +8,8 @@ namespace AlephTools\DDD\Common\Application\Data;
  */
 abstract class AbstractCollectionResponse extends AbstractDataResponse
 {
-    protected $items;
-    protected $count;
+    protected ?array $items = null;
+    protected ?int $count = null;
 
     public function __construct(?array $items = [], ?int $count = 0)
     {
@@ -38,8 +38,8 @@ abstract class AbstractCollectionResponse extends AbstractDataResponse
         return $this->toArray();
     }
 
-    public function toCollection(): array
+    protected function toCollection(): array
     {
-        return $this->items;
+        return $this->items ?? [];
     }
 }

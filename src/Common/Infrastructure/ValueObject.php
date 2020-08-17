@@ -10,7 +10,7 @@ abstract class ValueObject extends DomainObject
     /**
      * The cached hash value.
      *
-     * @var string
+     * @var string|null
      */
     private ?string $computedHash = null;
 

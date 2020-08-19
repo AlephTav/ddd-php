@@ -30,16 +30,16 @@ abstract class AbstractQuery extends WeakDto
     protected static int $pageMaxSize = self::DEFAULT_PAGE_MAX_SIZE;
 
     protected ?string $keyword = null;
-    protected $limit = self::DEFAULT_PAGE_SIZE;
-    protected $offset;
-    protected $page;
-    protected $sort;
-    protected $group;
-    protected $fields;
-    protected $timezone;
-    protected $language;
-    protected $withoutCount = false;
-    protected $withoutItems = false;
+    protected ?int $limit = self::DEFAULT_PAGE_SIZE;
+    protected ?int $offset = null;
+    protected ?int $page = null;
+    protected ?array $sort = null;
+    protected ?array $group = null;
+    protected ?array $fields = null;
+    protected ?int $timezone = null;
+    protected ?Language $language = null;
+    protected bool $withoutCount = false;
+    protected bool $withoutItems = false;
 
     public static function getPageMaxSize(): int
     {

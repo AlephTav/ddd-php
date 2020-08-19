@@ -33,8 +33,8 @@ class FileMetadata extends StrictDto
     private string $suggestedExtension;
     private string $path;
     private int $size;
-    private string $url;
-    private string $downloadLink;
+    private ?string $url;
+    private ?string $downloadLink;
     private $ownerId;
 
     public function __construct(

@@ -26,26 +26,9 @@ class SelectQuery extends AbstractQuery
 {
     use FromAware, JoinAware, WhereAware, OrderAware, LimitAware;
 
-    /**
-     * The SELECT expression instance.
-     *
-     * @var SelectExpression
-     */
-    private $select;
-
-    /**
-     * The GROUP BY expression instance.
-     *
-     * @var GroupExpression
-     */
-    private $group;
-
-    /**
-     * The HAVING expression instance.
-     *
-     * @var HavingExpression
-     */
-    private $having;
+    private ?SelectExpression $select;
+    private ?GroupExpression $group;
+    private ?HavingExpression $having;
 
     /**
      * The VALUES expression instance.
@@ -337,7 +320,7 @@ class SelectQuery extends AbstractQuery
     /**
      * @param int $size
      * @param int $page
-     * @return Generator|array[]
+     * @return Generator
      */
     public function pages(int $size = 1000, int $page = 0): Generator
     {
@@ -364,7 +347,7 @@ class SelectQuery extends AbstractQuery
     /**
      * @param int $size
      * @param int $page
-     * @return Generator|array[]
+     * @return Generator
      */
     public function batches(int $size = 1000, int $page = 0): Generator
     {

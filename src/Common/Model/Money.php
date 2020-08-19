@@ -88,10 +88,10 @@ class Money extends ValueObject
     public function equals($other): bool
     {
         if (is_scalar($other)) {
-            return $this->cmp($other) === 0;
+            return $this->cmp((string)$other) === 0;
         }
         if ($other instanceof Money) {
-            return $this->cmp($other->amount) === 0 && $this->currency->is($other->currency);
+            return $this->cmp($other->amount) === 0 && $this->currency->equals($other->currency);
         }
         return false;
     }

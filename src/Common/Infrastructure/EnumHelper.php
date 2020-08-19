@@ -30,7 +30,7 @@ class EnumHelper
         try {
             return $enum::$value();
         } catch (UnexpectedValueException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+            throw new InvalidArgumentException($e->getMessage(), (int)$e->getCode(), $e);
         }
     }
 }

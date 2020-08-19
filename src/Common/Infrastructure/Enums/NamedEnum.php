@@ -12,7 +12,7 @@ class NamedEnum extends AbstractEnum
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * Constructor.

@@ -71,14 +71,14 @@ trait AssertionConcern
 
     protected function assertArgumentNotEmpty(?string $value, string $msg): void
     {
-        if (mb_strlen($value) === 0) {
+        if (mb_strlen((string)$value) === 0) {
             throw new InvalidArgumentException($msg);
         }
     }
 
     protected function assertArgumentLength(?string $value, int $min, int $max, string $msg): void
     {
-        $length = mb_strlen($value);
+        $length = mb_strlen((string)$value);
         if ($length > $max || $length < $min) {
             throw new InvalidArgumentException($msg);
         }
@@ -86,14 +86,14 @@ trait AssertionConcern
 
     protected function assertArgumentMinLength(?string $value, int $min, string $msg): void
     {
-        if (mb_strlen($value) < $min) {
+        if (mb_strlen((string)$value) < $min) {
             throw new InvalidArgumentException($msg);
         }
     }
 
     protected function assertArgumentMaxLength(?string $value, int $max, string $msg): void
     {
-        if (mb_strlen($value) > $max) {
+        if (mb_strlen((string)$value) > $max) {
             throw new InvalidArgumentException($msg);
         }
     }

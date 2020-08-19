@@ -12,7 +12,7 @@ class Phone extends ValueObject
 {
     public const NUMBER_MAX_LENGTH = 20;
 
-    protected $number;
+    protected string $number = '';
 
     /**
      * Constructor. Available formats:

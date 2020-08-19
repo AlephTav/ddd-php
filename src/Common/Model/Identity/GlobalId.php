@@ -47,7 +47,7 @@ class GlobalId extends AbstractId
         }
 
         if (is_string($identity)) {
-            return preg_match('/' . self::UUID4_PATTERN . '/D', $identity);
+            return (bool)preg_match('/' . self::UUID4_PATTERN . '/D', $identity);
         }
 
         return false;

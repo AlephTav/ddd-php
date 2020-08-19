@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
 
+use AlephTools\DDD\Common\Model\Country;
 use BadMethodCallException;
 use UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
@@ -159,13 +160,13 @@ class EnumTest extends TestCase
         $this->assertSame(EnumTestObject::C3(), $c3);
         $this->assertEquals(EnumTestObject::C3(), $c3);
         $this->assertEquals('C3', $c3);
-        $this->assertTrue(EnumTestObject::C3()->is($c3));
-        $this->assertTrue(EnumTestObject::C3()->is('C3'));
+        $this->assertTrue(EnumTestObject::C3()->equals($c3));
+        $this->assertTrue(EnumTestObject::C3()->equals('C3'));
 
         $this->assertNotEquals('C1', $c3);
         $this->assertNotEquals(EnumTestObject::C2(), $c3);
-        $this->assertFalse($c3->is('C1'));
-        $this->assertFalse($c3->is(EnumTestObject::C2()));
+        $this->assertFalse($c3->equals('C1'));
+        $this->assertFalse($c3->equals(EnumTestObject::C2()));
     }
 
     public function testSerializeEnum(): void
@@ -181,13 +182,13 @@ class EnumTest extends TestCase
     public function testClearEnumCache(): void
     {
         $c1 = EnumTestObject::C1();
-        AbstractEnum::clear();
+        AbstractEnum::clearEnumCache();
 
         $this->assertNotSame(EnumTestObject::C1(), $c1);
         $this->assertEquals(EnumTestObject::C1(), $c1);
         $this->assertEquals('C1', $c1);
 
-        AbstractEnum::clear();
+        AbstractEnum::clearEnumCache();
         $c1 = unserialize(serialize($c1));
 
         $this->assertSame(EnumTestObject::C1(), $c1);

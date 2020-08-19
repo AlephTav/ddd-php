@@ -146,10 +146,10 @@ class DateHelper
             }
             return (new DateTime($date->format('c')))
                 ->setTime(
-                    $date->format('H'),
-                    $date->format('i'),
-                    $date->format('s'),
-                    $date->format('u')
+                    (int)$date->format('H'),
+                    (int)$date->format('i'),
+                    (int)$date->format('s'),
+                    (int)$date->format('u')
                 );
         }
         return self::parseInternal($date, DateTime::class);
@@ -163,12 +163,12 @@ class DateHelper
     /**
      * @param $date
      * @param string $class
-     * @return DateTime|DateTimeImmutable
+     * @return mixed
      */
     private static function parseInternal($date, string $class)
     {
         if (is_scalar($date)) {
-            $date = Sanitizer::sanitizeName($date);
+            $date = Sanitizer::sanitizeName((string)$date);
 
             foreach (static::getAvailableDateFormats() as $index => $format) {
                 /** @noinspection PhpUndefinedMethodInspection */
@@ -185,7 +185,7 @@ class DateHelper
     /**
      * @param DateTime|DateTimeImmutable $date
      * @param int $index
-     * @return DateTime|DateTimeImmutable
+     * @return mixed
      */
     private static function normalizeDate($date, int $index)
     {

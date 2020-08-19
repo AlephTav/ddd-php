@@ -20,7 +20,7 @@ class LocalId extends AbstractId
     public static function canBeId($identity): bool
     {
         if (is_string($identity) || is_numeric($identity)) {
-            return preg_match('/^[0-9]+$/', $identity);
+            return (bool)preg_match('/^[0-9]+$/', (string)$identity);
         }
 
         return false;

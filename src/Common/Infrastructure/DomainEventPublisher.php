@@ -7,17 +7,12 @@ use ReflectionClass;
 
 class DomainEventPublisher
 {
-    private $dispatcher;
-
-    private $subscribers = [];
-
-    private $events = [];
-
-    private $queued = true;
-
-    private $async = true;
-
-    private $isPublishing = false;
+    private EventDispatcher $dispatcher;
+    private array $subscribers = [];
+    private array $events = [];
+    private bool $queued = true;
+    private bool $async = true;
+    private bool $isPublishing = false;
 
     public function __construct(EventDispatcher $dispatcher)
     {

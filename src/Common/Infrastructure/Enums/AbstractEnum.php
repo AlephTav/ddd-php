@@ -63,7 +63,7 @@ abstract class AbstractEnum implements JsonSerializable
     /**
      * Clears the enum cache.
      */
-    final public static function clear(): void
+    final public static function clearEnumCache(): void
     {
         self::$instances = [];
     }
@@ -159,7 +159,7 @@ abstract class AbstractEnum implements JsonSerializable
      * @param mixed $enum
      * @return bool
      */
-    public function is($enum): bool
+    public function equals($enum): bool
     {
         if ($enum instanceof static) {
             return $this->constant === $enum->getConstantName();
@@ -237,5 +237,5 @@ abstract class AbstractEnum implements JsonSerializable
     /**
      * Forbids the implicit creation of enum instances without own constructors.
      */
-    private function __construct() {}
+    protected function __construct() {}
 }

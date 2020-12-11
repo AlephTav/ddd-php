@@ -21,6 +21,7 @@ class Language extends AbstractEnum
 
     protected function __construct(string $locale)
     {
+        parent::__construct();
         $this->locale = $locale;
     }
 

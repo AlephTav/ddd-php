@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Common\Model\Identity;
 
 use AlephTools\DDD\Common\Infrastructure\Hash;
+use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use ReflectionException;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
@@ -12,7 +13,7 @@ use AlephTools\DDD\Common\Infrastructure\ValueObject;
  *
  * @property-read mixed $identity
  */
-abstract class AbstractId extends ValueObject
+abstract class AbstractId extends ValueObject implements Scalarable
 {
     /**
      * The identity (unique identifier).
@@ -29,6 +30,11 @@ abstract class AbstractId extends ValueObject
     public function toString(): string
     {
         return (string)$this->identity;
+    }
+
+    public function toScalar()
+    {
+        return $this->identity;
     }
 
     /**

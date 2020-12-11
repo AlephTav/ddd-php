@@ -3,12 +3,13 @@
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Sanitizer;
+use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
  * @property-read string $address
  */
-class Email extends ValueObject
+class Email extends ValueObject implements Scalarable
 {
     public const ADDRESS_MAX_LENGTH = 255;
 
@@ -29,6 +30,16 @@ class Email extends ValueObject
         } else {
             parent::__construct(['address' => $address]);
         }
+    }
+
+    public function toString(): string
+    {
+        return $this->address;
+    }
+
+    public function toScalar()
+    {
+        return $this->address;
     }
 
     protected function setAddress(?string $address): void

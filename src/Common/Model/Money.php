@@ -3,13 +3,14 @@
 namespace AlephTools\DDD\Common\Model;
 
 use UnexpectedValueException;
+use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
  * @property-read string $amount
  * @property-read Currency $currency
  */
-class Money extends ValueObject
+class Money extends ValueObject implements Scalarable
 {
     public const SCALE_FUNC_ROUND = 'round';
     public const SCALE_FUNC_FLOOR = 'floor';
@@ -44,6 +45,11 @@ class Money extends ValueObject
     }
 
     public function toString(): string
+    {
+        return $this->amount;
+    }
+
+    public function toScalar()
     {
         return $this->amount;
     }

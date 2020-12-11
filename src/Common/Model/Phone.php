@@ -3,12 +3,13 @@
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Sanitizer;
+use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
  * @property-read string $number
  */
-class Phone extends ValueObject
+class Phone extends ValueObject implements Scalarable
 {
     public const NUMBER_MAX_LENGTH = 20;
 
@@ -31,6 +32,16 @@ class Phone extends ValueObject
                 'number' => $number
             ]);
         }
+    }
+
+    public function toString(): string
+    {
+        return $this->number;
+    }
+
+    public function toScalar()
+    {
+        return $this->number;
     }
 
     protected function setNumber(?string $number): void

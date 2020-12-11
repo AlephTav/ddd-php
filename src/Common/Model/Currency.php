@@ -348,6 +348,7 @@ class Currency extends AbstractEnum
 
     protected function __construct(string $name, string $numericCode, int $subunits)
     {
+        parent::__construct();
         $this->name = $name;
         $this->numericCode = $numericCode;
         $this->subunits = $subunits;

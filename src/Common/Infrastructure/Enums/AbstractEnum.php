@@ -2,6 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure\Enums;
 
+use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use JsonSerializable;
 use UnexpectedValueException;
 use BadMethodCallException;
@@ -11,7 +12,7 @@ use ReflectionClass;
 /**
  * Base class of all enum types.
  */
-abstract class AbstractEnum implements JsonSerializable
+abstract class AbstractEnum implements JsonSerializable, Scalarable
 {
     /**
      * The constants' cache.
@@ -185,7 +186,7 @@ abstract class AbstractEnum implements JsonSerializable
      */
     public function toString(): string
     {
-        return $this->__toString();
+        return $this->getConstantName();
     }
 
     /**
@@ -194,6 +195,16 @@ abstract class AbstractEnum implements JsonSerializable
      * @return string
      */
     public function __toString(): string
+    {
+        return $this->getConstantName();
+    }
+
+    /**
+     * Converts the enum instance to a scalar value.
+     *
+     * @return string
+     */
+    public function toScalar()
     {
         return $this->getConstantName();
     }

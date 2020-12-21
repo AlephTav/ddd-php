@@ -336,4 +336,12 @@ class MoneyTest extends TestCase
 
         (new Money('0.005'))->toScaledAmount('foo');
     }
+
+    public function testToScalar(): void
+    {
+        $money = new Money(34.56);
+
+        $this->assertSame('34.56', $money->toString());
+        $this->assertSame('34.56', $money->toScalar());
+    }
 }

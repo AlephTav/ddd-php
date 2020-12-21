@@ -45,7 +45,7 @@ class EmailTest extends TestCase
      * @param mixed $email
      * @param string $sanitizedEmail
      */
-    public function testEmailSanitization($email, $sanitizedEmail): void
+    public function testEmailSanitization($email, string $sanitizedEmail): void
     {
         $email = new Email($email);
 
@@ -62,5 +62,13 @@ class EmailTest extends TestCase
             ['abc@abc.com    ', 'abc@abc.com'],
             [' abc@abc.com ', 'abc@abc.com']
         ];
+    }
+
+    public function testToScalar(): void
+    {
+        $email = new Email('test@gmail.com');
+
+        $this->assertSame('test@gmail.com', $email->toString());
+        $this->assertSame('test@gmail.com', $email->toScalar());
     }
 }

@@ -23,6 +23,7 @@ class EnumTestObject extends AbstractEnum
 
     public function __construct($data)
     {
+        parent::__construct();
         $this->data = $data;
     }
 
@@ -194,5 +195,13 @@ class EnumTest extends TestCase
         $this->assertSame(EnumTestObject::C1(), $c1);
         $this->assertEquals(EnumTestObject::C1(), $c1);
         $this->assertEquals('C1', $c1);
+    }
+
+    public function testToScalar(): void
+    {
+        $c1 = EnumTestObject::C1();
+
+        $this->assertSame('C1', $c1->toString());
+        $this->assertSame('C1', $c1->toScalar());
     }
 }

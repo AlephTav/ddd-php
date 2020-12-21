@@ -60,6 +60,13 @@ abstract class Dto implements Serializable
     private static array $reflectors = [];
 
     /**
+     * The initialized properties.
+     *
+     * @var array|null
+     */
+    private ?array $initializedProperties = null;
+
+    /**
      * Returns the definitions of DTO's properties in format:
      * [
      *     'property_name' => property_attributes,
@@ -78,14 +85,18 @@ abstract class Dto implements Serializable
      *
      * @param array $properties
      * @param bool $strict  Determines whether to throw exception for non-existing properties (TRUE).
+     * @param bool $dynamic Determines whether to store information about initialized properties.
      */
-    public function __construct(array $properties = [], bool $strict = true)
+    public function __construct(array $properties = [], bool $strict = true, bool $dynamic = false)
     {
         $this->init();
         $this->assignPropertiesAndValidate(
             array_merge($this->getDefaultPropertyValues(), $properties),
             $strict
         );
+        if ($dynamic) {
+            $this->extractInitializedProperties($properties, $strict);
+        }
     }
 
     /**
@@ -96,6 +107,21 @@ abstract class Dto implements Serializable
     protected function getDefaultPropertyValues(): array
     {
         return [];
+    }
+
+    private function extractInitializedProperties(array $properties, bool $strict): void
+    {
+        if ($strict) {
+            $this->initializedProperties = array_keys($properties);
+        } else {
+            $allProperties = $this->properties();
+            $this->initializedProperties = [];
+            foreach ($properties as $property => $ignore) {
+                if (array_key_exists($property, $allProperties)) {
+                    $this->initializedProperties[] = $property;
+                }
+            }
+        }
     }
 
     /**
@@ -126,9 +152,27 @@ abstract class Dto implements Serializable
      */
     public function toArray(): array
     {
+        if ($this->initializedProperties === null) {
+            return $this->toPropertyArray();
+        }
+        return $this->toInitializedPropertyArray();
+    }
+
+    private function toPropertyArray(): array
+    {
         $result = [];
         foreach ($this->properties() as $property => $info) {
             $result[$property] = $this->extractPropertyValue($property, $info);
+        }
+        return $result;
+    }
+
+    private function toInitializedPropertyArray(): array
+    {
+        $result = [];
+        $properties = $this->properties();
+        foreach ($this->initializedProperties as $property) {
+            $result[$property] = $this->extractPropertyValue($property, $properties[$property]);
         }
         return $result;
     }
@@ -140,13 +184,36 @@ abstract class Dto implements Serializable
      */
     public function toNestedArray(): array
     {
+        if ($this->initializedProperties === null) {
+            return $this->toNestedPropertyArray();
+        }
+        return $this->toInitializedNestedPropertyArray();
+    }
+
+    private function toNestedPropertyArray(): array
+    {
         $result = [];
-        foreach ($this->properties() as $attribute => $info) {
-            $value = $this->extractPropertyValue($attribute, $info);
+        foreach ($this->properties() as $property => $info) {
+            $value = $this->extractPropertyValue($property, $info);
             if ($value instanceof self) {
-                $result[$attribute] = $value->toNestedArray();
+                $result[$property] = $value->toNestedArray();
             } else {
-                $result[$attribute] = $value;
+                $result[$property] = $value;
+            }
+        }
+        return $result;
+    }
+
+    private function toInitializedNestedPropertyArray(): array
+    {
+        $result = [];
+        $properties = $this->properties();
+        foreach ($this->initializedProperties as $property) {
+            $value = $this->extractPropertyValue($property, $properties[$property]);
+            if ($value instanceof self) {
+                $result[$property] = $value->toNestedArray();
+            } else {
+                $result[$property] = $value;
             }
         }
         return $result;

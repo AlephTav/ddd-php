@@ -92,4 +92,12 @@ class LocalIdTest extends TestCase
             ]
         ];
     }
+
+    public function testToScalar(): void
+    {
+        $id = new LocalId(123);
+
+        $this->assertSame('123', $id->toString());
+        $this->assertSame(123, $id->toScalar());
+    }
 }

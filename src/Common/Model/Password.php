@@ -50,11 +50,16 @@ class Password extends ValueObject
 
     protected function encodePassword(?string $password): string
     {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $hash = $this->hashPassword($password);
         if (!$hash) {
             throw new \RuntimeException('Failed to hash password.');
         }
         return $hash;
+    }
+
+    protected function hashPassword(?string $password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
     protected function validateHash(): void

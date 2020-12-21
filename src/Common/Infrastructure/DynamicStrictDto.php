@@ -2,6 +2,6 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-abstract class StrictDto extends Dto
+abstract class DynamicStrictDto extends DynamicDto
 {
 }

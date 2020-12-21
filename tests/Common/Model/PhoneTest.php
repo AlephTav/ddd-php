@@ -55,4 +55,12 @@ class PhoneTest extends TestCase
             [" 81\r\n2 3 4 5\n\t6789\v\r0 ", '81234567890']
         ];
     }
+
+    public function testToScalar(): void
+    {
+        $phone = new Phone('123456789');
+
+        $this->assertSame('123456789', $phone->toString());
+        $this->assertSame('123456789', $phone->toScalar());
+    }
 }

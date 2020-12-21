@@ -205,4 +205,16 @@ class PasswordTest extends TestCase
             ]
         ];
     }
+
+    public function testUnableToHashPassword(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        new class('password') extends Password {
+            protected function hashPassword(?string $password)
+            {
+                return false;
+            }
+        };
+    }
 }

@@ -90,4 +90,12 @@ class GlobalIdTest extends TestCase
             ]
         ];
     }
+
+    public function testToScalar(): void
+    {
+        $id = GlobalId::create();
+
+        $this->assertSame($id->identity, $id->toString());
+        $this->assertSame($id->identity, $id->toScalar());
+    }
 }

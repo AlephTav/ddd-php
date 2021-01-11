@@ -1,6 +1,6 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Support\Application;
+namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;

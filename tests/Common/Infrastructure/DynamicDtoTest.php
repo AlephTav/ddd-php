@@ -2,7 +2,6 @@
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\DynamicDto;
 use AlephTools\DDD\Common\Infrastructure\DynamicStrictDto;
 use AlephTools\DDD\Common\Infrastructure\DynamicWeakDto;
 use AlephTools\DDD\Common\Infrastructure\Exceptions\NonExistentPropertyException;

@@ -2,7 +2,7 @@
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-class IdentifiedValueObject extends IdentifiedDomainObject
+abstract class IdentifiedValueObject extends IdentifiedDomainObject
 {
     /**
      * The cached hash value.

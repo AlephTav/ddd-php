@@ -13,7 +13,12 @@ trait OrderAware
      */
     private $order;
 
-    public function orderBy($column, $order = null): self
+    /**
+     * @param mixed $column
+     * @param mixed $order
+     * @return static
+     */
+    public function orderBy($column, $order = null)
     {
         $this->order = $this->order ?? new OrderExpression();
         $this->order->append($column, $order);

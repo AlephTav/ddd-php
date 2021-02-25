@@ -65,13 +65,20 @@ class IdentifiedDomainObjectTest extends TestCase
 
     public function testHash(): void
     {
-        $id = new IdentifiedDomainObjectTestId(1);
-        $obj = new IdentifiedDomainObjectTestObject(['id' => $id, 'prop' => 'a']);
+        $id1 = new IdentifiedDomainObjectTestId(1);
+        $id2 = new IdentifiedDomainObjectTestId(2);
+        $obj1 = new IdentifiedDomainObjectTestObject(['id' => $id1, 'prop' => 'a']);
+        $obj2 = new IdentifiedDomainObjectTestObject(['id' => $id1, 'prop' => 'b']);
+        $obj3 = new IdentifiedDomainObjectTestObject(['id' => $id2, 'prop' => 'b']);
 
-        $this->assertSame($id->hash(), $obj->hash());
+        $this->assertSame($obj1->hash(), $obj2->hash());
+        $this->assertNotSame($obj1->hash(), $obj3->hash());
 
-        $obj = new IdentifiedDomainObjectTestObject(['prop' => 'a']);
+        $obj1 = new IdentifiedDomainObjectTestObject(['prop' => 'a']);
+        $obj2 = new IdentifiedDomainObjectTestObject(['prop' => 'a']);
+        $obj3 = new IdentifiedDomainObjectTestObject(['prop' => 'b']);
 
-        $this->assertSame(Hash::of(['id' => null, 'prop' => 'a']), $obj->hash());
+        $this->assertSame($obj1->hash(), $obj2->hash());
+        $this->assertNotSame($obj1->hash(), $obj3->hash());
     }
 }

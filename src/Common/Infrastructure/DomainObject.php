@@ -20,23 +20,7 @@ abstract class DomainObject extends StrictDto implements Hashable
         if ($other === null || !($other instanceof static)) {
             return false;
         }
-
-        $properties1 = $this->toArray();
-        $properties2 = $other->toArray();
-
-        foreach ($properties1 as $property => $value1) {
-            $value2 = $properties2[$property];
-            if ($value1 instanceof DomainObject) {
-                if (!$value1->equals($value2)) {
-                    return false;
-                }
-            }
-            if ($value1 != $value2) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->hash() === $other->hash();
     }
 
     /**
@@ -46,7 +30,10 @@ abstract class DomainObject extends StrictDto implements Hashable
      */
     public function hash(): string
     {
-        return Hash::of($this->toArray());
+        $hash = new \stdClass();
+        $hash->type = get_class($this);
+        $hash->properties = $this->toArray();
+        return Hash::of($hash);
     }
 
     /**
@@ -79,7 +66,6 @@ abstract class DomainObject extends StrictDto implements Hashable
      * By default it's the short class name.
      *
      * @return string
-     * @throws \ReflectionException
      */
     public function domainName(): string
     {

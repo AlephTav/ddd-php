@@ -13,7 +13,12 @@ trait FromAware
      */
     private $from;
 
-    public function from($table, $alias = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $alias
+     * @return static
+     */
+    public function from($table, $alias = null)
     {
         $this->from = $this->from ?? new FromExpression();
         $this->from->append($table, $alias);

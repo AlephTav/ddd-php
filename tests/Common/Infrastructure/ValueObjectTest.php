@@ -24,11 +24,9 @@ class ValueObjectTest extends TestCase
     public function testComputedHash(): void
     {
         $obj = new ValueTestObject(['prop' => 'foo']);
-
-        $hash = Hash::of(['prop' => 'foo']);
-        $this->assertEquals($hash, $obj->hash());
-
+        $hash = $obj->hash();
         $obj->setProp('boo');
+
         $this->assertEquals($hash, $obj->hash());
     }
 }

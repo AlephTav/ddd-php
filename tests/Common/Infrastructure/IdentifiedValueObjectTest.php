@@ -30,29 +30,24 @@ class IdentifiedValueObjectTest extends TestCase
 {
     public function testComputedHashWithoutId(): void
     {
-        $obj = new IdentifiedValueObjectTestObject(['prop' => 'foo']);
+        $obj1 = new IdentifiedValueObjectTestObject(['prop' => 'foo']);
+        $obj2 = new IdentifiedValueObjectTestObject(['prop' => 'foo']);
+        $obj3 = new IdentifiedValueObjectTestObject(['prop' => 'poo']);
 
-        $hash = Hash::of(['id' => null, 'prop' => 'foo']);
-        $this->assertEquals($hash, $obj->hash());
-
-        $obj->setProp('boo');
-        $this->assertEquals($hash, $obj->hash());
+        $this->assertEquals($obj1->hash(), $obj2->hash());
+        $this->assertNotEquals($obj1->hash(), $obj3->hash());
     }
 
     public function testComputedHashWithId(): void
     {
-        $id = new class(1) extends LocalId {};
+        $id1 = new LocalId(1);
+        $id2 = new LocalId(2);
 
-        $obj = new IdentifiedValueObjectTestObject(['id' => $id, 'prop' => 'foo']);
+        $obj1 = new IdentifiedValueObjectTestObject(['id' => $id1, 'prop' => 'foo']);
+        $obj2 = new IdentifiedValueObjectTestObject(['id' => $id1, 'prop' => 'poo']);
+        $obj3 = new IdentifiedValueObjectTestObject(['id' => $id2, 'prop' => 'foo']);
 
-        $hash = $id->hash();
-        $this->assertEquals($hash, $obj->hash());
-
-        $obj->setProp('boo');
-        $this->assertEquals($hash, $obj->hash());
-
-        $id = new class(2) extends LocalId {};
-        $obj->assignId($id);
-        $this->assertEquals($hash, $obj->hash());
+        $this->assertSame($obj1->hash(), $obj2->hash());
+        $this->assertNotSame($obj1->hash(), $obj3->hash());
     }
 }

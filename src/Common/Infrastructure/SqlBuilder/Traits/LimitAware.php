@@ -9,7 +9,11 @@ trait LimitAware
      */
     private $limit;
 
-    public function limit(?int $limit): self
+    /**
+     * @param int|null $limit
+     * @return static
+     */
+    public function limit(?int $limit)
     {
         $this->limit = $limit;
         $this->built = false;

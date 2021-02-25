@@ -67,9 +67,13 @@ class DomainObjectTest extends TestCase
             'prop3' => true,
             'prop4' => null
         ];
-        $obj = new DomainTestObject($attributes);
+        $obj1 = new DomainTestObject($attributes);
+        $obj2 = new DomainTestObject($attributes);
+        $attributes['prop3'] = false;
+        $obj3 = new DomainTestObject($attributes);
 
-        $this->assertEquals(Hash::of($attributes), $obj->hash());
+        $this->assertSame($obj1->hash(), $obj2->hash());
+        $this->assertNotSame($obj1->hash(), $obj3->hash());
     }
 
     public function testEquals(): void

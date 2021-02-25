@@ -13,17 +13,36 @@ trait WhereAware
      */
     private $where;
 
-    public function andWhere($column, $operator = null, $value = null): self
+    /**
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return static
+     */
+    public function andWhere($column, $operator = null, $value = null)
     {
         return $this->where($column, $operator, $value, 'AND');
     }
 
-    public function orWhere($column, $operator = null, $value = null): self
+    /**
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return static
+     */
+    public function orWhere($column, $operator = null, $value = null)
     {
         return $this->where($column, $operator, $value, 'OR');
     }
 
-    public function where($column, $operator = null, $value = null, string $connector = 'AND'): self
+    /**
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @param string $connector
+     * @return static
+     */
+    public function where($column, $operator = null, $value = null, string $connector = 'AND')
     {
         $this->where = $this->where ?? new WhereExpression();
         $this->where->with($column, $operator, $value, $connector);

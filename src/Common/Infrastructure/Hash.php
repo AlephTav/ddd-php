@@ -31,7 +31,21 @@ class Hash
         if (is_resource($item)) {
             return self::hashOfResource($item, $algorithm, $rawOutput);
         }
-        return self::hashOfScalar($item, $algorithm, $rawOutput);
+        return hash($algorithm, serialize($item), $rawOutput);
+    }
+
+    private static function hashOfArray(array $item, string $algorithm, bool $rawOutput): string
+    {
+        foreach ($item as &$value) {
+            if (is_object($value)) {
+                $value = self::hashOfObject($value, $algorithm, $rawOutput);
+            } elseif (is_array($value)) {
+                $value = self::hashOfArray($value, $algorithm, $rawOutput);
+            } elseif (is_resource($value)) {
+                $value = self::hashOfResource($value, $algorithm, $rawOutput);
+            }
+        }
+        return hash($algorithm, serialize($item), $rawOutput);
     }
 
     private static function hashOfObject(object $item, string $algorithm, bool $rawOutput): string
@@ -39,17 +53,8 @@ class Hash
         if ($item instanceof Hashable) {
             return $item->hash();
         }
-        if ($item instanceof AbstractEnum) {
-            return self::hashOfScalar($item->toString(), $algorithm, $rawOutput);
-        }
-        if ($item instanceof DateTimeInterface) {
-            return self::hashOfScalar($item->format('U.u'), $algorithm, $rawOutput);
-        }
-        if ($item instanceof Serializable) {
-            return self::hashOfArray([get_class($item), $item->toArray()], $algorithm, $rawOutput);
-        }
         if ($item instanceof Traversable) {
-            return self::hashOfArray(iterator_to_array($item), $algorithm, $rawOutput);
+            return self::of(iterator_to_array($item, true), $algorithm, $rawOutput);
         }
         if ($item instanceof Closure) {
             return self::of($item(), $algorithm, $rawOutput);
@@ -57,22 +62,11 @@ class Hash
         return hash($algorithm, serialize($item), $rawOutput);
     }
 
-    private static function hashOfArray(array $item, string $algorithm, bool $rawOutput): string
-    {
-        $hash = '';
-        foreach ($item as $k => $v) {
-            $hash .= 'k' . static::of($k, $algorithm, $rawOutput) . 'v' . static::of($v, $algorithm, $rawOutput);
-        }
-        return hash($algorithm, $hash, $rawOutput);
-    }
-
     private static function hashOfResource($item, string $algorithm, bool $rawOutput): string
     {
-        return hash($algorithm, get_resource_type($item) . (int)$item, $rawOutput);
-    }
-
-    private static function hashOfScalar($item, string $algorithm, bool $rawOutput): string
-    {
-        return hash($algorithm, $item, $rawOutput);
+        $hash = new \stdClass();
+        $hash->resource = get_resource_type($item);
+        $hash->value = (int)$item;
+        return hash($algorithm, serialize($hash), $rawOutput);
     }
 }

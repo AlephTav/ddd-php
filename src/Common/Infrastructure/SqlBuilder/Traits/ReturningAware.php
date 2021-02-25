@@ -13,7 +13,12 @@ trait ReturningAware
      */
     private $returning;
 
-    public function returning($column = null, $alias = null): self
+    /**
+     * @param mixed $column
+     * @param mixed $alias
+     * @return static
+     */
+    public function returning($column = null, $alias = null)
     {
         $this->returning = $this->returning ?? new ReturningExpression();
         if ($column !== null) {

@@ -13,67 +13,133 @@ trait JoinAware
      */
     private $join;
 
-    public function join($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function join($table, $conditions = null)
     {
         return $this->typeJoin('JOIN', $table, $conditions);
     }
 
-    public function innerJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function innerJoin($table, $conditions = null)
     {
         return $this->typeJoin('INNER JOIN', $table, $conditions);
     }
 
-    public function crossJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function crossJoin($table, $conditions = null)
     {
         return $this->typeJoin('CROSS JOIN', $table, $conditions);
     }
 
-    public function leftJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function leftJoin($table, $conditions = null)
     {
         return $this->typeJoin('LEFT JOIN', $table, $conditions);
     }
 
-    public function rightJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function rightJoin($table, $conditions = null)
     {
         return $this->typeJoin('RIGHT JOIN', $table, $conditions);
     }
 
-    public function leftOuterJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function leftOuterJoin($table, $conditions = null)
     {
         return $this->typeJoin('LEFT OUTER JOIN', $table, $conditions);
     }
 
-    public function rightOuterJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function rightOuterJoin($table, $conditions = null)
     {
         return $this->typeJoin('RIGHT OUTER JOIN', $table, $conditions);
     }
 
-    public function naturalLeftJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function naturalLeftJoin($table, $conditions = null)
     {
         return $this->typeJoin('NATURAL LEFT JOIN', $table, $conditions);
     }
 
-    public function naturalRightJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function naturalRightJoin($table, $conditions = null)
     {
         return $this->typeJoin('NATURAL RIGHT JOIN', $table, $conditions);
     }
 
-    public function naturalLeftOuterJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function naturalLeftOuterJoin($table, $conditions = null)
     {
         return $this->typeJoin('NATURAL LEFT OUTER JOIN', $table, $conditions);
     }
 
-    public function naturalRightOuterJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function naturalRightOuterJoin($table, $conditions = null)
     {
         return $this->typeJoin('NATURAL RIGHT OUTER JOIN', $table, $conditions);
     }
 
-    public function straightJoin($table, $conditions = null): self
+    /**
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    public function straightJoin($table, $conditions = null)
     {
         return $this->typeJoin('STRAIGHT_JOIN', $table, $conditions);
     }
 
-    private function typeJoin(string $type, $table, $conditions = null): self
+    /**
+     * @param string $type
+     * @param mixed $table
+     * @param mixed $conditions
+     * @return static
+     */
+    private function typeJoin(string $type, $table, $conditions = null)
     {
         $this->join = $this->join ?? new JoinExpression();
         $this->join->append($type, $table, $conditions);

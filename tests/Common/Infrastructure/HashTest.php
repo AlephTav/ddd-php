@@ -49,48 +49,61 @@ class HashTest extends TestCase
     public function testHash($value, string $algorithm, bool $rawOutput, string $expectedHash): void
     {
         $this->assertSame(Hash::of($value, $algorithm, $rawOutput), $expectedHash);
-
-        $this->assertEquals(hash('md5', 'foo', true), Hash::of('foo', 'md5', true));
-        $this->assertEquals(hash('md5', 'foo', false), Hash::of('foo', 'md5', false));
     }
 
     public function hashData(): array
     {
+        $resourceHash = function($resource) {
+            $hash = new \stdClass();
+            $hash->resource = get_resource_type($resource);
+            $hash->value = (int)$resource;
+            return serialize($hash);
+        };
         return [
             // Scalars
             [
                 10,
                 'md5',
                 true,
-                hash('md5', 10, true)
+                hash('md5', serialize(10), true)
             ],
             [
                 5.76,
                 'sha256',
                 false,
-                hash('sha256', 5.76, false)
+                hash('sha256', serialize(5.76), false)
             ],
             [
                 true,
                 'sha1',
                 true,
-                hash('sha1', true, true)
+                hash('sha1', serialize(true), true)
             ],
             [
                 'foo',
                 'md5',
                 false,
-                hash('md5', 'foo', false)
+                hash('md5', serialize('foo'), false)
             ],
             // Arrays
             [
-                [0 => 'foo', '10' => 1.34, 1 => true],
+                $arr = [0 => 'foo', '10' => 1.34, 1 => true],
                 'md5',
                 false,
-                md5(
-                    'k' . md5(0) . 'v' . md5('foo') .
-                    'k' . md5('10') . 'v' . md5(1.34) .
-                    'k' . md5(1) . 'v' . md5(true)
+                md5(serialize($arr))
+            ],
+            [
+                $arr = [new \stdClass(), [true], $resource = STDIN],
+                'md5',
+                true,
+                hash(
+                    'md5',
+                    serialize([
+                        hash('md5', serialize(new \stdClass()), true),
+                        hash('md5', serialize([true]), true),
+                        hash('md5', $resourceHash(STDIN), true)
+                    ]),
+                    true
                 )
             ],
             // Objects
@@ -107,16 +120,16 @@ class HashTest extends TestCase
                 'some hash'
             ],
             [
-                Gender::FEMALE(),
+                $enum = Gender::FEMALE(),
                 'crc32',
                 false,
-                hash('crc32', Gender::FEMALE(), false)
+                hash('crc32', serialize($enum), false)
             ],
             [
                 $date = new \DateTime(),
                 'sha512',
                 true,
-                hash('sha512', $date->format('U.u'), true)
+                hash('sha512', serialize($date), true)
             ],
             [
                 $dto = new HashableDtoTestObject([
@@ -125,13 +138,7 @@ class HashTest extends TestCase
                 ]),
                 'md5',
                 false,
-                md5(
-                    'k' . md5(0) . 'v' . md5(get_class($dto)) .
-                    'k' . md5(1) . 'v' . md5(
-                        'k' . md5('prop1') . 'v' . md5(1) .
-                        'k' . md5('prop2') . 'v' . md5('abc')
-                    )
-                )
+                md5(serialize($dto))
             ],
             [
                 $iterator = function() {
@@ -143,11 +150,7 @@ class HashTest extends TestCase
                 },
                 'md5',
                 false,
-                md5(
-                    'k' . md5(0) . 'v' . md5(3) .
-                    'k' . md5(1) . 'v' . md5(2) .
-                    'k' . md5(2) . 'v' . md5(1)
-                )
+                md5(serialize([3, 2, 1]))
             ],
             [
                 $closure = function() {
@@ -155,14 +158,14 @@ class HashTest extends TestCase
                 },
                 'md5',
                 false,
-                md5('test')
+                md5(serialize('test'))
             ],
             // Resources
             [
-                $resource = STDIN,
+                STDIN,
                 'md5',
                 false,
-                md5(get_resource_type($resource) . (int)$resource)
+                md5($resourceHash(STDIN))
             ]
         ];
     }

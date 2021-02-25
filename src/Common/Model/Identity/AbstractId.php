@@ -38,16 +38,6 @@ abstract class AbstractId extends ValueObject implements Scalarable
     }
 
     /**
-     * Generates a hash value for the id.
-     *
-     * @return string
-     */
-    public function hash(): string
-    {
-        return Hash::of(get_class($this) . $this->toString());
-    }
-
-    /**
      * Parsing of raw value
      *
      * @param $identity

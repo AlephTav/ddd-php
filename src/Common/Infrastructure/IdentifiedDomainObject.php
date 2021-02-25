@@ -37,27 +37,18 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     }
 
     /**
-     * Compares two domain objects.
-     *
-     * @param mixed $other
-     * @return bool
-     */
-    public function equals($other): bool
-    {
-        if ($other === null || !($other instanceof static)) {
-            return false;
-        }
-
-        return $this->id || $other->id ? $this->id->equals($other->id) : parent::equals($other);
-    }
-
-    /**
      * Generates a hash value for this domain object.
      *
      * @return string
      */
     public function hash(): string
     {
-        return $this->id ? $this->id->hash() : parent::hash();
+        if (!$this->id) {
+            return parent::hash();
+        }
+        $hash = new \stdClass();
+        $hash->type = get_class($this);
+        $hash->properties = ['id' => $this->id];
+        return Hash::of($hash);
     }
 }

@@ -168,7 +168,7 @@ class DateHelper
     private static function parseInternal($date, string $class)
     {
         if (is_scalar($date)) {
-            $date = Sanitizer::sanitizeName((string)$date);
+            $date = preg_replace('/[[:cntrl:]]/', '', trim($date));
 
             foreach (static::getAvailableDateFormats() as $index => $format) {
                 /** @noinspection PhpUndefinedMethodInspection */

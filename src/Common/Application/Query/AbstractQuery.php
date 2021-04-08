@@ -3,7 +3,6 @@
 namespace AlephTools\DDD\Common\Application\Query;
 
 use AlephTools\DDD\Common\Application\TypeConversionAware;
-use AlephTools\DDD\Common\Infrastructure\EnumHelper;
 use AlephTools\DDD\Common\Infrastructure\WeakDto;
 use AlephTools\DDD\Common\Model\Language;
 
@@ -153,7 +152,7 @@ abstract class AbstractQuery extends WeakDto
 
     protected function setLanguage(?string $language): void
     {
-        $this->language = $language !== null ? EnumHelper::toEnum(Language::class, strtoupper($language)) : null;
+        $this->language = $language !== null ? Language::from(strtoupper($language)) : null;
     }
 
     protected function setWithoutCount($flag): void

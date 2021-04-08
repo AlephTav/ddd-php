@@ -3,6 +3,8 @@
 namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
 
 use AlephTools\DDD\Common\Model\Country;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use AlephTools\DDD\Common\Model\Gender;
 use BadMethodCallException;
 use UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
@@ -203,5 +205,51 @@ class EnumTest extends TestCase
 
         $this->assertSame('C1', $c1->toString());
         $this->assertSame('C1', $c1->toScalar());
+    }
+
+    public function testCastToEnumSuccess(): void
+    {
+        $female = Gender::from('FEMALE');
+
+        $this->assertSame(Gender::FEMALE(), $female);
+    }
+
+    public function testCastToEnumFailure(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Constant "Gender::FOO" does not exist. Valid values are FEMALE, MALE.');
+
+        Gender::from('FOO');
+    }
+
+    public function testNonScalarEnumConstant(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Constant of ' . Gender::class . ' must be a string, object given.');
+
+        Gender::from(new \stdClass);
+    }
+
+    public function testNullEnumConstant(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Constant of ' . Gender::class . ' must be a string, NULL given.');
+
+        Gender::from(null);
+    }
+
+    public function testEmptyEnumConstant(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Constant of ' . Gender::class . ' must not be empty string.');
+
+        Gender::from('');
+    }
+
+    public function testEnumInstanceAsEnumConstant(): void
+    {
+        $enum = Gender::from(Gender::FEMALE());
+
+        $this->assertSame(Gender::FEMALE(), $enum);
     }
 }

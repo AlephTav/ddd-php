@@ -46,7 +46,15 @@ class Phone extends ValueObject implements Scalarable
 
     protected function setNumber(?string $number): void
     {
-        $this->number = Sanitizer::sanitizePhone($number);
+        if ($number === null) {
+            $number = '';
+        } else {
+            $number = preg_replace('/[^0-9]/', '', $number);
+            if (strlen($number) === 10) {
+                $number = '7' . $number;
+            }
+        }
+        $this->number = $number;
     }
 
     protected function validateNumber(): void

@@ -2,7 +2,6 @@
 
 namespace AlephTools\DDD\Common\Model;
 
-use AlephTools\DDD\Common\Infrastructure\Sanitizer;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
@@ -36,7 +35,7 @@ class FullName extends ValueObject
         }
 
         $n = 0;
-        $parts = explode(' ', Sanitizer::sanitizeName($fullName));
+        $parts = explode(' ', static::sanitizeName($fullName));
         $format = strtolower($format ?: 'fl');
         $length = strlen($format);
         $firstName = $lastName = $middleName = '';
@@ -107,17 +106,17 @@ class FullName extends ValueObject
 
     protected function setFirstName(?string $firstName): void
     {
-        $this->firstName = Sanitizer::sanitizeName($firstName);
+        $this->firstName = static::sanitizeName($firstName);
     }
 
     protected function setLastName(?string $lastName): void
     {
-        $this->lastName = Sanitizer::sanitizeName($lastName);
+        $this->lastName = static::sanitizeName($lastName);
     }
 
     protected function setMiddleName(?string $middleName): void
     {
-        $this->middleName = Sanitizer::sanitizeName($middleName);
+        $this->middleName = static::sanitizeName($middleName);
     }
 
     protected function validateFirstName(): void
@@ -148,4 +147,9 @@ class FullName extends ValueObject
     }
 
     //endregion
+
+    protected static function sanitizeName(?string $name): string
+    {
+        return $name === null ? '' : preg_replace('/[[:cntrl:]]/', '', trim($name));
+    }
 }

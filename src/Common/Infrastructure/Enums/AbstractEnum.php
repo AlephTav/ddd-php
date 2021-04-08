@@ -3,6 +3,7 @@
 namespace AlephTools\DDD\Common\Infrastructure\Enums;
 
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use JsonSerializable;
 use UnexpectedValueException;
 use BadMethodCallException;
@@ -125,6 +126,35 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     {
         static::validate($name);
         return self::getConstants()[$name];
+    }
+
+    /**
+     * Creates enum instance from the given constant name.
+     *
+     * @param static|string $constantName
+     * @return static
+     */
+    public static function from($constantName)
+    {
+        if (is_object($constantName) && ($constantName instanceof static)) {
+            return $constantName;
+        }
+        if (!is_string($constantName)) {
+            throw new InvalidArgumentException(
+                'Constant of ' . static::class . ' must be a string, ' . gettype($constantName) . ' given.'
+            );
+        }
+        if (strlen($constantName) === 0) {
+            throw new InvalidArgumentException(
+                'Constant of ' . static::class . ' must not be empty string.'
+            );
+        }
+
+        try {
+            return static::$constantName();
+        } catch (UnexpectedValueException $e) {
+            throw new InvalidArgumentException($e->getMessage(), (int)$e->getCode(), $e);
+        }
     }
 
     /**

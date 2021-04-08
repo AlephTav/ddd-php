@@ -44,7 +44,7 @@ class Email extends ValueObject implements Scalarable
 
     protected function setAddress(?string $address): void
     {
-        $this->address = Sanitizer::sanitizeEmail($address);
+        $this->address = trim($address);
     }
 
     protected function validateAddress(): void

@@ -12,4 +12,14 @@ class Gender extends NamedEnum
 {
     private const FEMALE = 'Female';
     private const MALE = 'Male';
+
+    public function isFemale(): bool
+    {
+        return $this->constant === 'FEMALE';
+    }
+
+    public function isMale(): bool
+    {
+        return $this->constant === 'MALE';
+    }
 }

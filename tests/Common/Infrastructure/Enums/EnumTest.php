@@ -252,4 +252,11 @@ class EnumTest extends TestCase
 
         $this->assertSame(Gender::FEMALE(), $enum);
     }
+
+    public function testNullableEnumConstant(): void
+    {
+        $enum = Gender::fromNullable(null);
+
+        $this->assertNull($enum);
+    }
 }

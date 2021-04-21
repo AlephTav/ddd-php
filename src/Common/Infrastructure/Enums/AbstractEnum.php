@@ -131,6 +131,20 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Creates enum instance from the given constant name.
      *
+     * @param static|string|null $constantName
+     * @return static|null Returns null if the given constant is null.
+     */
+    public static function fromNullable($constantName)
+    {
+        if ($constantName === null) {
+            return null;
+        }
+        return static::from($constantName);
+    }
+
+    /**
+     * Creates enum instance from the given constant name.
+     *
      * @param static|string $constantName
      * @return static
      */

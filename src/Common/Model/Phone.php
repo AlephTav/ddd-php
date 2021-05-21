@@ -50,8 +50,12 @@ class Phone extends ValueObject implements Scalarable
             $number = '';
         } else {
             $number = preg_replace('/[^0-9]/', '', $number);
-            if (strlen($number) === 10) {
+            // Adjust phone number for RU zone by default.
+            $length = strlen($number);
+            if ($length === 10) {
                 $number = '7' . $number;
+            } else if ($length === 11 && $number[0] === '8') {
+                $number = '7' . substr($number, 1);
             }
         }
         $this->number = $number;

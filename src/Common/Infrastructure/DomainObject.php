@@ -30,10 +30,7 @@ abstract class DomainObject extends StrictDto implements Hashable
      */
     public function hash(): string
     {
-        $hash = new \stdClass();
-        $hash->type = get_class($this);
-        $hash->properties = $this->toArray();
-        return Hash::of($hash);
+        return Hash::of(get_class($this) . Hash::of($this->toArray()));
     }
 
     /**

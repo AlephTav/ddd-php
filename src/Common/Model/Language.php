@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
@@ -31,7 +33,7 @@ class Language extends AbstractEnum
         $this->locale = $locale;
     }
 
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }

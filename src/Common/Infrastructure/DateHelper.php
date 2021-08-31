@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use DateTime;
 use DateTimeImmutable;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use DateTimeInterface;
 
 class DateHelper
 {
+    /**
+     * @var list<string>
+     */
     private static array $dateFormats = [
         'Y-m-d\TH:i:sP',
         'Y-m-d H:i:s',
@@ -20,9 +26,12 @@ class DateHelper
         'm/d/Y',
         'm/d/y',
         'H:i:s',
-        'Y'
+        'Y',
     ];
 
+    /**
+     * @var array<array<string,list<mixed>>>
+     */
     private static array $dateComponents = [
         ['tm' => ['H', 'i', 's', 0]],
         ['tm' => ['H', 'i', 's', 0]],
@@ -38,17 +47,27 @@ class DateHelper
         ['dt' => ['Y', 1, 1], 'tm' => [0, 0, 0, 0]],
     ];
 
+    /**
+     * @return list<string>
+     */
     public static function getAvailableDateFormats(): array
     {
         return self::$dateFormats;
     }
 
+    /**
+     * @param list<string> $formats
+     */
     public static function setAvailableDateFormats(array $formats): void
     {
         self::$dateFormats = $formats;
         self::$dateComponents = self::parseFormatList($formats);
     }
 
+    /**
+     * @param string[] $formats
+     * @return array<array<string,list<mixed>>>
+     */
     private static function parseFormatList(array $formats): array
     {
         $dateComponents = [];
@@ -58,11 +77,14 @@ class DateHelper
         return $dateComponents;
     }
 
+    /**
+     * @return array<string,list<mixed>>
+     */
     private static function parseFormat(string $format): array
     {
         $components = [
             'dt' => [1970, 1, 1],
-            'tm' => [0, 0, 0, 0]
+            'tm' => [0, 0, 0, 0],
         ];
         $dateComponent = 0;
         $timeComponent = 0;
@@ -124,6 +146,9 @@ class DateHelper
         return $components;
     }
 
+    /**
+     * @param mixed $date
+     */
     public static function parseImmutable($date): ?DateTimeImmutable
     {
         if ($date === null || $date instanceof DateTimeImmutable) {
@@ -135,6 +160,9 @@ class DateHelper
         return self::parseInternal($date, DateTimeImmutable::class);
     }
 
+    /**
+     * @param mixed $date
+     */
     public static function parse($date): ?DateTime
     {
         if ($date === null || $date instanceof DateTime) {
@@ -161,17 +189,18 @@ class DateHelper
     }
 
     /**
-     * @param $date
-     * @param string $class
-     * @return mixed
+     * @template T as class-string<DateTime>|class-string<DateTimeImmutable>
+     * @param mixed $date
+     * @param T $class
+     * @psalm-return (T is class-string<DateTime> ? DateTime : DateTimeImmutable)
      */
     private static function parseInternal($date, string $class)
     {
         if (is_scalar($date)) {
-            $date = preg_replace('/[[:cntrl:]]/', '', trim($date));
+            $date = preg_replace('/[[:cntrl:]]/', '', trim((string)$date));
 
             foreach (static::getAvailableDateFormats() as $index => $format) {
-                /** @noinspection PhpUndefinedMethodInspection */
+                /** @var DateTime|DateTimeImmutable|false $d */
                 $d = $class::createFromFormat($format, $date);
                 if ($d !== false) {
                     return self::normalizeDate($d, $index);
@@ -183,9 +212,9 @@ class DateHelper
     }
 
     /**
-     * @param DateTime|DateTimeImmutable $date
-     * @param int $index
-     * @return mixed
+     * @template T as DateTime|DateTimeImmutable
+     * @param T $date
+     * @return T
      */
     private static function normalizeDate($date, int $index)
     {
@@ -211,14 +240,18 @@ class DateHelper
         return $date;
     }
 
-    private static function formDateTimeComponent($date, array $components): array
+    /**
+     * @param list<mixed> $components
+     * @return list<int>
+     */
+    private static function formDateTimeComponent(DateTimeInterface $date, array $components): array
     {
         $dt = [];
         foreach ($components as $component) {
             if ($component === 0) {
                 $dt[] = 0;
             } else {
-                $dt[] = $date->format($component);
+                $dt[] = (int)$date->format((string)$component);
             }
         }
         return $dt;

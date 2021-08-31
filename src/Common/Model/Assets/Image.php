@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Assets;
 
-class Image extends File {}
+class Image extends File
+{
+}

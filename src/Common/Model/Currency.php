@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
@@ -367,7 +369,6 @@ class Currency extends AbstractEnum
     /**
      * Returns number of digits after the decimal separator.
      *
-     * @return int
      */
     public function getSubunits(): int
     {

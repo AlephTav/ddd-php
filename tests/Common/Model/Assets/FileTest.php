@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model\Assets;
 
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
@@ -10,20 +12,23 @@ use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 class FileTest extends TestCase
 {
     public function testCreationFromScalar(): void
     {
         $file = new File($id = FileId::create());
 
-        $this->assertSame($id, $file->id);
+        self::assertSame($id, $file->id);
     }
 
     public function testCreationFromArray(): void
     {
         $file = new File(['id' => $id = FileId::create()]);
 
-        $this->assertSame($id, $file->id);
+        self::assertSame($id, $file->id);
     }
 
     public function testValidation(): void
@@ -39,7 +44,7 @@ class FileTest extends TestCase
         $this->setUpFileStorageMock();
         $file = new File($id = FileId::create());
 
-        $this->assertSame($id->toString(), $file->toUrl());
+        self::assertSame($id->toString(), $file->toUrl());
     }
 
     public function testToDownloadLink(): void
@@ -47,10 +52,10 @@ class FileTest extends TestCase
         $this->setUpFileStorageMock();
         $file = new File($id = FileId::create());
 
-        $this->assertSame($id->toString() . '17', $file->toDownloadLink(17));
+        self::assertSame($id->toString() . '17', $file->toDownloadLink(17));
     }
 
-    private function setUpFileStorageMock()
+    private function setUpFileStorageMock(): void
     {
         /** @var MockBuilder $builder */
         $builder = $this->getMockBuilder(FileStorage::class);
@@ -63,21 +68,15 @@ class FileTest extends TestCase
             'upload',
             'download',
             'downloadByLink',
-            'delete'
+            'delete',
         ])->getMock();
 
         $storage->method('getUrl')
-            ->willReturnCallback(function($id) {
-                return (string)$id;
-            });
+            ->willReturnCallback(fn ($id) => (string)$id);
 
         $storage->method('getDownloadLink')
-            ->willReturnCallback(function($id, int $expirationInSeconds) {
-                return (string)$id . (string)$expirationInSeconds;
-            });
+            ->willReturnCallback(fn ($id, int $expirationInSeconds) => (string)$id . (string)$expirationInSeconds);
 
-        ApplicationContext::set(function() use($storage) {
-            return $storage;
-        });
+        ApplicationContext::set(fn () => $storage);
     }
 }

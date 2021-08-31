@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Infrastructure\Entity;
 use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\Entity;
 
 /**
  * @property mixed $prop1
@@ -19,7 +21,7 @@ class EntityTestObject extends Entity
     {
         parent::__construct([
             'prop1' => $prop1,
-            'prop2' => $prop2
+            'prop2' => $prop2,
         ]);
     }
 
@@ -33,12 +35,15 @@ class EntityTestObject extends Entity
         return $this->isEntityInstantiated;
     }
 
-    public function publish(DomainEvent $event)
+    public function publish(DomainEvent $event): void
     {
         $this->publishEvent($event);
     }
 }
 
+/**
+ * @internal
+ */
 class EntityTest extends TestCase
 {
     use DomainEventPublisherAware;
@@ -47,28 +52,28 @@ class EntityTest extends TestCase
     {
         $entity = new EntityTestObject();
 
-        $this->assertTrue($entity->isEntityInstantiated());
+        self::assertTrue($entity->isEntityInstantiated());
     }
 
     public function testPublishEventAfterInstantiation(): void
     {
-        $event = new class extends DomainEvent {};
+        $event = new class() extends DomainEvent {};
 
         $entity = new EntityTestObject();
         $entity->publish($event);
 
-        $this->assertSame([$event], $this->publisher->getEvents());
+        self::assertSame([$event], $this->publisher->getEvents());
     }
 
     public function testPublishEventBeforeInstantiation(): void
     {
-        $event = new class extends DomainEvent {};
+        $event = new class() extends DomainEvent {};
 
         $entity = new EntityTestObject();
         $entity->setIsEntityInstantiated(false);
         $entity->publish($event);
 
-        $this->assertSame([], $this->publisher->getEvents());
+        self::assertSame([], $this->publisher->getEvents());
     }
 
     public function testCopyEntity(): void
@@ -76,8 +81,8 @@ class EntityTest extends TestCase
         $entity = new EntityTestObject('abc', 123);
         $copy = $entity->copyWith(['prop2' => '@@@']);
 
-        $this->assertSame($entity->prop1, $copy->prop1);
-        $this->assertSame('@@@', $copy->prop2);
-        $this->assertTrue($copy->isEntityInstantiated());
+        self::assertSame($entity->prop1, $copy->prop1);
+        self::assertSame('@@@', $copy->prop2);
+        self::assertTrue($copy->isEntityInstantiated());
     }
 }

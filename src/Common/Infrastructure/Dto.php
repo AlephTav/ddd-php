@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use TypeError;
+use AlephTools\DDD\Common\Infrastructure\Exceptions\NonExistentPropertyException;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use ReflectionClass;
 use RuntimeException;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
-use AlephTools\DDD\Common\Infrastructure\Exceptions\NonExistentPropertyException;
+use TypeError;
 
 /**
  * The base class for data transfer objects.
@@ -48,7 +50,7 @@ abstract class Dto implements Serializable
     /**
      * The property definitions.
      *
-     * @var array
+     * @psalm-var array<class-string<static>,array<string,array{int,string|null,string|null,string|null}>>
      */
     private static array $properties = [];
 
@@ -62,7 +64,7 @@ abstract class Dto implements Serializable
     /**
      * The initialized properties.
      *
-     * @var array|null
+     * @var string[]|null
      */
     private ?array $initializedProperties = null;
 
@@ -73,7 +75,7 @@ abstract class Dto implements Serializable
      *     ...
      * ]
      *
-     * @return array|null
+     * @psalm-return array<string,int>
      */
     protected static function getPropertyDefinitions(): ?array
     {
@@ -83,7 +85,7 @@ abstract class Dto implements Serializable
     /**
      * Constructor.
      *
-     * @param array $properties
+     * @param array<string,mixed> $properties
      * @param bool $strict  Determines whether to throw exception for non-existing properties (TRUE).
      * @param bool $dynamic Determines whether to store information about initialized properties.
      */
@@ -102,13 +104,16 @@ abstract class Dto implements Serializable
     /**
      * Sets default values for DTO for complex non-nullable properties
      *
-     * @return array
+     * @return array<string,mixed>
      */
     protected function getDefaultPropertyValues(): array
     {
         return [];
     }
 
+    /**
+     * @param array<string,mixed> $properties
+     */
     private function extractInitializedProperties(array $properties, bool $strict): void
     {
         if ($strict) {
@@ -116,7 +121,7 @@ abstract class Dto implements Serializable
         } else {
             $allProperties = $this->properties();
             $this->initializedProperties = [];
-            foreach ($properties as $property => $ignore) {
+            foreach ($properties as $property => $_) {
                 if (array_key_exists($property, $allProperties)) {
                     $this->initializedProperties[] = $property;
                 }
@@ -128,9 +133,8 @@ abstract class Dto implements Serializable
      * We need restore the reflection object after serialization
      * to eliminate this bug https://bugs.php.net/bug.php?id=30324
      *
-     * @return void
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->init();
     }
@@ -148,7 +152,7 @@ abstract class Dto implements Serializable
     /**
      * Converts this object to an associative array.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {
@@ -158,6 +162,9 @@ abstract class Dto implements Serializable
         return $this->toInitializedPropertyArray();
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     private function toPropertyArray(): array
     {
         $result = [];
@@ -167,11 +174,16 @@ abstract class Dto implements Serializable
         return $result;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     private function toInitializedPropertyArray(): array
     {
         $result = [];
         $properties = $this->properties();
-        foreach ($this->initializedProperties as $property) {
+        /** @var string[] $initializedProperties */
+        $initializedProperties = $this->initializedProperties;
+        foreach ($initializedProperties as $property) {
             $result[$property] = $this->extractPropertyValue($property, $properties[$property]);
         }
         return $result;
@@ -180,7 +192,7 @@ abstract class Dto implements Serializable
     /**
      * Converts this object to a nested associative array.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function toNestedArray(): array
     {
@@ -190,6 +202,9 @@ abstract class Dto implements Serializable
         return $this->toInitializedNestedPropertyArray();
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     private function toNestedPropertyArray(): array
     {
         $result = [];
@@ -204,11 +219,16 @@ abstract class Dto implements Serializable
         return $result;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     private function toInitializedNestedPropertyArray(): array
     {
         $result = [];
         $properties = $this->properties();
-        foreach ($this->initializedProperties as $property) {
+        /** @var string[] $initializedProperties */
+        $initializedProperties = $this->initializedProperties;
+        foreach ($initializedProperties as $property) {
             $value = $this->extractPropertyValue($property, $properties[$property]);
             if ($value instanceof self) {
                 $result[$property] = $value->toNestedArray();
@@ -219,6 +239,10 @@ abstract class Dto implements Serializable
         return $result;
     }
 
+    /**
+     * @param array{int,string|null,string|null,string|null} $info
+     * @return mixed
+     */
     private function extractPropertyValue(string $property, array $info)
     {
         $getter = $info[self::PROP_OFFSET_GETTER];
@@ -231,7 +255,6 @@ abstract class Dto implements Serializable
     /**
      * Converts this object to JSON.
      *
-     * @return string
      */
     public function toJson(): string
     {
@@ -241,7 +264,6 @@ abstract class Dto implements Serializable
     /**
      * Returns data which should be serialized to JSON.
      *
-     * @return array
      */
     public function jsonSerialize(): array
     {
@@ -251,7 +273,6 @@ abstract class Dto implements Serializable
     /**
      * Converts this object to a string.
      *
-     * @return string
      */
     public function toString(): string
     {
@@ -261,7 +282,6 @@ abstract class Dto implements Serializable
     /**
      * Converts this object to a string.
      *
-     * @return string
      */
     public function __toString(): string
     {
@@ -271,7 +291,6 @@ abstract class Dto implements Serializable
     /**
      * Returns the property value.
      *
-     * @param string $property
      * @return mixed
      */
     public function __get(string $property)
@@ -300,9 +319,7 @@ abstract class Dto implements Serializable
     /**
      * Sets the property value.
      *
-     * @param string $property
      * @param mixed $value
-     * @return void
      */
     public function __set(string $property, $value): void
     {
@@ -316,10 +333,10 @@ abstract class Dto implements Serializable
         $setter = $info[self::PROP_OFFSET_SETTER];
         if ($setter === null) {
             $this->assignValueToProperty($property, $value);
-        } else if ($reflector = $this->reflector()) {
+        } elseif ($reflector = $this->reflector()) {
             $method = $reflector->getMethod($setter);
             if ($method->isPublic() || $method->isProtected() && $this->isCalledFromSameClass()) {
-                $this->invokeWithTypeErrorProcessing(function() use($setter, $value) {
+                $this->invokeWithTypeErrorProcessing(function () use ($setter, $value): void {
                     $this->{$setter}($value);
                 });
             } else {
@@ -333,7 +350,6 @@ abstract class Dto implements Serializable
     /**
      * Returns true if the caller of this method is called from this class.
      *
-     * @return bool
      */
     private function isCalledFromSameClass(): bool
     {
@@ -344,8 +360,6 @@ abstract class Dto implements Serializable
     /**
      * Returns TRUE if the given property is not NULL.
      *
-     * @param string $property
-     * @return bool
      */
     public function __isset(string $property): bool
     {
@@ -355,8 +369,6 @@ abstract class Dto implements Serializable
     /**
      * Sets the given property value to NULL.
      *
-     * @param string $property
-     * @return void
      */
     public function __unset(string $property): void
     {
@@ -364,9 +376,9 @@ abstract class Dto implements Serializable
     }
 
     /**
-     * Returns the properties information.
+     * Returns the properties' information.
      *
-     * @return array
+     * @psalm-return array<string,array{int,string|null,string|null,string|null}>
      */
     private function properties(): array
     {
@@ -376,9 +388,8 @@ abstract class Dto implements Serializable
     /**
      * Assigns values to properties.
      *
-     * @param array $properties
+     * @param array<string,mixed> $properties
      * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
-     * @return void
      */
     protected function assignProperties(array $properties, bool $strict = true): void
     {
@@ -390,16 +401,14 @@ abstract class Dto implements Serializable
     /**
      * Assigns value to a property.
      *
-     * @param string $property
      * @param mixed $value
      * @param bool $strict Determines whether to throw exception for non-existing property (TRUE).
-     * @return void
      */
     protected function assignProperty(string $property, $value, bool $strict = true): void
     {
         if ($strict) {
             $this->checkPropertyExistence($property);
-        } else if (!isset($this->properties()[$property])) {
+        } elseif (!isset($this->properties()[$property])) {
             return;
         }
 
@@ -414,9 +423,8 @@ abstract class Dto implements Serializable
     /**
      * Sets properties and validates their values.
      *
-     * @param array $properties
+     * @param array<string,mixed> $properties
      * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
-     * @return void
      */
     protected function assignPropertiesAndValidate(array $properties, bool $strict = true): void
     {
@@ -427,11 +435,10 @@ abstract class Dto implements Serializable
     /**
      * Validates attribute values.
      *
-     * @return void
      */
     protected function validate(): void
     {
-        foreach ($this->properties() as $attribute => $info) {
+        foreach ($this->properties() as $info) {
             if (null !== $validator = $info[self::PROP_OFFSET_VALIDATOR]) {
                 $this->invokeValidator($validator);
             }
@@ -445,6 +452,9 @@ abstract class Dto implements Serializable
         }
     }
 
+    /**
+     * @return mixed
+     */
     private function propertyValue(string $property)
     {
         if ($reflector = $this->reflector()) {
@@ -455,21 +465,27 @@ abstract class Dto implements Serializable
         return $this->{$property};
     }
 
-    private function assignValueToProperty(string $property, $value)
+    /**
+     * @param mixed $value
+     */
+    private function assignValueToProperty(string $property, $value): void
     {
         if ($reflector = $this->reflector()) {
             $property = $reflector->getProperty($property);
             $property->setAccessible(true);
-            $this->invokeWithTypeErrorProcessing(function () use ($property, $value) {
+            $this->invokeWithTypeErrorProcessing(function () use ($property, $value): void {
                 $property->setValue($this, $value);
             });
         } else {
-            $this->invokeWithTypeErrorProcessing(function () use ($property, $value) {
+            $this->invokeWithTypeErrorProcessing(function () use ($property, $value): void {
                 $this->{$property} = $value;
             });
         }
     }
 
+    /**
+     * @return mixed
+     */
     private function invokeGetter(string $getter)
     {
         if ($reflector = $this->reflector()) {
@@ -480,16 +496,19 @@ abstract class Dto implements Serializable
         return $this->{$getter}();
     }
 
+    /**
+     * @param mixed $value
+     */
     private function invokeSetter(string $setter, $value): void
     {
         if ($reflector = $this->reflector()) {
             $method = $reflector->getMethod($setter);
             $method->setAccessible(true);
-            $this->invokeWithTypeErrorProcessing(function () use ($method, $value) {
+            $this->invokeWithTypeErrorProcessing(function () use ($method, $value): void {
                 $method->invoke($this, $value);
             });
         } else {
-            $this->invokeWithTypeErrorProcessing(function () use ($setter, $value) {
+            $this->invokeWithTypeErrorProcessing(function () use ($setter, $value): void {
                 $this->{$setter}($value);
             });
         }
@@ -506,7 +525,7 @@ abstract class Dto implements Serializable
         }
     }
 
-    private function invokeWithTypeErrorProcessing(callable $callback)
+    private function invokeWithTypeErrorProcessing(callable $callback): void
     {
         try {
             $callback();
@@ -530,7 +549,6 @@ abstract class Dto implements Serializable
     /**
      * Determines properties of a DTO object.
      *
-     * @return void
      */
     private static function extractProperties(): void
     {
@@ -545,6 +563,9 @@ abstract class Dto implements Serializable
         }
     }
 
+    /**
+     * @param array<string,int> $definitions
+     */
     private static function extractPropertiesFromUserDefinition(array $definitions): void
     {
         $properties = [];
@@ -583,7 +604,7 @@ abstract class Dto implements Serializable
             foreach ($matches[1] as $i => $type) {
                 if ($type === '-read') {
                     $definition = self::PROP_READ;
-                } else if ($type === '-write') {
+                } elseif ($type === '-write') {
                     $definition = self::PROP_WRITE;
                 } else {
                     $definition = self::PROP_READ_WRITE;

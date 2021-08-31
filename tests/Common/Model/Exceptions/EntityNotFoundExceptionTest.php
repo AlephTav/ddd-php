@@ -1,13 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model\Exceptions;
 
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Model\Exceptions\EntityNotFoundException;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;
+use PHPUnit\Framework\TestCase;
 
-class SomeEntityId extends GlobalId {}
+class SomeEntityId extends GlobalId
+{
+}
 
+/**
+ * @internal
+ */
 class EntityNotFoundExceptionTest extends TestCase
 {
     public function testGenerateMessageFromId(): void
@@ -15,6 +22,6 @@ class EntityNotFoundExceptionTest extends TestCase
         $id = SomeEntityId::create();
         $e = new EntityNotFoundException($id);
 
-        $this->assertSame("Some entity [ID: $id] is not found.", $e->getMessage());
+        self::assertSame("Some entity [ID: $id] is not found.", $e->getMessage());
     }
 }

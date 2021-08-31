@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Events;
 
 use AlephTools\DDD\Common\Model\Identity\AbstractId;

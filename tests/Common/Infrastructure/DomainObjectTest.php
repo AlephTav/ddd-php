@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Infrastructure\DomainObject;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DomainObject;
-use AlephTools\DDD\Common\Infrastructure\Hash;
+use stdClass;
 
 /**
  * @property-read mixed $prop1
@@ -21,6 +23,9 @@ class DomainTestObject extends DomainObject
     private $prop4;
 }
 
+/**
+ * @internal
+ */
 class DomainObjectTest extends TestCase
 {
     public function testCopy(): void
@@ -29,15 +34,15 @@ class DomainObjectTest extends TestCase
             'prop1' => 5,
             'prop2' => 'foo',
             'prop3' => true,
-            'prop4' => null
+            'prop4' => null,
         ]))->copy();
 
-        $this->assertInstanceOf(DomainTestObject::class, $copy);
-        $this->assertEquals([
+        self::assertInstanceOf(DomainTestObject::class, $copy);
+        self::assertEquals([
             'prop1' => 5,
             'prop2' => 'foo',
             'prop3' => true,
-            'prop4' => null
+            'prop4' => null,
         ], $copy->toArray());
     }
 
@@ -47,15 +52,15 @@ class DomainObjectTest extends TestCase
             'prop1' => 5,
             'prop2' => 'foo',
             'prop3' => true,
-            'prop4' => null
+            'prop4' => null,
         ]))->copyWith(['prop3' => false, 'prop2' => 'boo']);
 
-        $this->assertInstanceOf(DomainTestObject::class, $copy);
-        $this->assertEquals([
+        self::assertInstanceOf(DomainTestObject::class, $copy);
+        self::assertEquals([
             'prop1' => 5,
             'prop2' => 'boo',
             'prop3' => false,
-            'prop4' => null
+            'prop4' => null,
         ], $copy->toArray());
     }
 
@@ -65,15 +70,15 @@ class DomainObjectTest extends TestCase
             'prop1' => 5,
             'prop2' => 'foo',
             'prop3' => true,
-            'prop4' => null
+            'prop4' => null,
         ];
         $obj1 = new DomainTestObject($attributes);
         $obj2 = new DomainTestObject($attributes);
         $attributes['prop3'] = false;
         $obj3 = new DomainTestObject($attributes);
 
-        $this->assertSame($obj1->hash(), $obj2->hash());
-        $this->assertNotSame($obj1->hash(), $obj3->hash());
+        self::assertSame($obj1->hash(), $obj2->hash());
+        self::assertNotSame($obj1->hash(), $obj3->hash());
     }
 
     public function testEquals(): void
@@ -87,43 +92,43 @@ class DomainObjectTest extends TestCase
             'prop1' => 5,
             'prop2' => $id,
             'prop3' => true,
-            'prop4' => $nestedObj1
+            'prop4' => $nestedObj1,
         ]);
 
         $obj2 = new DomainTestObject([
             'prop1' => 5,
             'prop2' => $id,
             'prop3' => true,
-            'prop4' => $nestedObj2
+            'prop4' => $nestedObj2,
         ]);
 
         $obj3 = new DomainTestObject([
             'prop1' => 5,
             'prop2' => $id,
             'prop3' => false,
-            'prop4' => $nestedObj1
+            'prop4' => $nestedObj1,
         ]);
 
         $obj4 = new DomainTestObject([
             'prop1' => 5,
             'prop2' => $id,
             'prop3' => true,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
 
-        $this->assertFalse($obj1->equals(null));
-        $this->assertFalse($obj1->equals('foo'));
-        $this->assertFalse($obj1->equals(123));
-        $this->assertFalse($obj1->equals(new \stdClass()));
-        $this->assertFalse($obj1->equals($obj3));
-        $this->assertTrue($obj1->equals($obj2));
-        $this->assertFalse($obj1->equals($obj4));
+        self::assertFalse($obj1->equals(null));
+        self::assertFalse($obj1->equals('foo'));
+        self::assertFalse($obj1->equals(123));
+        self::assertFalse($obj1->equals(new stdClass()));
+        self::assertFalse($obj1->equals($obj3));
+        self::assertTrue($obj1->equals($obj2));
+        self::assertFalse($obj1->equals($obj4));
     }
 
     public function testDomainName(): void
     {
         $obj = new DomainTestObject();
 
-        $this->assertEquals('DomainTestObject', $obj->domainName());
+        self::assertEquals('DomainTestObject', $obj->domainName());
     }
 }

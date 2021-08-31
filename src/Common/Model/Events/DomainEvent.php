@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Events;
 
+use AlephTools\DDD\Common\Infrastructure\ValueObject;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
 /**
  * The base class for all domain events.
@@ -17,14 +19,13 @@ abstract class DomainEvent extends ValueObject
     /**
      * The event creation date and time.
      *
-     * @var DateTimeImmutable|null
      */
     protected ?DateTimeImmutable $occurredOn = null;
 
     /**
      * Constructor.
      *
-     * @param array $properties
+     * @param array<string,mixed> $properties
      */
     public function __construct(array $properties = [])
     {

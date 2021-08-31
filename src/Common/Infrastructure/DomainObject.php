@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use ReflectionClass;
@@ -13,20 +15,18 @@ abstract class DomainObject extends StrictDto implements Hashable
      * Compares two domain objects.
      *
      * @param mixed $other
-     * @return bool
      */
     public function equals($other): bool
     {
-        if ($other === null || !($other instanceof static)) {
-            return false;
+        if ($other instanceof static) {
+            return $this->hash() === $other->hash();
         }
-        return $this->hash() === $other->hash();
+        return false;
     }
 
     /**
      * Generates a hash value for this domain object.
      *
-     * @return string
      */
     public function hash(): string
     {
@@ -46,7 +46,7 @@ abstract class DomainObject extends StrictDto implements Hashable
     /**
      * Creates a copy of this domain object with the given property values.
      *
-     * @param array $properties
+     * @param array<string,mixed> $properties
      * @return static
      */
     public function copyWith(array $properties = [])
@@ -60,9 +60,8 @@ abstract class DomainObject extends StrictDto implements Hashable
 
     /**
      * Returns the domain name associated with this object.
-     * By default it's the short class name.
+     * By default, it's the short class name.
      *
-     * @return string
      */
     public function domainName(): string
     {

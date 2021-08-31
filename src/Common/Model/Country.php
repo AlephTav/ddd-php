@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Enums\NamedEnum;

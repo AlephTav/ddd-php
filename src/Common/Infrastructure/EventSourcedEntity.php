@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Model\Events\EntityCreated;
@@ -8,6 +10,9 @@ use AlephTools\DDD\Common\Model\Events\EntityUpdated;
 
 abstract class EventSourcedEntity extends Entity
 {
+    /**
+     * @param array<string,mixed> $properties
+     */
     public function __construct(array $properties = [], bool $suppressEntityCreatedEvent = true)
     {
         parent::__construct($properties);
@@ -19,9 +24,8 @@ abstract class EventSourcedEntity extends Entity
     /**
      * Sets new properties and generates EntityUpdated event.
      *
-     * @param array $newProperties
+     * @param array<string,mixed> $newProperties
      * @param bool $strict Determines whether to throw exception for non-existing properties (TRUE).
-     * @return void
      */
     protected function applyChanges(array $newProperties, bool $strict = true): void
     {
@@ -36,9 +40,7 @@ abstract class EventSourcedEntity extends Entity
     /**
      * Sets new properties, generates EntityUpdated event and validates those properties.
      *
-     * @param array $newProperties
-     * @param bool $strict
-     * @return void
+     * @param array<string,mixed> $newProperties
      */
     protected function applyChangesAndValidate(array $newProperties, bool $strict = true): void
     {
@@ -46,15 +48,24 @@ abstract class EventSourcedEntity extends Entity
         $this->validate();
     }
 
+    /**
+     * @param array<string,mixed> $newProperties
+     * @return array<string,mixed>
+     */
     private function getOldProperties(array $newProperties): array
     {
         $oldProperties = [];
-        foreach ($newProperties as $property => $ignore) {
+        foreach ($newProperties as $property => $_) {
             $oldProperties[$property] = $this->__get($property);
         }
         return $oldProperties;
     }
 
+    /**
+     * @param array<string,mixed> $properties1
+     * @param array<string,mixed> $properties2
+     * @psalm-return array{array<string,mixed>,array<string,mixed>}
+     */
     private function computeNestedChanges(array $properties1, array $properties2): array
     {
         $oldProperties = [];
@@ -72,7 +83,7 @@ abstract class EventSourcedEntity extends Entity
                         $newProperties[$property] = $value2->toNestedArray();
                     }
                 }
-            } else if ($value2 !== $value1) {
+            } elseif ($value2 !== $value1) {
                 $oldProperties[$property] = $value1 instanceof DomainObject ? $value1->toNestedArray() : $value1;
                 $newProperties[$property] = $value2;
             }

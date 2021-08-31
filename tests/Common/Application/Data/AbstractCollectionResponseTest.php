@@ -1,20 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Application\Data;
 
 use AlephTools\DDD\Common\Application\Data\AbstractCollectionResponse;
 use PHPUnit\Framework\TestCase;
 
-class CollectionResponseTestObject extends AbstractCollectionResponse {}
+class CollectionResponseTestObject extends AbstractCollectionResponse
+{
+}
 
+/**
+ * @internal
+ */
 class AbstractCollectionResponseTest extends TestCase
 {
     public function testEmptyCollectionCreation(): void
     {
         $collection = new CollectionResponseTestObject();
 
-        $this->assertSame([], $collection->items);
-        $this->assertSame(0, $collection->count);
+        self::assertSame([], $collection->items);
+        self::assertSame(0, $collection->count);
     }
 
     public function testCollectionWithoutCount(): void
@@ -22,20 +29,20 @@ class AbstractCollectionResponseTest extends TestCase
         $items = [1, 2, 3];
         $collection = new CollectionResponseTestObject($items, null);
 
-        $this->assertSame($items, $collection->items);
-        $this->assertNull($collection->count);
-        $this->assertSame(['items' => $items], $collection->toArray());
-        $this->assertSame($collection->toArray(), $collection->toNestedArray());
+        self::assertSame($items, $collection->items);
+        self::assertNull($collection->count);
+        self::assertSame(['items' => $items], $collection->toArray());
+        self::assertSame($collection->toArray(), $collection->toNestedArray());
     }
 
     public function testCollectionWithoutItems(): void
     {
         $collection = new CollectionResponseTestObject(null, 5);
 
-        $this->assertNull($collection->items);
-        $this->assertSame(5, $collection->count);
-        $this->assertSame(['count' => 5], $collection->toArray());
-        $this->assertSame($collection->toArray(), $collection->toNestedArray());
+        self::assertNull($collection->items);
+        self::assertSame(5, $collection->count);
+        self::assertSame(['count' => 5], $collection->toArray());
+        self::assertSame($collection->toArray(), $collection->toNestedArray());
     }
 
     public function testCollectionWithItemsAndCount(): void
@@ -43,9 +50,9 @@ class AbstractCollectionResponseTest extends TestCase
         $items = [1, 2, 3];
         $collection = new CollectionResponseTestObject($items, 3);
 
-        $this->assertSame($items, $collection->items);
-        $this->assertSame(3, $collection->count);
-        $this->assertSame(['count' => 3, 'items' => $items], $collection->toArray());
-        $this->assertSame($collection->toArray(), $collection->toNestedArray());
+        self::assertSame($items, $collection->items);
+        self::assertSame(3, $collection->count);
+        self::assertSame(['count' => 3, 'items' => $items], $collection->toArray());
+        self::assertSame($collection->toArray(), $collection->toNestedArray());
     }
 }

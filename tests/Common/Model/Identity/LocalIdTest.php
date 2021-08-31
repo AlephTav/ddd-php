@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model\Identity;
 
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Identity\LocalId;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
+/**
+ * @internal
+ */
 class LocalIdTest extends TestCase
 {
     public function testNullId(): void
@@ -20,51 +26,50 @@ class LocalIdTest extends TestCase
     {
         $id = new LocalId(12345);
 
-        $this->assertSame('12345', $id->toString());
-        $this->assertSame('12345', (string)$id);
+        self::assertSame('12345', $id->toString());
+        self::assertSame('12345', (string)$id);
     }
 
     public function testCanBeId(): void
     {
-        $this->assertTrue(LocalId::canBeId('54321'));
-        $this->assertTrue(LocalId::canBeId(123));
+        self::assertTrue(LocalId::canBeId('54321'));
+        self::assertTrue(LocalId::canBeId(123));
 
-        $this->assertFalse(LocalId::canBeId([]));
-        $this->assertFalse(LocalId::canBeId(new \stdClass()));
-        $this->assertFalse(LocalId::canBeId(null));
+        self::assertFalse(LocalId::canBeId([]));
+        self::assertFalse(LocalId::canBeId(new stdClass()));
+        self::assertFalse(LocalId::canBeId(null));
     }
 
     public function testParseLocalId(): void
     {
         $id = new LocalId(new LocalId(123));
 
-        $this->assertSame(123, $id->identity);
+        self::assertSame(123, $id->identity);
     }
 
     public function testParseString(): void
     {
         $id = new LocalId('123');
 
-        $this->assertSame(123, $id->identity);
+        self::assertSame(123, $id->identity);
     }
 
     public function testParseFloat(): void
     {
         $id = new LocalId(123.6);
 
-        $this->assertSame(123, $id->identity);
+        self::assertSame(123, $id->identity);
     }
 
     public function testParseInteger(): void
     {
         $id = new LocalId(123);
 
-        $this->assertSame(123, $id->identity);
+        self::assertSame(123, $id->identity);
     }
 
     /**
      * @dataProvider invalidIdentityProvider
-     * @param string $error
      * @param mixed $identity
      */
     public function testParseInvalidValue(string $error, $identity): void
@@ -80,16 +85,16 @@ class LocalIdTest extends TestCase
         return [
             [
                 'Invalid identifier: identity must be an integer.',
-                []
+                [],
             ],
             [
                 'Invalid identifier: identity must be an integer.',
-                new \stdClass()
+                new stdClass(),
             ],
             [
                 'Invalid identifier: foo',
-                'foo'
-            ]
+                'foo',
+            ],
         ];
     }
 
@@ -97,7 +102,7 @@ class LocalIdTest extends TestCase
     {
         $id = new LocalId(123);
 
-        $this->assertSame('123', $id->toString());
-        $this->assertSame(123, $id->toScalar());
+        self::assertSame('123', $id->toString());
+        self::assertSame(123, $id->toScalar());
     }
 }

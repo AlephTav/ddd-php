@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
-use AlephTools\DDD\Common\Infrastructure\Sanitizer;
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
@@ -21,7 +22,7 @@ class Email extends ValueObject implements Scalarable
      * Email(string $address)
      * Email(array $properties)
      *
-     * @param array|string|null $address
+     * @param array<string,mixed>|string|null $address
      */
     public function __construct($address = null)
     {
@@ -44,15 +45,15 @@ class Email extends ValueObject implements Scalarable
 
     protected function setAddress(?string $address): void
     {
-        $this->address = trim($address);
+        $this->address = $address ? trim($address) : '';
     }
 
     protected function validateAddress(): void
     {
         $this->assertArgumentMaxLength(
             $this->address,
-            static::ADDRESS_MAX_LENGTH,
-            'Email address must be at most ' . static::ADDRESS_MAX_LENGTH . ' characters.'
+            (int)static::ADDRESS_MAX_LENGTH,
+            'Email address must be at most ' . (string)static::ADDRESS_MAX_LENGTH . ' characters.'
         );
         if (strlen($this->address) > 0) {
             $this->assertArgumentTrue(filter_var($this->address, FILTER_VALIDATE_EMAIL), 'Invalid email format.');

@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use DateTime;
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\AssertionConcern;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidStateException;
+use DateTime;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
 
 class AssertionConcernTestObject
 {
@@ -18,6 +22,9 @@ class AssertionConcernTestObject
     }
 }
 
+/**
+ * @internal
+ */
 class AssertionConcernTest extends TestCase
 {
     /**
@@ -36,14 +43,14 @@ class AssertionConcernTest extends TestCase
 
     public function testAssertArgumentSameSuccess(): void
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
         self::$obj->assertArgumentSame('', '', '');
         self::$obj->assertArgumentSame(1, 1, '');
         self::$obj->assertArgumentSame(true, true, '');
         self::$obj->assertArgumentSame([1, 2, 3], [1, 2, 3], '');
         self::$obj->assertArgumentSame($obj, $obj, '');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentSameFailure(): void
@@ -53,14 +60,14 @@ class AssertionConcernTest extends TestCase
             [1, 0],
             [true, false],
             [[1, 2, 3], [2, 3, 1]],
-            [new \stdClass(), new \stdClass()]
+            [new stdClass(), new stdClass()],
         ];
         foreach ($pairs as $n => [$value1, $value2]) {
             $error = 'error ' . $n;
             try {
                 self::$obj->assertArgumentSame($value1, $value2, $error);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -71,27 +78,27 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentNotSame(1, 0, '');
         self::$obj->assertArgumentNotSame(false, true, '');
         self::$obj->assertArgumentNotSame([1, 2, 3], [3, 1, 3], '');
-        self::$obj->assertArgumentNotSame(new \stdClass(), new \stdClass(), '');
+        self::$obj->assertArgumentNotSame(new stdClass(), new stdClass(), '');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotSameFailure(): void
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $pairs = [
             ['1', '1'],
             [0, 0],
             [true, true],
             [[1, 2, 3], [1, 2, 3]],
-            [$obj, $obj]
+            [$obj, $obj],
         ];
         foreach ($pairs as $n => [$value1, $value2]) {
             $error = 'error ' . $n;
             try {
                 self::$obj->assertArgumentNotSame($value1, $value2, $error);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -102,7 +109,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentEquals('abc', 'abc', '');
         self::$obj->assertArgumentEquals(true, true, '');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentEqualsFailure(): void
@@ -119,7 +126,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentNotEquals('abc', 4, '');
         self::$obj->assertArgumentNotEquals(5.6, false, '');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotEqualsFailure(): void
@@ -135,9 +142,9 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentNotNull(0, 'error message');
         self::$obj->assertArgumentNotNull('', 'error message');
         self::$obj->assertArgumentNotNull([], 'error message');
-        self::$obj->assertArgumentNotNull(new \stdClass(), 'error message');
+        self::$obj->assertArgumentNotNull(new stdClass(), 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotNullFailure(): void
@@ -152,17 +159,17 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentNull(null, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNullFailure(): void
     {
-        foreach ([0, '', [], new \stdClass()] as $n => $value) {
+        foreach ([0, '', [], new stdClass()] as $n => $value) {
             $error = 'error ' . $n;
             try {
                 self::$obj->assertArgumentNull($value, $error);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -175,17 +182,17 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentFalse('0', 'error message');
         self::$obj->assertArgumentFalse([], 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentFalseFailure(): void
     {
-        foreach ([true, 1, '1', [null], new \stdClass()] as $n => $value) {
+        foreach ([true, 1, '1', [null], new stdClass()] as $n => $value) {
             $error = 'error ' . $n;
             try {
                 self::$obj->assertArgumentFalse($value, $error);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -196,9 +203,9 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentTrue(1, 'error message');
         self::$obj->assertArgumentTrue('1', 'error message');
         self::$obj->assertArgumentTrue([null], 'error message');
-        self::$obj->assertArgumentTrue(new \stdClass(), 'error message');
+        self::$obj->assertArgumentTrue(new stdClass(), 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentTrueFailure(): void
@@ -208,7 +215,7 @@ class AssertionConcernTest extends TestCase
             try {
                 self::$obj->assertArgumentTrue($value, $error);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -217,7 +224,7 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentNotEmpty('some text', 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotEmptyFailure(): void
@@ -234,14 +241,14 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentLength('', 0, 10, 'error message');
         self::$obj->assertArgumentLength(null, 0, 10, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentLengthFailureMax(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('error message');
-        
+
         self::$obj->assertArgumentLength('some text', 3, 5, 'error message');
     }
 
@@ -249,7 +256,7 @@ class AssertionConcernTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('error message');
-        
+
         self::$obj->assertArgumentLength("some text", 10, 15, 'error message');
     }
 
@@ -259,7 +266,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentMinLength('', 0, 'error message');
         self::$obj->assertArgumentMinLength(null, 0, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentMinLengthFailure(): void
@@ -276,7 +283,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentMaxLength('', 3, 'error message');
         self::$obj->assertArgumentMaxLength(null, 3, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentMaxLengthFailure(): void
@@ -291,7 +298,7 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentRange(10, 5, 15, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentRangeFailureMax(): void
@@ -314,7 +321,7 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentMin(10, 5, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentMinFailure(): void
@@ -329,7 +336,7 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentMax(10, 15, 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentMaxFailure(): void
@@ -344,7 +351,7 @@ class AssertionConcernTest extends TestCase
     {
         self::$obj->assertArgumentPatternMatch('abcdefg', '/^[a-z]+$/', 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentPatternFailure(): void
@@ -358,11 +365,11 @@ class AssertionConcernTest extends TestCase
     public function testAssertArgumentWithoutExceptionSuccess(): void
     {
         self::$obj->assertArgumentWithoutException(
-            function() { return 'some code without exception goes here'; },
+            fn () => 'some code without exception goes here',
             'error message'
         );
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentWithoutExceptionFailure(): void
@@ -371,7 +378,9 @@ class AssertionConcernTest extends TestCase
         $this->expectExceptionMessage('error message');
 
         self::$obj->assertArgumentWithoutException(
-            function() { throw new \RuntimeException('error message'); },
+            function (): void {
+                throw new RuntimeException('error message');
+            },
             'error message'
         );
     }
@@ -381,7 +390,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentNotInFuture(new DateTime(), 'error message 1');
         self::$obj->assertArgumentNotInFuture(new DateTime('-1 second'), 'error message 2');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotInFutureFailure(): void
@@ -397,7 +406,7 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertArgumentNotInPast(new DateTime(), 'error message 1');
         self::$obj->assertArgumentNotInPast(new DateTime('+1 second'), 'error message 2');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentNotInPastFailure(): void
@@ -410,11 +419,11 @@ class AssertionConcernTest extends TestCase
 
     public function testAssertArgumentInstanceOfSuccess(): void
     {
-        self::$obj->assertArgumentInstanceOf(new \stdClass(), \stdClass::class, 'error message 1');
+        self::$obj->assertArgumentInstanceOf(new stdClass(), stdClass::class, 'error message 1');
         self::$obj->assertArgumentInstanceOf(new DateTime(), DateTime::class, 'error message 2');
         self::$obj->assertArgumentInstanceOf($this, TestCase::class, 'error message 3');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertArgumentInstanceOfFailure(): void
@@ -422,7 +431,7 @@ class AssertionConcernTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('error message');
 
-        self::$obj->assertArgumentInstanceOf(new DateTime(), \stdClass::class, 'error message');
+        self::$obj->assertArgumentInstanceOf(new DateTime(), stdClass::class, 'error message');
     }
 
     //endregion
@@ -437,17 +446,17 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertStateFalse('0', 'error message');
         self::$obj->assertStateFalse([], 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertStateFalseFailure(): void
     {
-        foreach ([true, 1, '1', [null], new \stdClass()] as $n => $value) {
+        foreach ([true, 1, '1', [null], new stdClass()] as $n => $value) {
             $error = 'error ' . $n;
             try {
                 self::$obj->assertStateFalse($value, $error);
             } catch (InvalidStateException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }
@@ -458,9 +467,9 @@ class AssertionConcernTest extends TestCase
         self::$obj->assertStateTrue(1, 'error message');
         self::$obj->assertStateTrue('1', 'error message');
         self::$obj->assertStateTrue([null], 'error message');
-        self::$obj->assertStateTrue(new \stdClass(), 'error message');
+        self::$obj->assertStateTrue(new stdClass(), 'error message');
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testAssertStateTrueFailure(): void
@@ -470,7 +479,7 @@ class AssertionConcernTest extends TestCase
             try {
                 self::$obj->assertStateTrue($value, $error);
             } catch (InvalidStateException $e) {
-                $this->assertEquals('error ' . $n, $error);
+                self::assertEquals('error ' . $n, $error);
             }
         }
     }

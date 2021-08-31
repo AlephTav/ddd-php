@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Events;
 
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
@@ -17,7 +19,7 @@ class EntityLifeCycleChanged extends DomainEvent
     {
         parent::__construct([
             'id' => $id,
-            'entity' => $entity
+            'entity' => $entity,
         ]);
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use Closure;
+use stdClass;
 use Traversable;
 
 /**
@@ -16,7 +19,6 @@ class Hash
      * @param mixed $item Any data to be hashed.
      * @param string $algorithm Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
      * @param bool $rawOutput When set to TRUE, outputs raw binary data. FALSE outputs lowercase hexits.
-     * @return string
      */
     public static function of($item, string $algorithm = 'md5', bool $rawOutput = false): string
     {
@@ -60,9 +62,12 @@ class Hash
         return hash($algorithm, serialize($item), $rawOutput);
     }
 
+    /**
+     * @param resource $item
+     */
     private static function hashOfResource($item, string $algorithm, bool $rawOutput): string
     {
-        $hash = new \stdClass();
+        $hash = new stdClass();
         $hash->resource = get_resource_type($item);
         $hash->value = (int)$item;
         return hash($algorithm, serialize($hash), $rawOutput);

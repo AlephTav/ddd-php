@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use PHPUnit\Framework\MockObject\MockBuilder;
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
 use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 use AlephTools\DDD\Common\Infrastructure\EventDispatcher;
+use PHPUnit\Framework\MockObject\MockBuilder;
 
 trait DomainEventPublisherAware
 {
@@ -27,8 +29,6 @@ trait DomainEventPublisherAware
         $this->publisher->queued(true);
         $this->publisher->cleanAll();
 
-        ApplicationContext::set(function() {
-            return $this->publisher;
-        });
+        ApplicationContext::set(fn () => $this->publisher);
     }
 }

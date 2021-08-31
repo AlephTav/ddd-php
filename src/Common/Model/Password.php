@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\Hash;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
+use RuntimeException;
 
 /**
  * @property-read string $hash
- * @property-read string $password
+ * @property-read string|null $password
  */
 class Password extends ValueObject
 {
@@ -22,7 +25,6 @@ class Password extends ValueObject
     /**
      * The cached hash value.
      *
-     * @var string|null
      */
     private ?string $computedHash = null;
 
@@ -33,9 +35,12 @@ class Password extends ValueObject
      */
     public static function random()
     {
-        return new static(bin2hex(random_bytes(static::RANDOM_PASSWORD_LENGTH >> 1)));
+        return new static(bin2hex(random_bytes((int)static::RANDOM_PASSWORD_LENGTH >> 1)));
     }
 
+    /**
+     * @param array<string,mixed>|string|null $password
+     */
     public function __construct($password)
     {
         if (is_array($password)) {
@@ -43,21 +48,27 @@ class Password extends ValueObject
         } else {
             parent::__construct([
                 'password' => $password,
-                'hash' => $this->encodePassword($password)
+                'hash' => $this->encodePassword($password),
             ]);
         }
     }
 
-    protected function encodePassword(?string $password): string
+    /**
+     * @param mixed $password
+     */
+    protected function encodePassword($password): string
     {
-        $hash = $this->hashPassword($password);
+        $hash = is_scalar($password) || $password === null ? $this->hashPassword((string)$password) : null;
         if (!$hash) {
-            throw new \RuntimeException('Failed to hash password.');
+            throw new RuntimeException('Failed to hash password.');
         }
         return $hash;
     }
 
-    protected function hashPassword(?string $password)
+    /**
+     * @return string|false|null
+     */
+    protected function hashPassword(string $password)
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
@@ -67,8 +78,8 @@ class Password extends ValueObject
         $this->assertArgumentNotEmpty($this->hash, 'Password hash must not be empty.');
         $this->assertArgumentMaxLength(
             $this->hash,
-            static::HASH_MAX_LENGTH,
-            'Password hash must be at most ' . static::HASH_MAX_LENGTH . ' characters.'
+            (int)static::HASH_MAX_LENGTH,
+            'Password hash must be at most ' . (string)static::HASH_MAX_LENGTH . ' characters.'
         );
     }
 
@@ -77,10 +88,10 @@ class Password extends ValueObject
         if ($this->password !== null) {
             $this->assertArgumentLength(
                 $this->password,
-                static::PASSWORD_MIN_LENGTH,
-                static::PASSWORD_MAX_LENGTH,
-                'Password must be at least ' . static::PASSWORD_MIN_LENGTH .
-                ' and at most ' . static::PASSWORD_MAX_LENGTH . ' characters.'
+                (int)static::PASSWORD_MIN_LENGTH,
+                (int)static::PASSWORD_MAX_LENGTH,
+                'Password must be at least ' . (string)static::PASSWORD_MIN_LENGTH .
+                ' and at most ' . (string)static::PASSWORD_MAX_LENGTH . ' characters.'
             );
         }
     }
@@ -88,7 +99,6 @@ class Password extends ValueObject
     /**
      * Generates a hash value for this domain object.
      *
-     * @return string
      */
     public function hash(): string
     {
@@ -102,16 +112,15 @@ class Password extends ValueObject
      * Compares two domain objects.
      *
      * @param mixed $other
-     * @return bool
      */
     public function equals($other): bool
     {
         if ($other instanceof static) {
             if ($this->password !== null && $other->password !== null) {
                 return $this->password === $other->password;
-            } else if ($this->password !== null) {
-                return password_verify($this->password, $other->hash);
-            } else if ($other->password !== null) {
+            } elseif ($this->password !== null) {
+                return password_verify($this->password, (string)$other->hash);
+            } elseif ($other->password !== null) {
                 return password_verify($other->password, $this->hash);
             }
             return $this->hash === $other->hash;

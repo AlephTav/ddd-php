@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
-use RuntimeException;
 use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @property-read int|null $prop1
@@ -23,7 +25,7 @@ class FastDtoParentTestObject extends Dto
         return [
             'prop1' => self::PROP_READ_SETTER_VALIDATOR,
             'prop2' => self::PROP_READ_GETTER,
-            'prop3' => self::PROP_READ_WRITE | self::PROP_VALIDATOR
+            'prop3' => self::PROP_READ_WRITE | self::PROP_VALIDATOR,
         ];
     }
 
@@ -61,7 +63,7 @@ class FastDtoTestObject extends FastDtoParentTestObject
     {
         return array_merge(parent::getPropertyDefinitions(), [
             'prop4' => self::PROP_WRITE | self::PROP_SETTER,
-            'prop5' => self::PROP_READ_WRITE_GETTER_VALIDATOR
+            'prop5' => self::PROP_READ_WRITE_GETTER_VALIDATOR,
         ]);
     }
 
@@ -81,6 +83,9 @@ class FastDtoTestObject extends FastDtoParentTestObject
     }
 }
 
+/**
+ * @internal
+ */
 class FastDtoTest extends TestCase
 {
     public function testCreationSuccess(): void
@@ -90,10 +95,10 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCreationFailureNotExistingProperty(): void
@@ -107,7 +112,7 @@ class FastDtoTest extends TestCase
             'prop3' => true,
             'prop4' => 'foo',
             'prop5' => 'test',
-            'prop6' => 123
+            'prop6' => 123,
         ]);
     }
 
@@ -118,11 +123,11 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ];
         $obj = new FastDtoTestObject($properties);
 
-        $this->assertEquals($properties, $obj->toArray());
+        self::assertEquals($properties, $obj->toArray());
     }
 
     public function testToNestedArray(): void
@@ -132,7 +137,7 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ];
         $nestedObj = new FastDtoTestObject($nestedProperties);
 
@@ -141,12 +146,12 @@ class FastDtoTest extends TestCase
             'prop2' => $nestedObj,
             'prop3' => false,
             'prop4' => 'test',
-            'prop5' => 'foo'
+            'prop5' => 'foo',
         ];
         $obj = new FastDtoTestObject($properties);
 
         $properties['prop2'] = $nestedProperties;
-        $this->assertEquals($properties, $obj->toNestedArray());
+        self::assertEquals($properties, $obj->toNestedArray());
     }
 
     public function testToJson(): void
@@ -156,13 +161,13 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ];
         $obj = new FastDtoTestObject($properties);
 
         $expected = json_encode($properties);
-        $this->assertEquals($expected, json_encode($obj));
-        $this->assertEquals($expected, $obj->toJson());
+        self::assertEquals($expected, json_encode($obj));
+        self::assertEquals($expected, $obj->toJson());
     }
 
     public function testSerialize(): void
@@ -172,12 +177,12 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
 
         $new = unserialize(serialize($obj));
 
-        $this->assertSame($obj->toArray(), $new->toArray());
+        self::assertSame($obj->toArray(), $new->toArray());
     }
 
     public function testToString(): void
@@ -187,13 +192,13 @@ class FastDtoTest extends TestCase
             'prop2' => null,
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ];
         $obj = new FastDtoTestObject($properties);
 
         $expected = print_r($obj, true);
-        $this->assertEquals($expected, $obj->toString());
-        $this->assertEquals($expected, (string)$obj);
+        self::assertEquals($expected, $obj->toString());
+        self::assertEquals($expected, (string)$obj);
     }
 
     public function testValidate(): void
@@ -206,12 +211,12 @@ class FastDtoTest extends TestCase
                     'prop2' => null,
                     'prop3' => true,
                     'prop4' => 'foo',
-                    'prop5' => 'test'
+                    'prop5' => 'test',
                 ];
                 $properties[$property] = $value;
                 new FastDtoTestObject($properties);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('validate error ' . $n, $e->getMessage());
+                self::assertEquals('validate error ' . $n, $e->getMessage());
             }
             ++$n;
         }
@@ -224,14 +229,14 @@ class FastDtoTest extends TestCase
             'prop2' => [1, 2, 3],
             'prop3' => true,
             'prop4' => 'foo',
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
 
-        $this->assertSame(5, $obj->prop1);
-        $this->assertSame([1, 2, 3], $obj->prop2);
-        $this->assertSame(true, $obj->prop3);
-        $this->assertSame('test', $obj->prop5);
-        $this->assertSame('foo', $obj->toArray()['prop4']);
+        self::assertSame(5, $obj->prop1);
+        self::assertSame([1, 2, 3], $obj->prop2);
+        self::assertTrue($obj->prop3);
+        self::assertSame('test', $obj->prop5);
+        self::assertSame('foo', $obj->toArray()['prop4']);
     }
 
     public function testFailedPropertyRead(): void
@@ -243,7 +248,7 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         /** @var mixed $obj */
         $obj->prop4;
@@ -255,15 +260,15 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         $obj->prop3 = 123;
         $obj->prop4 = 'test';
         $obj->prop5 = 'foo';
 
-        $this->assertSame(123, $obj->prop3);
-        $this->assertSame('foo', $obj->prop5);
-        $this->assertEquals('test', $obj->toArray()['prop4']);
+        self::assertSame(123, $obj->prop3);
+        self::assertSame('foo', $obj->prop5);
+        self::assertEquals('test', $obj->toArray()['prop4']);
     }
 
     public function testFailedPropertyWrite(): void
@@ -275,7 +280,7 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         /** @var mixed $obj */
         $obj->prop1 = 3;
@@ -287,13 +292,13 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
 
-        $this->assertFalse(isset($obj->prop2));
-        $this->assertTrue(isset($obj->prop1));
-        $this->assertTrue(isset($obj->prop3));
-        $this->assertTrue(isset($obj->prop5));
+        self::assertFalse(isset($obj->prop2));
+        self::assertTrue(isset($obj->prop1));
+        self::assertTrue(isset($obj->prop3));
+        self::assertTrue(isset($obj->prop5));
     }
 
     public function testFailedIsset(): void
@@ -305,7 +310,7 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         /** @var mixed $obj */
         $foo = isset($obj->prop4);
@@ -317,11 +322,11 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => null,
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         unset($obj->prop3);
 
-        $this->assertNull($obj->prop3);
+        self::assertNull($obj->prop3);
     }
 
     public function testFailedUnset(): void
@@ -333,7 +338,7 @@ class FastDtoTest extends TestCase
             'prop1' => 5,
             'prop2' => [123],
             'prop3' => true,
-            'prop5' => 'test'
+            'prop5' => 'test',
         ]);
         unset($obj->prop2);
     }

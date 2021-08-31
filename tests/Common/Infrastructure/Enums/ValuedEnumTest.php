@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
 
+use AlephTools\DDD\Common\Infrastructure\Enums\ValuedEnum;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\Enums\ValuedEnum;
 
 /**
  * @method static ONE(string $method = null)
@@ -21,13 +23,16 @@ class ValuedEnumTestObject extends ValuedEnum
     private const A = 'a';
 }
 
+/**
+ * @internal
+ */
 class ValuedEnumTest extends TestCase
 {
     public function testGetValue(): void
     {
-        $this->assertSame(1, ValuedEnumTestObject::ONE('value'));
-        $this->assertSame(2, ValuedEnumTestObject::TWO('value'));
-        $this->assertSame(3, ValuedEnumTestObject::THREE('value'));
+        self::assertSame(1, ValuedEnumTestObject::ONE('value'));
+        self::assertSame(2, ValuedEnumTestObject::TWO('value'));
+        self::assertSame(3, ValuedEnumTestObject::THREE('value'));
     }
 
     public function testInvalidConstantValue(): void

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Events;
 
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
@@ -10,8 +12,8 @@ use AlephTools\DDD\Common\Model\Identity\AbstractId;
  */
 class EntityUpdated extends EntityLifeCycleChanged
 {
-    private array $oldProperties = [];
-    private array $newProperties = [];
+    private array $oldProperties;
+    private array $newProperties;
 
     public function __construct(string $entity, ?AbstractId $id, array $oldProperties, array $newProperties)
     {
@@ -23,7 +25,7 @@ class EntityUpdated extends EntityLifeCycleChanged
     public function merge(EntityUpdated $event): EntityUpdated
     {
         $this->assertStateTrue(
-            $event->entity === $this->entity && $this->id->equals($event->id),
+            $event->entity === $this->entity && $this->id && $this->id->equals($event->id),
             'You can only merge entity updated events for the same entities with the same identifier.'
         );
 
@@ -42,7 +44,7 @@ class EntityUpdated extends EntityLifeCycleChanged
     {
         $properties = $oldProperties1;
         foreach ($oldProperties2 as $property => $value) {
-            if (!key_exists($property, $properties)) {
+            if (!array_key_exists($property, $properties)) {
                 $properties[$property] = $value;
             } elseif (is_array($value) && is_array($properties[$property])) {
                 $properties[$property] = $this->mergeOldProperties($properties[$property], $value);
@@ -57,7 +59,7 @@ class EntityUpdated extends EntityLifeCycleChanged
 
         foreach ($newProperties2 as $property => $value) {
             $oldValue = $oldProperties[$property] ?? null;
-            if (key_exists($property, $properties)) {
+            if (array_key_exists($property, $properties)) {
                 if (is_array($value) && is_array($properties[$property])) {
                     $properties[$property] = $this->mergeNewProperties(
                         is_array($oldValue) ? $oldValue : [],

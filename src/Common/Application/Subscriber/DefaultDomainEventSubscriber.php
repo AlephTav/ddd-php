@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Application\Subscriber;
 
 use AlephTools\DDD\Common\Application\EventStore;
@@ -12,7 +14,6 @@ class DefaultDomainEventSubscriber implements DomainEventSubscriber
     /**
      * Constructor.
      *
-     * @param EventStore $eventStore
      */
     public function __construct(EventStore $eventStore)
     {
@@ -21,7 +22,6 @@ class DefaultDomainEventSubscriber implements DomainEventSubscriber
 
     /**
      * @param DomainEvent $event
-     * @return void
      */
     public function handle($event): void
     {
@@ -29,7 +29,6 @@ class DefaultDomainEventSubscriber implements DomainEventSubscriber
     }
 
     /**
-     * @return string
      */
     public function subscribedToEventType(): string
     {

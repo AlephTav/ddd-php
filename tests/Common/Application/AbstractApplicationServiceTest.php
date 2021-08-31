@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Application;
 
 use AlephTools\DDD\Common\Application\AbstractApplicationService;
@@ -18,7 +20,7 @@ class ApplicationServiceTestObject extends AbstractApplicationService
         return $this->executeAtomically($callback);
     }
 
-    public function execAsync(callable $callback, array $params = [])
+    public function execAsync(callable $callback, array $params = []): void
     {
         $this->runAsync($callback, $params);
     }
@@ -29,13 +31,16 @@ class ApplicationServiceTestObject extends AbstractApplicationService
     }
 }
 
+/**
+ * @internal
+ */
 class AbstractApplicationServiceTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
-        ApplicationContext::set(function(string $abstract = null, array $parameters = []) {
+        ApplicationContext::set(function (string $abstract = null, array $parameters = []) {
             if ($abstract === UnitOfWork::class) {
-                return new class implements UnitOfWork {
+                return new class() implements UnitOfWork {
                     public function execute(callable $callback)
                     {
                         return $callback();
@@ -43,11 +48,13 @@ class AbstractApplicationServiceTest extends TestCase
                 };
             }
             if ($abstract === DomainEventPublisher::class) {
-                return new DomainEventPublisher(new class implements EventDispatcher {
-                    public function dispatch(string $subscriber, DomainEvent $event, bool $async): void {}
+                return new DomainEventPublisher(new class() implements EventDispatcher {
+                    public function dispatch(string $subscriber, DomainEvent $event, bool $async): void
+                    {
+                    }
                 });
             }
-            return new class implements Async {
+            return new class() implements Async {
                 public function run($callback, array $params = []): void
                 {
                     $callback($params);
@@ -60,11 +67,9 @@ class AbstractApplicationServiceTest extends TestCase
     {
         $service = new ApplicationServiceTestObject();
 
-        $result = $service->execAtomically(function() {
-            return 'executed atomically';
-        });
+        $result = $service->execAtomically(fn () => 'executed atomically');
 
-        $this->assertSame('executed atomically', $result);
+        self::assertSame('executed atomically', $result);
     }
 
     public function testRunAsync(): void
@@ -72,17 +77,17 @@ class AbstractApplicationServiceTest extends TestCase
         $service = new ApplicationServiceTestObject();
 
         $result = null;
-        $service->execAsync(function(array $params) use(&$result) {
+        $service->execAsync(function (array $params) use (&$result): void {
             $result = $params;
         }, ['a', 'b', 'c']);
 
-        $this->assertSame(['a', 'b', 'c'], $result);
+        self::assertSame(['a', 'b', 'c'], $result);
     }
 
     public function testEventPublisher(): void
     {
         $service = new ApplicationServiceTestObject();
 
-        $this->assertInstanceOf(DomainEventPublisher::class, $service->getEventPublisher());
+        self::assertInstanceOf(DomainEventPublisher::class, $service->getEventPublisher());
     }
 }

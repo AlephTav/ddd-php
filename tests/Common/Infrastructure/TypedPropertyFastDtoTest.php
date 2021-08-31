@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use DateTime;
 use DateTimeInterface;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
-use AlephTools\DDD\Common\Infrastructure\Dto;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @property string $prop1
@@ -36,24 +39,27 @@ class TypedPropertyFastTestObject extends Dto
             'prop4' => self::PROP_READ_WRITE,
             'prop5' => self::PROP_READ_WRITE,
             'prop6' => self::PROP_READ_WRITE,
-            'prop7' => self::PROP_READ_WRITE
+            'prop7' => self::PROP_READ_WRITE,
         ];
     }
 }
 
+/**
+ * @internal
+ */
 class TypedPropertyFastDtoTest extends TestCase
 {
     public function testDefaultPropertyValues(): void
     {
         $dto = new TypedPropertyTestObject();
 
-        $this->assertSame('', $dto->prop1);
-        $this->assertSame(null, $dto->prop2);
-        $this->assertSame(-1.0, $dto->prop3);
-        $this->assertSame(null, $dto->prop4);
-        $this->assertSame([], $dto->prop5);
-        $this->assertSame(null, $dto->prop6);
-        $this->assertSame(null, $dto->prop7);
+        self::assertSame('', $dto->prop1);
+        self::assertNull($dto->prop2);
+        self::assertSame(-1.0, $dto->prop3);
+        self::assertNull($dto->prop4);
+        self::assertSame([], $dto->prop5);
+        self::assertNull($dto->prop6);
+        self::assertNull($dto->prop7);
     }
 
     public function testReadWriteValues(): void
@@ -66,15 +72,15 @@ class TypedPropertyFastDtoTest extends TestCase
         $dto->prop4 = false;
         $dto->prop5 = [1, 2, 3];
         $dto->prop6 = new DateTime();
-        $dto->prop7 = new \stdClass();
+        $dto->prop7 = new stdClass();
 
-        $this->assertSame('abc', $dto->prop1);
-        $this->assertSame(100, $dto->prop2);
-        $this->assertSame(.0, $dto->prop3);
-        $this->assertSame(false, $dto->prop4);
-        $this->assertSame([1, 2, 3], $dto->prop5);
-        $this->assertInstanceOf(DateTime::class, $dto->prop6);
-        $this->assertInstanceOf(\stdClass::class, $dto->prop7);
+        self::assertSame('abc', $dto->prop1);
+        self::assertSame(100, $dto->prop2);
+        self::assertSame(.0, $dto->prop3);
+        self::assertFalse($dto->prop4);
+        self::assertSame([1, 2, 3], $dto->prop5);
+        self::assertInstanceOf(DateTime::class, $dto->prop6);
+        self::assertInstanceOf(stdClass::class, $dto->prop7);
     }
 
     public function testAssignInvalidPropertyValues(): void
@@ -84,7 +90,7 @@ class TypedPropertyFastDtoTest extends TestCase
 
         new TypedPropertyTestObject([
             'prop7' => true,
-            'prop6' => 123
+            'prop6' => 123,
         ]);
     }
 }

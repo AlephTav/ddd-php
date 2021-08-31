@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Application\Query;
 
 use AlephTools\DDD\Common\Application\TypeConversionAware;
@@ -53,8 +55,6 @@ abstract class AbstractQuery extends WeakDto
     /**
      * Returns TRUE if the fields is not set or if the given field within $fields array.
      *
-     * @param string $field
-     * @return bool
      */
     public function containsField(string $field): bool
     {
@@ -64,8 +64,6 @@ abstract class AbstractQuery extends WeakDto
     /**
      * Returns TRUE if the given sort field exists within this request.
      *
-     * @param string $field
-     * @return bool
      */
     public function containsSortField(string $field): bool
     {
@@ -75,8 +73,6 @@ abstract class AbstractQuery extends WeakDto
     /**
      * Returns TRUE if the given field is passed with this request as sort or regular field..
      *
-     * @param string $field
-     * @return bool
      */
     public function usesField(string $field): bool
     {
@@ -85,11 +81,17 @@ abstract class AbstractQuery extends WeakDto
 
     //region Setters
 
+    /**
+     * @param mixed $keyword
+     */
     protected function setKeyword($keyword): void
     {
         $this->keyword = is_scalar($keyword) ? (string)$keyword : null;
     }
 
+    /**
+     * @param mixed $limit
+     */
     protected function setLimit($limit): void
     {
         $this->limit = is_numeric($limit) ? abs((int)$limit) : static::DEFAULT_PAGE_SIZE;
@@ -99,16 +101,25 @@ abstract class AbstractQuery extends WeakDto
         }
     }
 
+    /**
+     * @param mixed $offset
+     */
     protected function setOffset($offset): void
     {
         $this->offset = is_numeric($offset) ? abs((int)$offset) : null;
     }
 
+    /**
+     * @param mixed $page
+     */
     protected function setPage($page): void
     {
         $this->page = is_numeric($page) ? abs((int)$page) : null;
     }
 
+    /**
+     * @param mixed $sort
+     */
     protected function setSort($sort): void
     {
         if (!is_string($sort) || $sort === '') {
@@ -125,7 +136,7 @@ abstract class AbstractQuery extends WeakDto
             $first = $item[0];
             if ($first === '-') {
                 $items[ltrim(substr($item, 1))] = 'DESC';
-            } else if ($first === '+') {
+            } elseif ($first === '+') {
                 $items[ltrim(substr($item, 1))] = 'ASC';
             } else {
                 $items[$item] = 'ASC';
@@ -135,16 +146,25 @@ abstract class AbstractQuery extends WeakDto
         $this->sort = $items ?: null;
     }
 
+    /**
+     * @param mixed $fields
+     */
     protected function setGroup($fields): void
     {
         $this->group = $this->fieldsToArray($fields);
     }
 
+    /**
+     * @param mixed $fields
+     */
     protected function setFields($fields): void
     {
         $this->fields = $this->fieldsToArray($fields);
     }
 
+    /**
+     * @param mixed $timezone
+     */
     protected function setTimezone($timezone): void
     {
         $this->timezone = is_numeric($timezone) ? (int)$timezone : null;
@@ -155,11 +175,17 @@ abstract class AbstractQuery extends WeakDto
         $this->language = $language !== null ? Language::from(strtoupper($language)) : null;
     }
 
+    /**
+     * @param mixed $flag
+     */
     protected function setWithoutCount($flag): void
     {
         $this->withoutCount = $this->toBoolean($flag);
     }
 
+    /**
+     * @param mixed $flag
+     */
     protected function setWithoutItems($flag): void
     {
         $this->withoutItems = $this->toBoolean($flag);
@@ -167,6 +193,9 @@ abstract class AbstractQuery extends WeakDto
 
     //endregion
 
+    /**
+     * @param mixed $fields
+     */
     private function fieldsToArray($fields): ?array
     {
         if (!is_string($fields) || $fields === '') {

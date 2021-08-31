@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use RuntimeException;
-use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @property mixed $prop1@email
@@ -57,8 +59,13 @@ class DtoTestObject extends Dto
 /**
  * @property mixed $notExistingProp
  */
-class DtoTestObjectWithNonExistentProperty extends Dto {}
+class DtoTestObjectWithNonExistentProperty extends Dto
+{
+}
 
+/**
+ * @internal
+ */
 class DtoTest extends TestCase
 {
     public function testCreationSuccess(): void
@@ -67,10 +74,10 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
         ]);
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCreationFailureNotExistingProperty(): void
@@ -83,7 +90,7 @@ class DtoTest extends TestCase
             'prop2' => 5,
             'prop3' => true,
             'prop4' => 'boo',
-            'prop5' => 123
+            'prop5' => 123,
         ]);
     }
 
@@ -94,11 +101,11 @@ class DtoTest extends TestCase
             'prop2' => 5,
             'prop3' => true,
             'prop4' => 'boo',
-            'docComment' => 'text'
+            'docComment' => 'text',
         ];
         $obj = new DtoTestObject($properties);
 
-        $this->assertEquals($properties, $obj->toArray());
+        self::assertEquals($properties, $obj->toArray());
     }
 
     public function testToNestedArray(): void
@@ -108,7 +115,7 @@ class DtoTest extends TestCase
             'prop2' => 5,
             'prop3' => true,
             'prop4' => 'boo',
-            'docComment' => 'comment1'
+            'docComment' => 'comment1',
         ];
         $nestedObj = new DtoTestObject($nestedProperties);
 
@@ -117,12 +124,12 @@ class DtoTest extends TestCase
             'prop2' => 7,
             'prop3' => false,
             'prop4' => 'foo',
-            'docComment' => 'comment2'
+            'docComment' => 'comment2',
         ];
         $obj = new DtoTestObject($properties);
 
         $properties['prop1'] = $nestedProperties;
-        $this->assertEquals($properties, $obj->toNestedArray());
+        self::assertEquals($properties, $obj->toNestedArray());
     }
 
     public function testToJson(): void
@@ -132,13 +139,13 @@ class DtoTest extends TestCase
             'prop2' => 5,
             'prop3' => true,
             'prop4' => 'boo',
-            'docComment' => 'text'
+            'docComment' => 'text',
         ];
         $obj = new DtoTestObject($attributes);
 
         $expected = json_encode($attributes);
-        $this->assertEquals($expected, json_encode($obj));
-        $this->assertEquals($expected, $obj->toJson());
+        self::assertEquals($expected, json_encode($obj));
+        self::assertEquals($expected, $obj->toJson());
     }
 
     public function testToString(): void
@@ -147,13 +154,13 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
         ];
         $obj = new DtoTestObject($attributes);
 
         $expected = print_r($obj, true);
-        $this->assertEquals($expected, $obj->toString());
-        $this->assertEquals($expected, (string)$obj);
+        self::assertEquals($expected, $obj->toString());
+        self::assertEquals($expected, (string)$obj);
     }
 
     public function testValidate(): void
@@ -163,7 +170,7 @@ class DtoTest extends TestCase
             try {
                 new DtoTestObject([$property => $value]);
             } catch (InvalidArgumentException $e) {
-                $this->assertEquals('error message ' . $n, $e->getMessage());
+                self::assertEquals('error message ' . $n, $e->getMessage());
             }
             ++$n;
         }
@@ -173,10 +180,10 @@ class DtoTest extends TestCase
     {
         $obj = new DtoTestObject([
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
 
-        $this->assertEquals(5, $obj->prop2);
+        self::assertEquals(5, $obj->prop2);
     }
 
     public function testGetSuccessGetter(): void
@@ -184,10 +191,10 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop2' => 5,
             'prop4' => 'foo',
-            'prop3' => true
+            'prop3' => true,
         ]);
 
-        $this->assertEquals(5, $obj->prop3);
+        self::assertEquals(5, $obj->prop3);
     }
 
     public function testGetFailureWriteOnly(): void
@@ -197,7 +204,7 @@ class DtoTest extends TestCase
 
         $obj = new DtoTestObject([
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         /** @var mixed $obj */
         $obj->prop4;
@@ -211,7 +218,7 @@ class DtoTest extends TestCase
         (new DtoTestObject([
             'prop1' => true,
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]))->prop1;
     }
 
@@ -220,11 +227,11 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop2' => 5,
             'prop3' => false,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         $obj->prop1 = 'test';
 
-        $this->assertEquals('test', $obj->toArray()['prop1']);
+        self::assertEquals('test', $obj->toArray()['prop1']);
     }
 
     public function testSetSuccessSetter(): void
@@ -232,11 +239,11 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop2' => 5,
             'prop3' => false,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         $obj->prop4 = 'test';
 
-        $this->assertEquals('test', $obj->toArray()['prop4']);
+        self::assertEquals('test', $obj->toArray()['prop4']);
     }
 
     public function testSetFailureReadOnly(): void
@@ -247,7 +254,7 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop2' => 5,
             'prop3' => false,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         /** @var mixed $obj */
         $obj->prop3 = true;
@@ -261,7 +268,7 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop2' => 5,
             'prop3' => false,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         $obj->prop2 = 3;
     }
@@ -270,11 +277,11 @@ class DtoTest extends TestCase
     {
         $obj = new DtoTestObject([
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
 
-        $this->assertTrue(isset($obj->prop2));
-        $this->assertFalse(isset($obj->prop3));
+        self::assertTrue(isset($obj->prop2));
+        self::assertFalse(isset($obj->prop3));
     }
 
     public function testIssetFailureWriteOnly(): void
@@ -284,7 +291,7 @@ class DtoTest extends TestCase
 
         $obj = new DtoTestObject([
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         /** @var mixed $obj */
         $foo = isset($obj->prop4);
@@ -297,7 +304,7 @@ class DtoTest extends TestCase
 
         $obj = new DtoTestObject([
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         $foo = isset($obj->prop1);
     }
@@ -307,11 +314,11 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop1' => 'test',
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         unset($obj->prop1);
 
-        $this->assertNull($obj->toArray()['prop1']);
+        self::assertNull($obj->toArray()['prop1']);
     }
 
     public function testUnsetFailureReadOnly(): void
@@ -323,7 +330,7 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop3' => true,
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         unset($obj->prop3);
     }
@@ -336,7 +343,7 @@ class DtoTest extends TestCase
         $obj = new DtoTestObject([
             'prop3' => true,
             'prop2' => 5,
-            'prop4' => 'foo'
+            'prop4' => 'foo',
         ]);
         unset($obj->prop2);
     }
@@ -347,12 +354,12 @@ class DtoTest extends TestCase
             'prop1' => null,
             'prop2' => 5,
             'prop3' => true,
-            'prop4' => 'boo'
+            'prop4' => 'boo',
         ]);
 
         $new = unserialize(serialize($obj));
 
-        $this->assertSame($obj->toArray(), $new->toArray());
+        self::assertSame($obj->toArray(), $new->toArray());
     }
 
     public function testDtoWithNotExistingProperty(): void

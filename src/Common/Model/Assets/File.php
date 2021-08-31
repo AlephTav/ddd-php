@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Assets;
 
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
@@ -11,13 +13,16 @@ use AlephTools\DDD\Common\Infrastructure\IdentifiedValueObject;
  */
 class File extends IdentifiedValueObject
 {
+    /**
+     * @param array<string,mixed>|FileId|null $id
+     */
     public function __construct($id)
     {
         if (is_array($id)) {
             parent::__construct($id);
         } else {
             parent::__construct([
-                'id' => $id
+                'id' => $id,
             ]);
         }
     }

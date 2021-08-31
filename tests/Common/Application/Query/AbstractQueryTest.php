@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Application\Query;
 
+use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use AlephTools\DDD\Common\Model\Language;
 use DateTime;
 use DateTimeImmutable;
-use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class TestQueryTestObject extends AbstractQuery
 {
@@ -15,24 +18,27 @@ class TestQueryTestObject extends AbstractQuery
         return $this->toBoolean($value);
     }
 
-    public function castToDate($value): DateTime
+    public function castToDate($value): ?DateTime
     {
         return $this->toDate($value);
     }
 
-    public function castToImmutableDate($value): DateTimeImmutable
+    public function castToImmutableDate($value): ?DateTimeImmutable
     {
         return $this->toImmutableDate($value);
     }
 }
 
+/**
+ * @internal
+ */
 class AbstractQueryTest extends TestCase
 {
     public function testDefaultValues(): void
     {
         $query = new TestQueryTestObject(['a' => 1, 'b' => 2, 'c' => 3]);
 
-        $this->assertSame([
+        self::assertSame([
             'keyword' => null,
             'limit' => TestQueryTestObject::DEFAULT_PAGE_SIZE,
             'offset' => null,
@@ -43,19 +49,18 @@ class AbstractQueryTest extends TestCase
             'timezone' => null,
             'language' => null,
             'withoutCount' => false,
-            'withoutItems' => false
+            'withoutItems' => false,
         ], $query->toArray());
     }
 
     /**
      * @dataProvider booleanDataProvider
      * @param mixed $value
-     * @param bool $result
      */
     public function testToBoolean($value, bool $result): void
     {
         $query = new TestQueryTestObject();
-        $this->assertEquals($result, $query->castToBoolean($value));
+        self::assertEquals($result, $query->castToBoolean($value));
     }
 
     public function booleanDataProvider(): array
@@ -72,8 +77,8 @@ class AbstractQueryTest extends TestCase
             ['oFf', false],
             ['  faLse', false],
             [[], false],
-            [new \stdClass(), false],
-            [null, false]
+            [new stdClass(), false],
+            [null, false],
         ];
     }
 
@@ -82,24 +87,23 @@ class AbstractQueryTest extends TestCase
         $query = new TestQueryTestObject();
         $date = $query->castToDate('2018-10-01 21:30:00');
 
-        $this->assertInstanceOf(DateTime::class, $date);
-        $this->assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
+        self::assertInstanceOf(DateTime::class, $date);
+        self::assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
 
         $date = $query->castToImmutableDate('2018-10-01 21:30:00');
 
-        $this->assertInstanceOf(DateTimeImmutable::class, $date);
-        $this->assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
+        self::assertInstanceOf(DateTimeImmutable::class, $date);
+        self::assertSame($date->format('Y-m-d H:i:s'), $date->format('Y-m-d H:i:s'));
     }
 
     /**
      * @dataProvider keywordDataProvider
      * @param mixed $value
-     * @param null|string $keyword
      */
     public function testSetKeyword($value, ?string $keyword): void
     {
         $query = new TestQueryTestObject(['keyword' => $value]);
-        $this->assertSame($keyword, $query->keyword);
+        self::assertSame($keyword, $query->keyword);
     }
 
     public function keywordDataProvider(): array
@@ -111,20 +115,19 @@ class AbstractQueryTest extends TestCase
             [true, '1'],
             [false, ''],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider limitDataProvider
      * @param mixed $value
-     * @param int $limit
      */
     public function testSetLimit($value, int $limit): void
     {
         $query = new TestQueryTestObject(['limit' => $value]);
-        $this->assertSame($limit, $query->limit);
+        self::assertSame($limit, $query->limit);
     }
 
     public function limitDataProvider(): array
@@ -137,20 +140,19 @@ class AbstractQueryTest extends TestCase
             [AbstractQuery::DEFAULT_PAGE_MAX_SIZE + 1, AbstractQuery::DEFAULT_PAGE_MAX_SIZE],
             ['test', AbstractQuery::DEFAULT_PAGE_SIZE],
             [[], AbstractQuery::DEFAULT_PAGE_SIZE],
-            [new \stdClass(), AbstractQuery::DEFAULT_PAGE_SIZE],
-            [null, AbstractQuery::DEFAULT_PAGE_SIZE]
+            [new stdClass(), AbstractQuery::DEFAULT_PAGE_SIZE],
+            [null, AbstractQuery::DEFAULT_PAGE_SIZE],
         ];
     }
 
     /**
      * @dataProvider offsetDataProvider
      * @param mixed $value
-     * @param int|null $offset
      */
     public function testSetOffset($value, ?int $offset): void
     {
         $query = new TestQueryTestObject(['offset' => $value]);
-        $this->assertSame($offset, $query->offset);
+        self::assertSame($offset, $query->offset);
     }
 
     public function offsetDataProvider(): array
@@ -162,20 +164,19 @@ class AbstractQueryTest extends TestCase
             ['6.7', 6],
             ['test', null],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider pageDataProvider
      * @param mixed $value
-     * @param int|null $page
      */
     public function testSetPage($value, ?int $page): void
     {
         $query = new TestQueryTestObject(['page' => $value]);
-        $this->assertSame($page, $query->page);
+        self::assertSame($page, $query->page);
     }
 
     public function pageDataProvider(): array
@@ -187,20 +188,19 @@ class AbstractQueryTest extends TestCase
             ['6.7', 6],
             ['test', null],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider timezoneDataProvider
      * @param mixed $value
-     * @param int|null $timezone
      */
     public function testSetTimezone($value, ?int $timezone): void
     {
         $query = new TestQueryTestObject(['timezone' => $value]);
-        $this->assertSame($timezone, $query->timezone);
+        self::assertSame($timezone, $query->timezone);
     }
 
     public function timezoneDataProvider(): array
@@ -212,20 +212,18 @@ class AbstractQueryTest extends TestCase
             ['-6.7', -6],
             ['test', null],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider languageDataProvider
-     * @param string|null $value
-     * @param Language|null $language
      */
     public function testSetLanguage(?string $value, ?Language $language): void
     {
         $query = new TestQueryTestObject(['language' => $value]);
-        $this->assertSame($language, $query->language);
+        self::assertSame($language, $query->language);
     }
 
     public function languageDataProvider(): array
@@ -233,41 +231,38 @@ class AbstractQueryTest extends TestCase
         return [
             ['ru', Language::RU()],
             ['En', Language::EN()],
-            [null, null]
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider booleanDataProvider
      * @param mixed $value
-     * @param bool $result
      */
     public function testSetWithoutCount($value, bool $result): void
     {
         $query = new TestQueryTestObject(['withoutCount' => $value]);
-        $this->assertEquals($result, $query->withoutCount);
+        self::assertEquals($result, $query->withoutCount);
     }
 
     /**
      * @dataProvider booleanDataProvider
      * @param mixed $value
-     * @param bool $result
      */
     public function testSetWithoutItems($value, bool $result): void
     {
         $query = new TestQueryTestObject(['withoutItems' => $value]);
-        $this->assertEquals($result, $query->withoutItems);
+        self::assertEquals($result, $query->withoutItems);
     }
 
     /**
      * @dataProvider sortDataPRovider
      * @param mixed $value
-     * @param array|null $sort
      */
     public function testSetSort($value, ?array $sort): void
     {
         $query = new TestQueryTestObject(['sort' => $value]);
-        $this->assertSame($sort, $query->sort);
+        self::assertSame($sort, $query->sort);
     }
 
     public function sortDataProvider(): array
@@ -283,31 +278,29 @@ class AbstractQueryTest extends TestCase
             [true, null],
             [false, null],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
     /**
      * @dataProvider fieldsDataProvider
      * @param mixed $value
-     * @param array|null $fields
      */
     public function testSetFields($value, ?array $fields): void
     {
         $query = new TestQueryTestObject(['fields' => $value]);
-        $this->assertSame($fields, $query->fields);
+        self::assertSame($fields, $query->fields);
     }
 
     /**
      * @dataProvider fieldsDataProvider
      * @param mixed $value
-     * @param array|null $fields
      */
     public function testSetGroup($value, ?array $fields): void
     {
         $query = new TestQueryTestObject(['group' => $value]);
-        $this->assertSame($fields, $query->group);
+        self::assertSame($fields, $query->group);
     }
 
     public function fieldsDataProvider(): array
@@ -322,8 +315,8 @@ class AbstractQueryTest extends TestCase
             [true, null],
             [false, null],
             [[], null],
-            [new \stdClass(), null],
-            [null, null]
+            [new stdClass(), null],
+            [null, null],
         ];
     }
 
@@ -331,45 +324,45 @@ class AbstractQueryTest extends TestCase
     {
         $query = new TestQueryTestObject(['fields' => 'f1,f2,f3']);
 
-        $this->assertTrue($query->containsField('f1'));
-        $this->assertTrue($query->containsField('f2'));
-        $this->assertTrue($query->containsField('f3'));
-        $this->assertFalse($query->containsField('f4'));
+        self::assertTrue($query->containsField('f1'));
+        self::assertTrue($query->containsField('f2'));
+        self::assertTrue($query->containsField('f3'));
+        self::assertFalse($query->containsField('f4'));
 
         $query = new TestQueryTestObject();
-        $this->assertTrue($query->containsField('f1'));
-        $this->assertTrue($query->containsField('f4'));
+        self::assertTrue($query->containsField('f1'));
+        self::assertTrue($query->containsField('f4'));
     }
 
     public function testContainingSortField(): void
     {
         $query = new TestQueryTestObject(['sort' => '+f1,-f2, f3']);
 
-        $this->assertTrue($query->containsSortField('f1'));
-        $this->assertTrue($query->containsSortField('f2'));
-        $this->assertTrue($query->containsSortField('f3'));
-        $this->assertFalse($query->containsSortField('f5'));
+        self::assertTrue($query->containsSortField('f1'));
+        self::assertTrue($query->containsSortField('f2'));
+        self::assertTrue($query->containsSortField('f3'));
+        self::assertFalse($query->containsSortField('f5'));
 
         $query = new TestQueryTestObject();
-        $this->assertFalse($query->containsSortField('f1'));
-        $this->assertFalse($query->containsSortField('f4'));
+        self::assertFalse($query->containsSortField('f1'));
+        self::assertFalse($query->containsSortField('f4'));
     }
 
     public function testUseField(): void
     {
         $query = new TestQueryTestObject([
             'sort' => '+f1,-f2',
-            'fields' => 'f1,f3'
+            'fields' => 'f1,f3',
         ]);
 
-        $this->assertTrue($query->usesField('f1'));
-        $this->assertTrue($query->usesField('f2'));
-        $this->assertTrue($query->usesField('f3'));
-        $this->assertFalse($query->usesField('f5'));
+        self::assertTrue($query->usesField('f1'));
+        self::assertTrue($query->usesField('f2'));
+        self::assertTrue($query->usesField('f3'));
+        self::assertFalse($query->usesField('f5'));
 
         $query = new TestQueryTestObject();
-        $this->assertTrue($query->usesField('f1'));
-        $this->assertTrue($query->usesField('f4'));
+        self::assertTrue($query->usesField('f1'));
+        self::assertTrue($query->usesField('f4'));
     }
 
     public function testSetPageSize(): void
@@ -378,7 +371,7 @@ class AbstractQueryTest extends TestCase
         $query1 = new TestQueryTestObject(['limit' => 50000]);
         $query2 = new TestQueryTestObject(['limit' => 35000]);
 
-        $this->assertSame(AbstractQuery::getPageMaxSize(), $query1->limit);
-        $this->assertSame(AbstractQuery::getPageMaxSize(), $query2->limit);
+        self::assertSame(AbstractQuery::getPageMaxSize(), $query1->limit);
+        self::assertSame(AbstractQuery::getPageMaxSize(), $query2->limit);
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
+use stdClass;
 
 /**
  * @property-read AbstractId $id
@@ -12,7 +15,6 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     /**
      * The object identifier.
      *
-     * @var AbstractId|null
      */
     protected ?AbstractId $id = null;
 
@@ -29,7 +31,6 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     /**
      * Converts an object to its identity string.
      *
-     * @return null|string
      */
     public function toIdentityString(): ?string
     {
@@ -39,14 +40,13 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     /**
      * Generates a hash value for this domain object.
      *
-     * @return string
      */
     public function hash(): string
     {
         if (!$this->id) {
             return parent::hash();
         }
-        $hash = new \stdClass();
+        $hash = new stdClass();
         $hash->type = get_class($this);
         $hash->properties = ['id' => $this->id];
         return Hash::of($hash);

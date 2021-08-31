@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Application\Data;
 
 /**
@@ -15,7 +17,7 @@ abstract class AbstractCollectionResponse extends AbstractDataResponse
     {
         parent::__construct([
             'items' => $items,
-            'count' => $count
+            'count' => $count,
         ]);
     }
 

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure\Enums;
 
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
-use JsonSerializable;
-use UnexpectedValueException;
 use BadMethodCallException;
-use ReflectionException;
+use JsonSerializable;
 use ReflectionClass;
+use ReflectionException;
+use UnexpectedValueException;
 
 /**
  * Base class of all enum types.
@@ -18,28 +20,27 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * The constants' cache.
      *
-     * @var array
+     * @psalm-var array<class-string<static>,array<string,mixed>>
      */
     private static array $constants = [];
 
     /**
      * The enum instances.
      *
-     * @var array
+     * @psalm-var array<class-string<static>,array<string,static>>
      */
     private static array $instances = [];
 
     /**
      * The name of an enum constant associated with the given enum instance.
      *
-     * @var string
      */
     protected string $constant = '';
 
     /**
      * Returns the class's constants.
      *
-     * @return array
+     * @return array<string,mixed>
      * @throws ReflectionException
      */
     final public static function getConstants(): array
@@ -54,7 +55,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Returns the available constant names.
      *
-     * @return array
+     * @return string[]
      * @throws ReflectionException
      */
     final public static function getConstantNames(): array
@@ -73,8 +74,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Checks if the given constant name is in the enum type.
      *
-     * @param string $name
-     * @return bool
      * @throws ReflectionException
      */
     public static function isValidConstantName(string $name): bool
@@ -87,7 +86,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      *
      * @param mixed $value
      * @param bool $strict Determines whether to search for identical elements.
-     * @return bool
      * @throws ReflectionException
      */
     public static function isValidConstantValue($value, $strict = false): bool
@@ -99,7 +97,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * Validates the constant name.
      *
      * @param string $name The constant name.
-     * @return void
      * @throws UnexpectedValueException
      * @throws ReflectionException
      */
@@ -150,7 +147,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      */
     public static function from($constantName)
     {
-        if (is_object($constantName) && ($constantName instanceof static)) {
+        if ($constantName instanceof static) {
             return $constantName;
         }
         if (!is_string($constantName)) {
@@ -165,7 +162,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
         }
 
         try {
-            return static::$constantName();
+            return static::__callStatic($constantName);
         } catch (UnexpectedValueException $e) {
             throw new InvalidArgumentException($e->getMessage(), (int)$e->getCode(), $e);
         }
@@ -174,9 +171,10 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Creates an enum instance that associated with the given enum constant name.
      *
+     * @template T as array
      * @param string $name The constant name.
-     * @param array $arguments
-     * @return static
+     * @param T $arguments The arguments of the invoked enum method.
+     * @psalm-return (T is non-empty-array ? mixed : static)
      * @throws UnexpectedValueException
      * @throws BadMethodCallException
      * @throws ReflectionException
@@ -187,14 +185,18 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
         $value = is_array($value) ? $value : [$value];
         $instance = self::getInstance($name, $value);
         $instance->constant = $name;
-        if ($arguments) {
-            $method = 'get' . ucfirst(array_shift($arguments));
+        if (!$arguments) {
+            return $instance;
+        }
+        $method = array_shift($arguments);
+        if (is_string($method)) {
+            $method = 'get' . ucfirst($method);
             if (method_exists($instance, $method)) {
+                /** @psalm-suppress MixedReturnStatement */
                 return $instance->{$method}(...$arguments);
             }
-            throw new BadMethodCallException("Method $method does not exist.");
         }
-        return $instance;
+        throw new BadMethodCallException("Method $method does not exist.");
     }
 
     /**
@@ -202,7 +204,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * Returns TRUE if two objects have the same enum value (even though they refer different object instances).
      *
      * @param mixed $enum
-     * @return bool
      */
     public function equals($enum): bool
     {
@@ -216,7 +217,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Returns the name of the constant that associated with the current enum instance.
      *
-     * @return string
      */
     public function getConstantName(): string
     {
@@ -226,7 +226,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Converts the enum instance to a string.
      *
-     * @return string
      */
     public function toString(): string
     {
@@ -236,7 +235,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Converts the enum instance to a string.
      *
-     * @return string
      */
     public function __toString(): string
     {
@@ -256,7 +254,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Returns data which should be serialized to JSON.
      *
-     * @return string
      */
     public function jsonSerialize(): string
     {
@@ -266,8 +263,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Creates the enum instance.
      *
-     * @param string $constant
-     * @param array $value
      * @return static
      */
     private static function getInstance(string $constant, array $value)
@@ -282,7 +277,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Restore the cache reference after deserialization.
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if (empty(self::$instances[static::class][$this->constant])) {
             self::$instances[static::class][$this->constant] = $this;
@@ -292,5 +287,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Forbids the implicit creation of enum instances without own constructors.
      */
-    protected function __construct() {}
+    protected function __construct()
+    {
+    }
 }

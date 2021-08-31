@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure\Enums;
 
 /**
@@ -10,14 +12,12 @@ class NamedEnum extends AbstractEnum
     /**
      * The name associated with the enum value.
      *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * Constructor.
      *
-     * @param string $name
      */
     protected function __construct(string $name)
     {
@@ -27,7 +27,6 @@ class NamedEnum extends AbstractEnum
     /**
      * Returns the name that associated with the current enum value.
      *
-     * @return string
      */
     public function getName(): string
     {

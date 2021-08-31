@@ -1,5 +1,6 @@
-composer.lock
-.idea
-vendor
-tests-coverage
+/.idea
+/vendor
+/tests-coverage
+/composer.lock
 .phpunit.result.cache
+.php-cs-fixer.cache

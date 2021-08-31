@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Identity;
 
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
@@ -15,7 +17,6 @@ class LocalId extends AbstractId
      * Returns TRUE if the given identity can be a local identifier.
      *
      * @param mixed $identity
-     * @return bool
      */
     public static function canBeId($identity): bool
     {
@@ -26,6 +27,9 @@ class LocalId extends AbstractId
         return false;
     }
 
+    /**
+     * @param mixed $identity
+     */
     public function __construct($identity)
     {
         parent::__construct(['identity' => $this->parse($identity)]);
@@ -35,15 +39,15 @@ class LocalId extends AbstractId
      * Parses the identifier.
      *
      * @param mixed $identity
-     * @return int|null
      */
     protected function parse($identity): ?int
     {
+        if ($identity instanceof static) {
+            /** @var mixed $identity */
+            $identity = $identity->identity;
+        }
         if ($identity === null) {
             return null;
-        }
-        if ($identity instanceof self) {
-            return $identity->identity;
         }
         if (is_numeric($identity)) {
             return (int)$identity;

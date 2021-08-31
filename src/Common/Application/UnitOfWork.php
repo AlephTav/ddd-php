@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Application;
 
 interface UnitOfWork
@@ -7,7 +9,6 @@ interface UnitOfWork
     /**
      * Execute some code in one transaction.
      *
-     * @param callable $callback
      * @return mixed
      */
     public function execute(callable $callback);

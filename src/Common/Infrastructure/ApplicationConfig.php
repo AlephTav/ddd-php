@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 final class ApplicationConfig
@@ -14,8 +16,6 @@ final class ApplicationConfig
     /**
      * Sets the application config.
      *
-     * @param callable $config
-     * @return void
      */
     public static function set(callable $config): void
     {
@@ -25,7 +25,6 @@ final class ApplicationConfig
     /**
      * Returns the specified configuration value.
      *
-     * @param string|null $key
      * @param mixed $default
      * @return mixed
      */

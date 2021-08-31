@@ -1,45 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model;
 
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\FullName;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 class FullNameTest extends TestCase
 {
     public function testCreationWithEmptyArguments(): void
     {
         $name = new FullName();
 
-        $this->assertSame('', $name->firstName);
-        $this->assertSame('', $name->lastName);
+        self::assertSame('', $name->firstName);
+        self::assertSame('', $name->lastName);
     }
 
     public function testCreationWithArguments(): void
     {
         $name = new FullName('first', 'last');
 
-        $this->assertSame('first', $name->firstName);
-        $this->assertSame('last', $name->lastName);
+        self::assertSame('first', $name->firstName);
+        self::assertSame('last', $name->lastName);
 
         $name = new FullName(['firstName' => 'first', 'lastName' => 'last']);
 
-        $this->assertSame('first', $name->firstName);
-        $this->assertSame('last', $name->lastName);
+        self::assertSame('first', $name->firstName);
+        self::assertSame('last', $name->lastName);
     }
 
     public function creationWithMixedArguments(): void
     {
         $name = new FullName('first');
 
-        $this->assertSame('first', $name->firstName);
-        $this->assertSame('', $name->lastName);
+        self::assertSame('first', $name->firstName);
+        self::assertSame('', $name->lastName);
 
         $name = new FullName(null, 'last');
 
-        $this->assertSame('', $name->firstName);
-        $this->assertSame('last', $name->lastName);
+        self::assertSame('', $name->firstName);
+        self::assertSame('last', $name->lastName);
     }
 
     public function testFirstNameIsTooLong(): void
@@ -47,7 +52,7 @@ class FullNameTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('First name must be at most ' . FullName::FIRST_NAME_MAX_LENGTH . ' characters.');
 
-        new FullName( str_repeat('*', FullName::FIRST_NAME_MAX_LENGTH + 1), 'last');
+        new FullName(str_repeat('*', FullName::FIRST_NAME_MAX_LENGTH + 1), 'last');
     }
 
     public function testLastNameIsTooLong(): void
@@ -74,27 +79,22 @@ class FullNameTest extends TestCase
     {
         $name = new FullName('  first', 'last  ', ' middle  ');
 
-        $this->assertSame('first', $name->firstName);
-        $this->assertSame('last', $name->lastName);
-        $this->assertSame('middle', $name->middleName);
+        self::assertSame('first', $name->firstName);
+        self::assertSame('last', $name->lastName);
+        self::assertSame('middle', $name->middleName);
     }
 
     public function testSanitizationOfControlCharacters(): void
     {
         $name = new FullName("\n first ", " \r last \t", "\rmiddle\n\n\t");
 
-        $this->assertSame('first', $name->firstName);
-        $this->assertSame('last', $name->lastName);
-        $this->assertSame('middle', $name->middleName);
+        self::assertSame('first', $name->firstName);
+        self::assertSame('last', $name->lastName);
+        self::assertSame('middle', $name->middleName);
     }
 
     /**
      * @dataProvider nameFormattingDataProvider
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $middleName
-     * @param string $format
-     * @param string $formattedName
      */
     public function testFullNameFormatting(
         string $firstName,
@@ -102,11 +102,10 @@ class FullNameTest extends TestCase
         string $middleName,
         string $format,
         string $formattedName
-    ): void
-    {
+    ): void {
         $name = new FullName($firstName, $lastName, $middleName);
 
-        $this->assertSame($formattedName, $name->asFormattedName($format));
+        self::assertSame($formattedName, $name->asFormattedName($format));
     }
 
     public function nameFormattingDataProvider(): array
@@ -117,130 +116,125 @@ class FullNameTest extends TestCase
                 ' last ',
                 ' ',
                 'f',
-                'first'
+                'first',
             ],
             [
                 ' first ',
                 ' last ',
                 ' ',
                 'l',
-                'last'
+                'last',
             ],
             [
                 ' first ',
                 ' last ',
                 ' ',
                 'm',
-                ''
+                '',
             ],
             [
                 ' first ',
                 ' last ',
                 ' middle ',
                 'm',
-                'middle'
+                'middle',
             ],
             [
                 ' first',
                 ' last',
                 ' middle ',
                 'fl',
-                'first last'
+                'first last',
             ],
             [
                 ' first',
                 ' last',
                 ' middle ',
                 'lf',
-                'last first'
+                'last first',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'fm',
-                'first middle'
+                'first middle',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'mf',
-                'middle first'
+                'middle first',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'lm',
-                'last middle'
+                'last middle',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'ml',
-                'middle last'
+                'middle last',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'flm',
-                'first last middle'
+                'first last middle',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'lfm',
-                'last first middle'
+                'last first middle',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'mfl',
-                'middle first last'
+                'middle first last',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'fml',
-                'first middle last'
+                'first middle last',
             ],
             [
                 'first ',
                 ' last',
                 ' middle ',
                 'lmf',
-                'last middle first'
+                'last middle first',
             ],
             [
                 ' ',
                 ' ',
                 '  ',
                 'flm',
-                ''
+                '',
             ],
             [
                 '',
                 '',
                 '',
                 'fml',
-                ''
-            ]
+                '',
+            ],
         ];
     }
 
     /**
      * @dataProvider nameParsingDataProvider
-     * @param null|string $fullName
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $middleName
-     * @param string $format
      */
     public function testParseName(
         ?string $fullName,
@@ -248,13 +242,12 @@ class FullNameTest extends TestCase
         string $lastName,
         string $middleName,
         string $format
-    ): void
-    {
+    ): void {
         $name = FullName::parse($fullName, $format);
 
-        $this->assertSame($firstName, $name->firstName);
-        $this->assertSame($lastName, $name->lastName);
-        $this->assertSame($middleName, $name->middleName);
+        self::assertSame($firstName, $name->firstName);
+        self::assertSame($lastName, $name->lastName);
+        self::assertSame($middleName, $name->middleName);
     }
 
     public function nameParsingDataProvider(): array
@@ -265,63 +258,63 @@ class FullNameTest extends TestCase
                 'first',
                 'last',
                 'middle',
-                'flm'
+                'flm',
             ],
             [
                 'last first middle   ',
                 'first',
                 'last',
                 'middle',
-                'lfm'
+                'lfm',
             ],
             [
                 '  first middle last',
                 'first',
                 'last',
                 'middle',
-                'fml'
+                'fml',
             ],
             [
                 'last middle first',
                 'first',
                 'last',
                 'middle',
-                'lmf'
+                'lmf',
             ],
             [
                 'middle first last  ',
                 'first',
                 'last',
                 'middle',
-                'mfl'
+                'mfl',
             ],
             [
                 '  middle last first',
                 'first',
                 'last',
                 'middle',
-                'mlf'
+                'mlf',
             ],
             [
                 '  first last middle',
                 'first',
                 'last',
                 '',
-                'fl'
+                'fl',
             ],
             [
                 '  last first middle',
                 'first',
                 'last',
                 '',
-                'lf'
+                'lf',
             ],
             [
                 '  first last middle',
                 'first',
                 'last',
                 '',
-                'fl'
+                'fl',
             ],
             [
                 '',
@@ -329,7 +322,7 @@ class FullNameTest extends TestCase
                 '',
                 '',
                 'flm',
-                ''
+                '',
             ],
             [
                 null,
@@ -337,7 +330,7 @@ class FullNameTest extends TestCase
                 '',
                 '',
                 '',
-                ''
+                '',
             ],
         ];
     }

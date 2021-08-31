@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Infrastructure\DateHelper;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use DateTime;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
-use AlephTools\DDD\Common\Infrastructure\DateHelper;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use stdClass;
 
 class DateHelperTestObject extends DateHelper
 {
@@ -16,6 +19,9 @@ class DateHelperTestObject extends DateHelper
     }
 }
 
+/**
+ * @internal
+ */
 class DateHelperTest extends TestCase
 {
     public function testParseDateFormats(): void
@@ -23,15 +29,13 @@ class DateHelperTest extends TestCase
         $defaultFormats = DateHelper::getAvailableDateFormats();
         DateHelper::setAvailableDateFormats($defaultFormats);
 
-        $this->assertSame($defaultFormats, DateHelper::getAvailableDateFormats());
+        self::assertSame($defaultFormats, DateHelper::getAvailableDateFormats());
     }
 
     /**
      * @depends testParseDateFormats
      * @dataProvider dateDataProvider
      * @param $value
-     * @param string|null $format
-     * @param bool $expectException
      */
     public function testParseDate($value, ?string $format, bool $expectException): void
     {
@@ -41,18 +45,18 @@ class DateHelperTest extends TestCase
 
         $date = DateHelper::parse($value);
         if ($format) {
-            $this->assertInstanceOf(DateTime::class, $date);
-            $this->assertEquals($value, $date->format($format));
+            self::assertInstanceOf(DateTime::class, $date);
+            self::assertEquals($value, $date->format($format));
         } else {
-            $this->assertEquals($value, $date);
+            self::assertEquals($value, $date);
         }
 
         $date = DateHelper::parseImmutable($value);
         if ($format) {
-            $this->assertInstanceOf(DateTimeImmutable::class, $date);
-            $this->assertEquals($value, $date->format($format));
+            self::assertInstanceOf(DateTimeImmutable::class, $date);
+            self::assertEquals($value, $date->format($format));
         } else {
-            $this->assertEquals($value, $date);
+            self::assertEquals($value, $date);
         }
     }
 
@@ -66,19 +70,19 @@ class DateHelperTest extends TestCase
             $data[] = [
                 $date,
                 $format,
-                false
+                false,
             ];
         }
         $data = array_merge($data, [
             [
                 new DateTime(),
                 null,
-                false
+                false,
             ],
             [
                 new DateTimeImmutable(),
                 null,
-                false
+                false,
             ],
             [
                 null,
@@ -88,13 +92,13 @@ class DateHelperTest extends TestCase
             [
                 [],
                 null,
-                true
+                true,
             ],
             [
-                new \stdClass(),
+                new stdClass(),
                 null,
-                true
-            ]
+                true,
+            ],
         ]);
 
         return $data;
@@ -106,6 +110,6 @@ class DateHelperTest extends TestCase
 
         $parsedDate = DateHelperTestObject::parse($date);
 
-        $this->assertSame($date->format('Y-m-d H:i:s.u'), $parsedDate->format('Y-m-d H:i:s.u'));
+        self::assertSame($date->format('Y-m-d H:i:s.u'), $parsedDate->format('Y-m-d H:i:s.u'));
     }
 }

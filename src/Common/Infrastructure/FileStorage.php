@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Application\Data\FileMetadata;
@@ -12,7 +14,6 @@ interface FileStorage
      *
      * @param mixed $fileId
      * @param mixed $ownerId
-     * @return bool
      */
     public function exists($fileId, $ownerId = null): bool;
 
@@ -20,9 +21,7 @@ interface FileStorage
      * Returns the file metadata by its unique identifier.
      *
      * @param mixed $fileId
-     * @param int $linksExpirationInSeconds
      * @param mixed $ownerId The file owner.
-     * @return FileMetadata
      * @throws EntityNotFoundException
      */
     public function getMetadata($fileId, int $linksExpirationInSeconds = 0, $ownerId = null): FileMetadata;
@@ -31,7 +30,6 @@ interface FileStorage
      * Returns the list of files metadata by their unique identifiers.
      *
      * @param array $ids File identifiers.
-     * @param int $linksExpirationInSeconds
      * @param mixed $ownerId The file owner.
      * @return FileMetadata[]
      * @throws EntityNotFoundException
@@ -42,9 +40,7 @@ interface FileStorage
      * Returns a url to access the given public file.
      *
      * @param mixed $fileId
-     * @param int $expirationInSeconds
      * @param mixed $ownerId The file owner.
-     * @return string
      */
     public function getUrl($fileId, int $expirationInSeconds = 0, $ownerId = null): string;
 
@@ -52,9 +48,7 @@ interface FileStorage
      * Returns the download link for a file.
      *
      * @param mixed $fileId
-     * @param int $expirationInSeconds
      * @param mixed $ownerId The file owner.
-     * @return string
      */
     public function getDownloadLink($fileId, int $expirationInSeconds, $ownerId = null): string;
 
@@ -62,11 +56,8 @@ interface FileStorage
      * Upload a file to storage.
      *
      * @param mixed $file
-     * @param bool $isPrivate
      * @param string $path Optional path to the file in the storage.
-     * @param int $linksExpirationInSeconds
      * @param mixed $ownerId The file owner.
-     * @return FileMetadata
      */
     public function upload(
         $file,
@@ -90,7 +81,6 @@ interface FileStorage
      *
      * @param mixed $fileId
      * @param mixed $ownerId The file owner.
-     * @return void
      */
     public function delete($fileId, $ownerId = null): void;
 }

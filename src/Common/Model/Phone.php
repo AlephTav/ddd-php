@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
-use AlephTools\DDD\Common\Infrastructure\Sanitizer;
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
 
@@ -21,7 +22,7 @@ class Phone extends ValueObject implements Scalarable
      * Phone(string $number)
      * Phone(array $properties)
      *
-     * @param array|string|null $number
+     * @param array<string,mixed>|string|null $number
      */
     public function __construct($number = null)
     {
@@ -29,7 +30,7 @@ class Phone extends ValueObject implements Scalarable
             parent::__construct($number);
         } else {
             parent::__construct([
-                'number' => $number
+                'number' => $number,
             ]);
         }
     }
@@ -54,7 +55,7 @@ class Phone extends ValueObject implements Scalarable
             $length = strlen($number);
             if ($length === 10) {
                 $number = '7' . $number;
-            } else if ($length === 11 && $number[0] === '8') {
+            } elseif ($length === 11 && $number[0] === '8') {
                 $number = '7' . substr($number, 1);
             }
         }
@@ -65,8 +66,8 @@ class Phone extends ValueObject implements Scalarable
     {
         $this->assertArgumentMaxLength(
             $this->number,
-            static::NUMBER_MAX_LENGTH,
-            'Phone number must be at most ' . static::NUMBER_MAX_LENGTH . ' characters.'
+            (int)static::NUMBER_MAX_LENGTH,
+            'Phone number must be at most ' . (string)static::NUMBER_MAX_LENGTH . ' characters.'
         );
     }
 }

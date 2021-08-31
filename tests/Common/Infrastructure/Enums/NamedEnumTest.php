@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
 
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Model\Gender;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 class NamedEnumTest extends TestCase
 {
     public function testGetName(): void
     {
-        $this->assertSame('Female', Gender::FEMALE('name'));
-        $this->assertSame('Male', Gender::MALE('name'));
+        self::assertSame('Female', Gender::FEMALE('name'));
+        self::assertSame('Male', Gender::MALE('name'));
     }
 }

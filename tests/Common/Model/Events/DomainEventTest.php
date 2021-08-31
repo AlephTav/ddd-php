@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model\Events;
 
 use AlephTools\DDD\Common\Model\Events\DomainEvent;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,17 +16,20 @@ class DomainEventTestObject extends DomainEvent
     private $prop;
 }
 
+/**
+ * @internal
+ */
 class DomainEventTest extends TestCase
 {
     public function testCreation(): void
     {
-        $now = new \DateTime();
+        $now = new DateTime();
         $event = new DomainEventTestObject([
             'prop' => 'foo',
-            'occurredOn' => $now
+            'occurredOn' => $now,
         ]);
 
-        $this->assertEquals('foo', $event->prop);
-        $this->assertEquals($now->format('Y-m-d H:i:s'), $event->occurredOn->format('Y-m-d H:i:s'));
+        self::assertEquals('foo', $event->prop);
+        self::assertEquals($now->format('Y-m-d H:i:s'), $event->occurredOn->format('Y-m-d H:i:s'));
     }
 }

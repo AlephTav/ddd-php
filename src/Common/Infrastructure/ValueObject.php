@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Infrastructure;
 
 /**
@@ -10,14 +12,12 @@ abstract class ValueObject extends DomainObject
     /**
      * The cached hash value.
      *
-     * @var string|null
      */
     private ?string $computedHash = null;
 
     /**
      * Generates a hash value for this domain object.
      *
-     * @return string
      */
     public function hash(): string
     {

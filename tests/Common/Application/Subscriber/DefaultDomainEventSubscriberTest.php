@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Application\Subscriber;
 
 use AlephTools\DDD\Common\Application\EventStore;
@@ -7,8 +9,13 @@ use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;
 use AlephTools\DDD\Common\Model\Events\DomainEvent;
 use PHPUnit\Framework\TestCase;
 
-class DefaultEventTestObject extends DomainEvent {}
+class DefaultEventTestObject extends DomainEvent
+{
+}
 
+/**
+ * @internal
+ */
 class DefaultDomainEventSubscriberTest extends TestCase
 {
     public function testSubscribedEventType(): void
@@ -17,14 +24,14 @@ class DefaultDomainEventSubscriberTest extends TestCase
         $eventStore = $this->getEventStoreMock();
         $subscriber = new DefaultDomainEventSubscriber($eventStore);
 
-        $this->assertSame(DomainEvent::class, $subscriber->subscribedToEventType());
+        self::assertSame(DomainEvent::class, $subscriber->subscribedToEventType());
     }
 
     public function testEventHandling(): void
     {
         $eventStore = $this->getEventStoreMock();
         $eventStore->method('append')
-            ->willReturnCallback(function($event) {
+            ->willReturnCallback(function ($event): void {
                 $this->assertInstanceOf(DefaultEventTestObject::class, $event);
             });
 

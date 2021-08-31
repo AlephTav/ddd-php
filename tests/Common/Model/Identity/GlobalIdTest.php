@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Model\Identity;
 
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
+/**
+ * @internal
+ */
 class GlobalIdTest extends TestCase
 {
     public function testNullId(): void
@@ -21,30 +27,30 @@ class GlobalIdTest extends TestCase
         $identity = 'bd2cbad1-6ccf-48e3-bb92-bc9961bc011e';
         $id = new GlobalId($identity);
 
-        $this->assertSame($identity, $id->toString());
-        $this->assertSame($identity, (string)$id);
+        self::assertSame($identity, $id->toString());
+        self::assertSame($identity, (string)$id);
     }
 
     public function testNewId(): void
     {
         $id = GlobalId::create();
 
-        $this->assertInstanceOf(GlobalId::class, $id);
-        $this->assertTrue(GlobalId::canBeId($id->identity));
+        self::assertInstanceOf(GlobalId::class, $id);
+        self::assertTrue(GlobalId::canBeId($id->identity));
     }
 
     public function testCanBeId(): void
     {
         $identity = 'b5e2cf01-8bb6-4fcd-ad88-0efb611195da';
 
-        $this->assertTrue(GlobalId::canBeId($identity));
-        $this->assertTrue(GlobalId::canBeId(GlobalId::create()));
+        self::assertTrue(GlobalId::canBeId($identity));
+        self::assertTrue(GlobalId::canBeId(GlobalId::create()));
 
-        $this->assertFalse(GlobalId::canBeId($identity . '0'));
-        $this->assertFalse(GlobalId::canBeId('123'));
-        $this->assertFalse(GlobalId::canBeId([]));
-        $this->assertFalse(GlobalId::canBeId(new \stdClass()));
-        $this->assertFalse(GlobalId::canBeId(null));
+        self::assertFalse(GlobalId::canBeId($identity . '0'));
+        self::assertFalse(GlobalId::canBeId('123'));
+        self::assertFalse(GlobalId::canBeId([]));
+        self::assertFalse(GlobalId::canBeId(new stdClass()));
+        self::assertFalse(GlobalId::canBeId(null));
     }
 
     public function testParseGlobalId(): void
@@ -52,12 +58,11 @@ class GlobalIdTest extends TestCase
         $id = GlobalId::create();
         $copy = new GlobalId($id);
 
-        $this->assertSame($id->identity, $copy->identity);
+        self::assertSame($id->identity, $copy->identity);
     }
 
     /**
      * @dataProvider invalidIdentityProvider
-     * @param string $error
      * @param mixed $identity
      */
     public function testParseInvalidValue(string $error, $identity): void
@@ -74,20 +79,20 @@ class GlobalIdTest extends TestCase
         return [
             [
                 'Invalid UUID: identity must be a string.',
-                []
+                [],
             ],
             [
                 'Invalid UUID: identity must be a string.',
-                new \stdClass()
+                new stdClass(),
             ],
             [
                 'Invalid UUID: identity must be a string.',
-                123
+                123,
             ],
             [
                 'Invalid UUID: ' . $invalidIdentity,
-                $invalidIdentity
-            ]
+                $invalidIdentity,
+            ],
         ];
     }
 
@@ -95,7 +100,7 @@ class GlobalIdTest extends TestCase
     {
         $id = GlobalId::create();
 
-        $this->assertSame($id->identity, $id->toString());
-        $this->assertSame($id->identity, $id->toScalar());
+        self::assertSame($id->identity, $id->toString());
+        self::assertSame($id->identity, $id->toScalar());
     }
 }

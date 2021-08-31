@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Infrastructure\DynamicStrictDto;
@@ -31,18 +33,21 @@ class DynamicWeakDtoTestObject extends DynamicWeakDto
     private $prop3;
 }
 
+/**
+ * @internal
+ */
 class DynamicDtoTest extends TestCase
 {
     public function testToArray(): void
     {
         $dto = new DynamicDtoTestObject([
             'prop1' => 1,
-            'prop2' => 2
+            'prop2' => 2,
         ]);
 
-        $this->assertSame([
+        self::assertSame([
             'prop1' => 1,
-            'prop2' => 2
+            'prop2' => 2,
         ], $dto->toArray());
     }
 
@@ -50,16 +55,16 @@ class DynamicDtoTest extends TestCase
     {
         $dto = new DynamicDtoTestObject([
             'prop1' => new DynamicDtoTestObject([
-                'prop2' => 2
+                'prop2' => 2,
             ]),
-            'prop3' => 3
+            'prop3' => 3,
         ]);
 
-        $this->assertSame([
+        self::assertSame([
             'prop1' => [
-                'prop2' => 2
+                'prop2' => 2,
             ],
-            'prop3' => 3
+            'prop3' => 3,
         ], $dto->toNestedArray());
     }
 
@@ -69,7 +74,7 @@ class DynamicDtoTest extends TestCase
 
         new DynamicDtoTestObject([
             'prop1' => 1,
-            'prop4' => 4
+            'prop4' => 4,
         ]);
     }
 
@@ -77,9 +82,9 @@ class DynamicDtoTest extends TestCase
     {
         $dto = new DynamicWeakDtoTestObject([
             'prop1' => 1,
-            'prop4' => 4
+            'prop4' => 4,
         ]);
 
-        $this->assertSame(['prop1' => 1], $dto->toArray());
+        self::assertSame(['prop1' => 1], $dto->toArray());
     }
 }

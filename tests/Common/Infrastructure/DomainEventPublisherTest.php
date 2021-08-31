@@ -1,21 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;
 use AlephTools\DDD\Common\Application\Subscriber\DomainEventSubscriber;
-use AlephTools\DDD\Common\Model\Events\DomainEvent;
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 use AlephTools\DDD\Common\Infrastructure\EventDispatcher;
+use AlephTools\DDD\Common\Model\Events\DomainEvent;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class Event1TestObject extends DomainEvent {}
-class Event2TestObject extends DomainEvent {}
-class Event3TestObject extends Event2TestObject {}
+class Event1TestObject extends DomainEvent
+{
+}
+class Event2TestObject extends DomainEvent
+{
+}
+class Event3TestObject extends Event2TestObject
+{
+}
 
 class Event1SubscriberTestObject implements DomainEventSubscriber
 {
-    public function handle($event): void {}
+    public function handle($event): void
+    {
+    }
 
     public function subscribedToEventType(): string
     {
@@ -25,7 +36,9 @@ class Event1SubscriberTestObject implements DomainEventSubscriber
 
 class Event2SubscriberTestObject implements DomainEventSubscriber
 {
-    public function handle($event): void {}
+    public function handle($event): void
+    {
+    }
 
     public function subscribedToEventType(): string
     {
@@ -33,10 +46,13 @@ class Event2SubscriberTestObject implements DomainEventSubscriber
     }
 }
 
+/**
+ * @internal
+ */
 class DomainEventPublisherTest extends TestCase
 {
     /**
-     * @var mixed
+     * @var MockObject&EventDispatcher
      */
     private $eventDispatcher;
 
@@ -45,7 +61,7 @@ class DomainEventPublisherTest extends TestCase
      */
     private $result;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->result = [];
 
@@ -58,17 +74,17 @@ class DomainEventPublisherTest extends TestCase
     {
         $publisher = new DomainEventPublisher($this->eventDispatcher);
 
-        $this->assertTrue($publisher->inAsyncMode());
+        self::assertTrue($publisher->inAsyncMode());
         $publisher->async(false);
-        $this->assertFalse($publisher->inAsyncMode());
+        self::assertFalse($publisher->inAsyncMode());
         $publisher->async(true);
-        $this->assertTrue($publisher->inAsyncMode());
+        self::assertTrue($publisher->inAsyncMode());
     }
 
     public function testInstantEventPublish(): void
     {
         $this->eventDispatcher->method('dispatch')
-            ->willReturnCallback(function(string $subscriber, DomainEvent $event, bool $async) {
+            ->willReturnCallback(function (string $subscriber, DomainEvent $event, bool $async): void {
                 $this->result[] = [$subscriber, $event, $async];
             });
 
@@ -78,27 +94,27 @@ class DomainEventPublisherTest extends TestCase
 
         $publisher->subscribeAll([
             Event1SubscriberTestObject::class,
-            Event2SubscriberTestObject::class
+            Event2SubscriberTestObject::class,
         ]);
 
         $subscribers = [
             DefaultDomainEventSubscriber::class => DomainEvent::class,
             Event1SubscriberTestObject::class => Event1TestObject::class,
-            Event2SubscriberTestObject::class => Event2TestObject::class
+            Event2SubscriberTestObject::class => Event2TestObject::class,
         ];
-        $this->assertSame($subscribers, $publisher->getSubscribers());
+        self::assertSame($subscribers, $publisher->getSubscribers());
 
         $publisher->publishAll([
             $event1 = new Event1TestObject(),
-            $event2 = new Event2TestObject()
+            $event2 = new Event2TestObject(),
         ]);
 
         $publisher->async(false);
         $publisher->publish($event3 = new Event3TestObject());
 
-        $this->assertCount(6, $this->result);
+        self::assertCount(6, $this->result);
 
-        $this->assertSame([
+        self::assertSame([
             [DefaultDomainEventSubscriber::class, $event1, true],
             [Event1SubscriberTestObject::class, $event1, true],
             [DefaultDomainEventSubscriber::class, $event2, true],
@@ -107,9 +123,9 @@ class DomainEventPublisherTest extends TestCase
             [Event2SubscriberTestObject::class, $event3, false],
         ], $this->result);
 
-        $this->assertSame($subscribers, $publisher->getSubscribers());
+        self::assertSame($subscribers, $publisher->getSubscribers());
 
-        $this->assertSame([], $publisher->getEvents());
+        self::assertSame([], $publisher->getEvents());
     }
 
     public function testQueuedEventPublish(): void
@@ -119,7 +135,8 @@ class DomainEventPublisherTest extends TestCase
         $publisher->subscribe(DefaultDomainEventSubscriber::class);
 
         $this->eventDispatcher->method('dispatch')
-            ->willReturnCallback(function(string $subscriber, DomainEvent $event) use($publisher, $event4) {;
+            ->willReturnCallback(function (string $subscriber, DomainEvent $event) use ($publisher, $event4): void {
+                ;
                 $this->result[] = [$subscriber, $event];
 
                 if ($publisher->inQueueMode() &&
@@ -134,30 +151,30 @@ class DomainEventPublisherTest extends TestCase
 
         $publisher->subscribeAll([
             Event1SubscriberTestObject::class,
-            Event2SubscriberTestObject::class
+            Event2SubscriberTestObject::class,
         ]);
 
         $publisher->publish($event1 = new Event1TestObject());
 
         $publisher->publishAll([
             $event2 = new Event2TestObject(),
-            $event3 = new Event3TestObject()
+            $event3 = new Event3TestObject(),
         ]);
 
-        $this->assertCount(0, $this->result);
+        self::assertCount(0, $this->result);
 
         $subscribers = [
             DefaultDomainEventSubscriber::class => DomainEvent::class,
             Event1SubscriberTestObject::class => Event1TestObject::class,
-            Event2SubscriberTestObject::class => Event2TestObject::class
+            Event2SubscriberTestObject::class => Event2TestObject::class,
         ];
-        $this->assertSame($subscribers, $publisher->getSubscribers());
+        self::assertSame($subscribers, $publisher->getSubscribers());
 
         $publisher->release();
 
-        $this->assertCount(8, $this->result);
+        self::assertCount(8, $this->result);
 
-        $this->assertSame([
+        self::assertSame([
             [DefaultDomainEventSubscriber::class, $event1],
             [Event1SubscriberTestObject::class, $event1],
             [DefaultDomainEventSubscriber::class, $event2],
@@ -168,8 +185,8 @@ class DomainEventPublisherTest extends TestCase
             [Event1SubscriberTestObject::class, $event4],
         ], $this->result);
 
-        $this->assertSame($subscribers, $publisher->getSubscribers());
+        self::assertSame($subscribers, $publisher->getSubscribers());
 
-        $this->assertSame([], $publisher->getEvents());
+        self::assertSame([], $publisher->getEvents());
     }
 }

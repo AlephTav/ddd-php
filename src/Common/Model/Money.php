@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
-use UnexpectedValueException;
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
+use UnexpectedValueException;
 
 /**
- * @property-read string $amount
+ * @property-read numeric-string $amount
  * @property-read Currency $currency
  */
 class Money extends ValueObject implements Scalarable
@@ -18,28 +20,28 @@ class Money extends ValueObject implements Scalarable
 
     protected const PRECISION = 12;
 
+    /** @var numeric-string */
     protected string $amount = '0';
     protected ?Currency $currency = null;
 
     /**
      * Constructor.
      *
-     * @param array|string|int|float|Money $amount
-     * @param Currency|null $currency
+     * @param array<string,mixed>|string|int|float|Money $amount
      */
     public function __construct($amount, Currency $currency = null)
     {
         if (is_array($amount)) {
             parent::__construct($amount);
-        } else if ($amount instanceof Money) {
+        } elseif ($amount instanceof Money) {
             parent::__construct([
                 'amount' => $amount->amount,
-                'currency' => $amount->currency
+                'currency' => $amount->currency,
             ]);
         } else {
             parent::__construct([
                 'amount' => $amount,
-                'currency' => $currency ?? Currency::USD()
+                'currency' => $currency ?? Currency::USD(),
             ]);
         }
     }
@@ -71,21 +73,33 @@ class Money extends ValueObject implements Scalarable
         return $this->isLessThan('0');
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function isLessThan(string $amount): bool
     {
         return $this->cmp($amount) < 0;
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function isLessOrEqualThan(string $amount): bool
     {
         return $this->cmp($amount) <= 0;
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function isGreaterThan(string $amount): bool
     {
         return $this->cmp($amount) > 0;
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function isGreaterOrEqualThan(string $amount): bool
     {
         return $this->cmp($amount) >= 0;
@@ -93,7 +107,7 @@ class Money extends ValueObject implements Scalarable
 
     public function equals($other): bool
     {
-        if (is_scalar($other)) {
+        if (is_numeric($other)) {
             return $this->cmp((string)$other) === 0;
         }
         if ($other instanceof Money) {
@@ -102,9 +116,12 @@ class Money extends ValueObject implements Scalarable
         return false;
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function cmp(string $amount): int
     {
-        return bccomp($this->amount, $amount, static::PRECISION);
+        return bccomp($this->amount, $this->normalizeAmount($amount), (int)static::PRECISION);
     }
 
     //endregion
@@ -119,21 +136,33 @@ class Money extends ValueObject implements Scalarable
         return $this;
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function add(string $amount): Money
     {
         return $this->op($amount, 'bcadd');
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function sub(string $amount): Money
     {
         return $this->op($amount, 'bcsub');
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function mul(string $amount): Money
     {
         return $this->op($amount, 'bcmul');
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     public function div(string $amount): Money
     {
         return $this->op($amount, 'bcdiv');
@@ -141,11 +170,16 @@ class Money extends ValueObject implements Scalarable
 
     public function sqrt(): Money
     {
-        return new Money(bcsqrt($this->amount, static::PRECISION), $this->currency);
+        return new Money(bcsqrt($this->amount, (int)static::PRECISION), $this->currency);
     }
 
+    /**
+     * @param numeric-string $amount
+     */
     private function op(string $amount, string $operation): Money
     {
+        $amount = $this->normalizeAmount($amount);
+        /** @var numeric-string $amount */
         $amount = $operation($this->amount, $amount, static::PRECISION);
         return new Money($amount, $this->currency);
     }
@@ -156,7 +190,7 @@ class Money extends ValueObject implements Scalarable
 
     public function toRoundAmount(): string
     {
-        return $this->toScaledAmount(self::SCALE_FUNC_ROUND);
+        return $this->toScaledAmount();
     }
 
     public function toFloorAmount(): string
@@ -171,42 +205,59 @@ class Money extends ValueObject implements Scalarable
 
     public function toScaledAmount(string $scaleFunction = self::SCALE_FUNC_ROUND): string
     {
-        if ($scaleFunction !== self::SCALE_FUNC_ROUND &&
-            $scaleFunction !== self::SCALE_FUNC_FLOOR &&
-            $scaleFunction !== self::SCALE_FUNC_CEIL
-        ) {
-            throw new UnexpectedValueException("Unexpected scale function: $scaleFunction.");
+        switch ($scaleFunction) {
+            case self::SCALE_FUNC_CEIL:
+                return $this->ceil($this->amount, $this->currency->getSubunits());
+            case self::SCALE_FUNC_FLOOR:
+                return $this->floor($this->amount, $this->currency->getSubunits());
+            case self::SCALE_FUNC_ROUND:
+                return $this->round($this->amount, $this->currency->getSubunits());
         }
-        return $this->{$scaleFunction}($this->amount, $this->currency->getSubunits());
+        throw new UnexpectedValueException("Unexpected scale function: $scaleFunction.");
     }
 
+    /**
+     * @param numeric-string $number
+     */
     private function round(string $number, int $precision): string
     {
         if (strpos($number, '.') !== false) {
+            /** @psalm-var numeric-string $addend */
+            $addend = '0.' . str_repeat('0', $precision) . '5';
             if ($number[0] != '-') {
-                return bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+                return bcadd($number, $addend, $precision);
             }
-            return bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            return bcsub($number, $addend, $precision);
         }
         return $number . '.' . str_repeat('0', $precision);
     }
 
+    /**
+     * @param numeric-string $number
+     */
     private function floor(string $number, int $precision): string
     {
         if (strpos($number, '.') !== false) {
             if ($number[0] != '-') {
                 return bcadd($number, '0', $precision);
             }
-            return bcsub($number, '0.' . str_repeat('0', $precision) . '9', $precision);
+            /** @psalm-var numeric-string $addend */
+            $addend = '0.' . str_repeat('0', $precision) . '9';
+            return bcsub($number, $addend, $precision);
         }
         return $number . '.' . str_repeat('0', $precision);
     }
 
+    /**
+     * @param numeric-string $number
+     */
     private function ceil(string $number, int $precision): string
     {
         if (strpos($number, '.') !== false) {
             if ($number[0] != '-') {
-                return bcadd($number, '0.' . str_repeat('0', $precision) . '9', $precision);
+                /** @psalm-var numeric-string $addend */
+                $addend = '0.' . str_repeat('0', $precision) . '9';
+                return bcadd($number, $addend, $precision);
             }
             return bcsub($number, '0', $precision);
         }
@@ -215,15 +266,30 @@ class Money extends ValueObject implements Scalarable
 
     //endregion
 
+    /**
+     * @return numeric-string
+     */
+    protected function normalizeAmount(string $amount): string
+    {
+        $amount = str_replace(',', '.', $amount);
+        $this->assertArgumentTrue(is_numeric($amount), 'Amount must be a number.');
+        return $amount;
+    }
+
     //region Setters
 
+    /**
+     * @param mixed $amount
+     */
     protected function setAmount($amount): void
     {
         $this->assertArgumentFalse(
             $amount !== null && !is_scalar($amount),
             'Money amount must be a scalar, ' . gettype($amount) . ' given.'
         );
-        $this->amount = $amount ? (string)$amount : '0';
+        /** @psalm-var numeric-string $amount */
+        $amount = $amount ? str_replace(',', '.', (string)$amount) : '0';
+        $this->amount = $amount;
     }
 
     //endregion

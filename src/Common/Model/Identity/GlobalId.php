@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model\Identity;
 
 /**
@@ -24,7 +26,6 @@ class GlobalId extends AbstractId
     /**
      * Generates new uuid4
      *
-     * @return string
      */
     private static function uuid4(): string
     {
@@ -38,7 +39,6 @@ class GlobalId extends AbstractId
      * Returns TRUE if the given identity can be a global identifier.
      *
      * @param mixed $identity
-     * @return bool
      */
     public static function canBeId($identity): bool
     {
@@ -67,15 +67,15 @@ class GlobalId extends AbstractId
      * Parses the identifier.
      *
      * @param mixed $identity
-     * @return null|string
      */
     protected function parse($identity): ?string
     {
+        if ($identity instanceof static) {
+            /** @var mixed $identity */
+            $identity = $identity->identity;
+        }
         if ($identity === null) {
             return null;
-        }
-        if ($identity instanceof self) {
-            return $identity->identity;
         }
         $this->assertArgumentTrue(is_string($identity), 'Invalid UUID: identity must be a string.');
         $this->assertArgumentTrue(static::canBeId($identity), "Invalid UUID: $identity");

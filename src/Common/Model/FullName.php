@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
@@ -24,14 +26,12 @@ class FullName extends ValueObject
      * The available formats: f, l, m, fl, lf, flm, fml, lfm, lmf, mfl, mlf, where
      * "f" - the first name, "l" - the last name and "m" - the middle name.
      *
-     * @param string|null $fullName
-     * @param string $format
      * @return static
      */
     public static function parse(?string $fullName, string $format = 'fl')
     {
         if ($fullName === null || $fullName === '') {
-            return new FullName();
+            return new static();
         }
 
         $n = 0;
@@ -44,25 +44,23 @@ class FullName extends ValueObject
             $field = $format[$n];
             if ($field === 'l') {
                 $lastName = $name;
-            } else if ($field === 'f') {
+            } elseif ($field === 'f') {
                 $firstName = $name;
-            } else if ($field === 'm') {
+            } elseif ($field === 'm') {
                 $middleName = $name;
             }
             ++$n;
         }
-        return new FullName($firstName, $lastName, $middleName);
+        return new static($firstName, $lastName, $middleName);
     }
 
     /**
-     * Constructor. Available formats:
+     * Available formats:
      * FullName()
      * FullName(string $firstName, string $lastName)
      * FullName(array $properties)
      *
-     * @param array|string|null $firstName
-     * @param string|null $lastName
-     * @param string|null $middleName
+     * @param array<string,mixed>|string|null $firstName
      */
     public function __construct($firstName = null, string $lastName = null, string $middleName = null)
     {
@@ -72,7 +70,7 @@ class FullName extends ValueObject
             parent::__construct([
                 'firstName' => $firstName,
                 'lastName' => $lastName,
-                'middleName' => $middleName
+                'middleName' => $middleName,
             ]);
         }
     }
@@ -82,8 +80,6 @@ class FullName extends ValueObject
      * The available formats: f, l, m, fl, lf, flm, fml, lfm, lmf, mfl, mlf, where
      * "f" - the first name, "l" - the last name and "m" - the middle name.
      *
-     * @param string $format
-     * @return string
      */
     public function asFormattedName(string $format = 'fl'): string
     {
@@ -93,9 +89,9 @@ class FullName extends ValueObject
             $field = $format[$i];
             if ($field === 'l') {
                 $name[] = $this->lastName;
-            } else if ($field === 'f') {
+            } elseif ($field === 'f') {
                 $name[] = $this->firstName;
-            } else if ($field === 'm') {
+            } elseif ($field === 'm') {
                 $name[] = $this->middleName;
             }
         }
@@ -123,8 +119,8 @@ class FullName extends ValueObject
     {
         $this->assertArgumentMaxLength(
             $this->firstName,
-            static::FIRST_NAME_MAX_LENGTH,
-            'First name must be at most ' . static::FIRST_NAME_MAX_LENGTH . ' characters.'
+            (int)static::FIRST_NAME_MAX_LENGTH,
+            'First name must be at most ' . (string)static::FIRST_NAME_MAX_LENGTH . ' characters.'
         );
     }
 
@@ -132,8 +128,8 @@ class FullName extends ValueObject
     {
         $this->assertArgumentMaxLength(
             $this->lastName,
-            static::LAST_NAME_MAX_LENGTH,
-            'Last name must be at most ' . static::LAST_NAME_MAX_LENGTH . ' characters.'
+            (int)static::LAST_NAME_MAX_LENGTH,
+            'Last name must be at most ' . (string)static::LAST_NAME_MAX_LENGTH . ' characters.'
         );
     }
 
@@ -141,8 +137,8 @@ class FullName extends ValueObject
     {
         $this->assertArgumentMaxLength(
             $this->middleName,
-            static::MIDDLE_NAME_MAX_LENGTH,
-            'Middle name must be at most ' . static::MIDDLE_NAME_MAX_LENGTH . ' characters.'
+            (int)static::MIDDLE_NAME_MAX_LENGTH,
+            'Middle name must be at most ' . (string)static::MIDDLE_NAME_MAX_LENGTH . ' characters.'
         );
     }
 

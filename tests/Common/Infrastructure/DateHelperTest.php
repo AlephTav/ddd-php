@@ -73,7 +73,7 @@ class DateHelperTest extends TestCase
                 false,
             ];
         }
-        $data = array_merge($data, [
+        return array_merge($data, [
             [
                 new DateTime(),
                 null,
@@ -100,8 +100,6 @@ class DateHelperTest extends TestCase
                 true,
             ],
         ]);
-
-        return $data;
     }
 
     public function testParseDateTimeImmutableForOldPhpVersions(): void

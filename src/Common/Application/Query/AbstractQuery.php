@@ -41,6 +41,8 @@ abstract class AbstractQuery extends WeakDto
     protected ?Language $language = null;
     protected bool $withoutCount = false;
     protected bool $withoutItems = false;
+    protected ?string $offsetField = null;
+    protected ?string $offsetValue = null;
 
     public static function getPageMaxSize(): int
     {
@@ -189,6 +191,16 @@ abstract class AbstractQuery extends WeakDto
     protected function setWithoutItems($flag): void
     {
         $this->withoutItems = $this->toBoolean($flag);
+    }
+
+    protected function setOffsetField(?string $offsetField): void
+    {
+        $this->offsetField = $offsetField;
+    }
+
+    protected function setOffsetValue(?string $offsetValue): void
+    {
+        $this->offsetValue = $offsetValue;
     }
 
     //endregion

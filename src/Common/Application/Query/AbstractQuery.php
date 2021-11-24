@@ -20,6 +20,8 @@ use AlephTools\DDD\Common\Model\Language;
  * @property-read Language|null $language
  * @property-read bool $withoutCount
  * @property-read bool $withoutItems
+ * @property-read string|null $offsetField
+ * @property-read string|null $offsetValue
  */
 abstract class AbstractQuery extends WeakDto
 {

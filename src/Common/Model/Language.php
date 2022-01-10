@@ -13,6 +13,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static EN(string $method = null)
  * @method static static DE(string $method = null)
  * @method static static VI(string $method = null)
+ * @method static static KZ(string $method = null)
  * @method static static UZ(string $method = null)
  */
 class Language extends AbstractEnum
@@ -23,6 +24,7 @@ class Language extends AbstractEnum
     private const EN = 'en_US';
     private const DE = 'de_DE';
     private const VI = 'vi_VN';
+    private const KZ = 'kk_KZ';
     private const UZ = 'uz_UZ';
 
     private string $locale;

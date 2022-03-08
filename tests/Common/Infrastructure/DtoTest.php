@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -16,7 +16,7 @@ use RuntimeException;
  * @property-write string $prop4;
  * @property-read string $docComment
  */
-class DtoTestObject extends Dto
+class DtoTestObject extends StrictDto
 {
     private $prop1;
     protected $prop2;
@@ -59,7 +59,7 @@ class DtoTestObject extends Dto
 /**
  * @property mixed $notExistingProp
  */
-class DtoTestObjectWithNonExistentProperty extends Dto
+class DtoTestObjectWithNonExistentProperty extends StrictDto
 {
 }
 
@@ -373,7 +373,7 @@ class DtoTest extends TestCase
     public function testProcessingTypeError(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property "prop2" must be of the type int, string given.');
+        $this->expectExceptionMessage('Property "prop2" must be of type int, string given.');
 
         new DtoTestObject(['prop2' => 'test']);
     }

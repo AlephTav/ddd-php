@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Infrastructure\Enums;
 
-use InvalidArgumentException;
-
 /**
  * The base class for enums that associated with one numeric value.
  */
@@ -14,21 +12,12 @@ class ValuedEnum extends AbstractEnum
     /**
      * The numeric value associated with the enum value.
      *
-     * @var int|float
      */
-    protected $value;
+    protected int|float $value;
 
-    /**
-     * Constructor.
-     *
-     * @param int|float $value
-     * @throws InvalidArgumentException
-     */
-    protected function __construct($value)
+    protected function __construct(int|float $value)
     {
-        if (!is_numeric($value)) {
-            throw new InvalidArgumentException('The enum value must be a numeric type.');
-        }
+        parent::__construct();
         $this->value = $value;
     }
 
@@ -37,7 +26,7 @@ class ValuedEnum extends AbstractEnum
      *
      * @return int|float
      */
-    public function getValue()
+    public function getValue(): int|float
     {
         return $this->value;
     }

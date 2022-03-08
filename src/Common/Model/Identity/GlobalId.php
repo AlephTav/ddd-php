@@ -38,9 +38,8 @@ class GlobalId extends AbstractId
     /**
      * Returns TRUE if the given identity can be a global identifier.
      *
-     * @param mixed $identity
      */
-    public static function canBeId($identity): bool
+    public static function canBeId(mixed $identity): bool
     {
         if ($identity instanceof self) {
             return true;

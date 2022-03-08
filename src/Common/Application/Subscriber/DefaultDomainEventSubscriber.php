@@ -11,10 +11,6 @@ class DefaultDomainEventSubscriber implements DomainEventSubscriber
 {
     private EventStore $eventStore;
 
-    /**
-     * Constructor.
-     *
-     */
     public function __construct(EventStore $eventStore)
     {
         $this->eventStore = $eventStore;
@@ -28,8 +24,6 @@ class DefaultDomainEventSubscriber implements DomainEventSubscriber
         $this->eventStore->append($event);
     }
 
-    /**
-     */
     public function subscribedToEventType(): string
     {
         return DomainEvent::class;

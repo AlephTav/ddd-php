@@ -28,7 +28,7 @@ final class ApplicationConfig
      * @param mixed $default
      * @return mixed
      */
-    public static function get(string $key = null, $default = null)
+    public static function get(string $key = null, mixed $default = null)
     {
         return (self::$config)($key, $default);
     }

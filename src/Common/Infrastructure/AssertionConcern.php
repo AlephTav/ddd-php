@@ -15,84 +15,56 @@ use Throwable;
  */
 trait AssertionConcern
 {
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     */
-    protected function assertArgumentSame($value1, $value2, string $msg): void
+    protected function assertArgumentSame(mixed $value1, mixed $value2, string $msg): void
     {
         if ($value1 !== $value2) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     */
-    protected function assertArgumentNotSame($value1, $value2, string $msg): void
+    protected function assertArgumentNotSame(mixed $value1, mixed $value2, string $msg): void
     {
         if ($value1 === $value2) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     */
-    protected function assertArgumentEquals($value1, $value2, string $msg): void
+    protected function assertArgumentEquals(mixed $value1, mixed $value2, string $msg): void
     {
         if ($value1 != $value2) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     */
-    protected function assertArgumentNotEquals($value1, $value2, string $msg): void
+    protected function assertArgumentNotEquals(mixed $value1, mixed $value2, string $msg): void
     {
         if ($value1 == $value2) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertArgumentNotNull($value, string $msg): void
+    protected function assertArgumentNotNull(mixed $value, string $msg): void
     {
         if ($value === null) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertArgumentNull($value, string $msg): void
+    protected function assertArgumentNull(mixed $value, string $msg): void
     {
         if ($value !== null) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertArgumentFalse($value, string $msg): void
+    protected function assertArgumentFalse(mixed $value, string $msg): void
     {
         if ($value) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertArgumentTrue($value, string $msg): void
+    protected function assertArgumentTrue(mixed $value, string $msg): void
     {
         if (!$value) {
             throw new InvalidArgumentException($msg);
@@ -128,34 +100,21 @@ trait AssertionConcern
         }
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $min
-     * @param mixed $max
-     */
-    protected function assertArgumentRange($value, $min, $max, string $msg): void
+    protected function assertArgumentRange(int|float|null $value, int|float $min, int|float $max, string $msg): void
     {
         if ($value < $min || $value > $max) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $min
-     */
-    protected function assertArgumentMin($value, $min, string $msg): void
+    protected function assertArgumentMin(int|float|null $value, int|float $min, string $msg): void
     {
         if ($value < $min) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $max
-     */
-    protected function assertArgumentMax($value, $max, string $msg): void
+    protected function assertArgumentMax(int|float|null $value, int|float $max, string $msg): void
     {
         if ($value > $max) {
             throw new InvalidArgumentException($msg);
@@ -187,35 +146,29 @@ trait AssertionConcern
     {
         try {
             $callback();
-        } catch (Throwable $ignore) {
+        } catch (Throwable $_) {
             throw new InvalidArgumentException($msg);
         }
     }
 
     /**
-     * @param mixed $value
+     * @psalm-param class-string $class
      */
-    protected function assertArgumentInstanceOf($value, string $class, string $msg): void
+    protected function assertArgumentInstanceOf(mixed $value, string $class, string $msg): void
     {
         if (!is_a($value, $class)) {
             throw new InvalidArgumentException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertStateFalse($value, string $msg): void
+    protected function assertStateFalse(mixed $value, string $msg): void
     {
         if ($value) {
             throw new InvalidStateException($msg);
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function assertStateTrue($value, string $msg): void
+    protected function assertStateTrue(mixed $value, string $msg): void
     {
         if (!$value) {
             throw new InvalidStateException($msg);

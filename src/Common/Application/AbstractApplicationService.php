@@ -10,18 +10,12 @@ use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
 
 abstract class AbstractApplicationService
 {
-    /**
-     * @param mixed $callback
-     */
-    protected function runAsync($callback, array $params = []): void
+    protected function runAsync(mixed $callback, array $params = []): void
     {
         $this->async()->run($callback, $params);
     }
 
-    /**
-     * @return mixed
-     */
-    protected function executeAtomically(callable $callback)
+    protected function executeAtomically(callable $callback): mixed
     {
         return $this->unitOfWork()->execute($callback);
     }

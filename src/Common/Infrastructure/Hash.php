@@ -20,7 +20,7 @@ class Hash
      * @param string $algorithm Name of selected hashing algorithm (e.g. "md5", "sha256", "haval160,4", etc..)
      * @param bool $rawOutput When set to TRUE, outputs raw binary data. FALSE outputs lowercase hexits.
      */
-    public static function of($item, string $algorithm = 'md5', bool $rawOutput = false): string
+    public static function of(mixed $item, string $algorithm = 'md5', bool $rawOutput = false): string
     {
         if (is_object($item)) {
             return self::hashOfObject($item, $algorithm, $rawOutput);

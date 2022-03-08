@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use DateTime;
 use DateTimeInterface;
@@ -20,7 +20,7 @@ use stdClass;
  * @property DateTimeInterface|null $prop6
  * @property mixed $prop7
  */
-class TypedPropertyTestObject extends Dto
+class TypedPropertyTestObject extends StrictDto
 {
     private string $prop1 = '';
     private ?int $prop2 = null;
@@ -73,7 +73,9 @@ class TypedPropertyDtoTest extends TestCase
     public function testAssignInvalidPropertyValues(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property "prop6" must be an instance of DateTimeInterface or null, int used.');
+        $this->expectExceptionMessage(
+            'Property "prop6" must be an instance of type DateTimeInterface or null, int used.'
+        );
 
         new TypedPropertyTestObject([
             'prop7' => true,

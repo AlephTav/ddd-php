@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Model\Identity\AbstractId;
 use stdClass;
+use AlephTools\DDD\Common\Model\Identity\AbstractId;
 
 /**
  * @property-read AbstractId $id
@@ -25,7 +25,7 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
      */
     public function toIdentity()
     {
-        return $this->id ? $this->id->identity : null;
+        return $this->id?->identity;
     }
 
     /**
@@ -34,7 +34,7 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
      */
     public function toIdentityString(): ?string
     {
-        return $this->id ? $this->id->toString() : null;
+        return $this->id?->toString();
     }
 
     /**

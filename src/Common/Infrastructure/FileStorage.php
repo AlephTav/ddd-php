@@ -12,10 +12,8 @@ interface FileStorage
     /**
      * Returns TRUE if file with the given identifier exists in our storage.
      *
-     * @param mixed $fileId
-     * @param mixed $ownerId
      */
-    public function exists($fileId, $ownerId = null): bool;
+    public function exists(mixed $fileId, mixed $ownerId = null): bool;
 
     /**
      * Returns the file metadata by its unique identifier.
@@ -24,7 +22,7 @@ interface FileStorage
      * @param mixed $ownerId The file owner.
      * @throws EntityNotFoundException
      */
-    public function getMetadata($fileId, int $linksExpirationInSeconds = 0, $ownerId = null): FileMetadata;
+    public function getMetadata(mixed $fileId, int $linksExpirationInSeconds = 0, mixed $ownerId = null): FileMetadata;
 
     /**
      * Returns the list of files metadata by their unique identifiers.
@@ -34,15 +32,15 @@ interface FileStorage
      * @return FileMetadata[]
      * @throws EntityNotFoundException
      */
-    public function getMetadataList(array $ids, int $linksExpirationInSeconds = 0, $ownerId = null): array;
+    public function getMetadataList(array $ids, int $linksExpirationInSeconds = 0, mixed $ownerId = null): array;
 
     /**
-     * Returns a url to access the given public file.
+     * Returns a URL to access the given public file.
      *
      * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
-    public function getUrl($fileId, int $expirationInSeconds = 0, $ownerId = null): string;
+    public function getUrl(mixed $fileId, int $expirationInSeconds = 0, mixed $ownerId = null): string;
 
     /**
      * Returns the download link for a file.
@@ -50,7 +48,7 @@ interface FileStorage
      * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
-    public function getDownloadLink($fileId, int $expirationInSeconds, $ownerId = null): string;
+    public function getDownloadLink(mixed $fileId, int $expirationInSeconds, mixed $ownerId = null): string;
 
     /**
      * Upload a file to storage.
@@ -60,11 +58,11 @@ interface FileStorage
      * @param mixed $ownerId The file owner.
      */
     public function upload(
-        $file,
+        mixed $file,
         bool $isPrivate,
         string $path = '',
         int $linksExpirationInSeconds = 0,
-        $ownerId = null
+        mixed $ownerId = null
     ): FileMetadata;
 
     /**
@@ -74,7 +72,7 @@ interface FileStorage
      * @param mixed $ownerId The file owner.
      * @return mixed
      */
-    public function download($fileId, $ownerId = null);
+    public function download(mixed $fileId, mixed $ownerId = null);
 
     /**
      * Deletes a file.
@@ -82,5 +80,5 @@ interface FileStorage
      * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
-    public function delete($fileId, $ownerId = null): void;
+    public function delete(mixed $fileId, mixed $ownerId = null): void;
 }

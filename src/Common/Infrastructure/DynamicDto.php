@@ -9,7 +9,7 @@ abstract class DynamicDto extends Dto
     /**
      * @param array<string,mixed> $properties
      */
-    public function __construct(array $properties = [], bool $strict = true)
+    public function __construct(array $properties, bool $strict)
     {
         parent::__construct($properties, $strict, true);
     }

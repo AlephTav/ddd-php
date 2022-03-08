@@ -18,7 +18,7 @@ class LocalId extends AbstractId
      *
      * @param mixed $identity
      */
-    public static function canBeId($identity): bool
+    public static function canBeId(mixed $identity): bool
     {
         if (is_string($identity) || is_numeric($identity)) {
             return (bool)preg_match('/^[0-9]+$/', (string)$identity);
@@ -38,9 +38,8 @@ class LocalId extends AbstractId
     /**
      * Parses the identifier.
      *
-     * @param mixed $identity
      */
-    protected function parse($identity): ?int
+    protected function parse(mixed $identity): ?int
     {
         if ($identity instanceof static) {
             /** @var mixed $identity */

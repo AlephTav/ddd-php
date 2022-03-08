@@ -89,7 +89,7 @@ abstract class Dto implements Serializable
      * @param bool $strict  Determines whether to throw exception for non-existing properties (TRUE).
      * @param bool $dynamic Determines whether to store information about initialized properties.
      */
-    public function __construct(array $properties = [], bool $strict = true, bool $dynamic = false)
+    public function __construct(array $properties, bool $strict, bool $dynamic)
     {
         $this->init();
         $this->assignPropertiesAndValidate(
@@ -288,12 +288,7 @@ abstract class Dto implements Serializable
         return $this->toString();
     }
 
-    /**
-     * Returns the property value.
-     *
-     * @return mixed
-     */
-    public function __get(string $property)
+    public function __get(string $property): mixed
     {
         $this->checkPropertyExistence($property);
 
@@ -316,12 +311,7 @@ abstract class Dto implements Serializable
         return $this->{$getter}();
     }
 
-    /**
-     * Sets the property value.
-     *
-     * @param mixed $value
-     */
-    public function __set(string $property, $value): void
+    public function __set(string $property, mixed $value): void
     {
         $this->checkPropertyExistence($property);
 
@@ -404,7 +394,7 @@ abstract class Dto implements Serializable
      * @param mixed $value
      * @param bool $strict Determines whether to throw exception for non-existing property (TRUE).
      */
-    protected function assignProperty(string $property, $value, bool $strict = true): void
+    protected function assignProperty(string $property, mixed $value, bool $strict = true): void
     {
         if ($strict) {
             $this->checkPropertyExistence($property);
@@ -459,7 +449,6 @@ abstract class Dto implements Serializable
     {
         if ($reflector = $this->reflector()) {
             $property = $reflector->getProperty($property);
-            $property->setAccessible(true);
             return $property->getValue($this);
         }
         return $this->{$property};
@@ -468,11 +457,10 @@ abstract class Dto implements Serializable
     /**
      * @param mixed $value
      */
-    private function assignValueToProperty(string $property, $value): void
+    private function assignValueToProperty(string $property, mixed $value): void
     {
         if ($reflector = $this->reflector()) {
             $property = $reflector->getProperty($property);
-            $property->setAccessible(true);
             $this->invokeWithTypeErrorProcessing(function () use ($property, $value): void {
                 $property->setValue($this, $value);
             });
@@ -490,20 +478,15 @@ abstract class Dto implements Serializable
     {
         if ($reflector = $this->reflector()) {
             $method = $reflector->getMethod($getter);
-            $method->setAccessible(true);
             return $method->invoke($this);
         }
         return $this->{$getter}();
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function invokeSetter(string $setter, $value): void
+    private function invokeSetter(string $setter, mixed $value): void
     {
         if ($reflector = $this->reflector()) {
             $method = $reflector->getMethod($setter);
-            $method->setAccessible(true);
             $this->invokeWithTypeErrorProcessing(function () use ($method, $value): void {
                 $method->invoke($this, $value);
             });
@@ -518,7 +501,6 @@ abstract class Dto implements Serializable
     {
         if ($reflector = $this->reflector()) {
             $method = $reflector->getMethod($validator);
-            $method->setAccessible(true);
             $method->invoke($this);
         } else {
             $this->{$validator}();
@@ -531,15 +513,22 @@ abstract class Dto implements Serializable
             $callback();
         } catch (TypeError $e) {
             $error = $e->getMessage();
-            if (strncmp('Typed property', $error, 14) === 0) {
-                preg_match('/^.*\$([a-zA-Z_0-9]+)(.+)$/', $error, $matches);
+            if (strncmp('Cannot assign', $error, 13) === 0) {
+                preg_match('/^Cannot assign ([0-9?a-zA-Z]+).*\$([a-zA-Z_0-9]+)(.+)$/', $error, $matches);
                 if ($matches) {
-                    $error = 'Property "' . $matches[1] . '"' . $matches[2] . '.';
+                    $matches[3] = preg_replace('/\?([0-9_a-zA-Z]+)/', '$1 or null', $matches[3]);
+                    $error = "Property \"$matches[2]\" must be an instance$matches[3], $matches[1] used.";
                 }
             } else {
-                preg_match('/^.*::[a-z_0-9]+([A-Z][a-zA-Z_0-9]+)\(\)(.+given).*$/', $error, $matches);
+                preg_match(
+                    '/^.*::[a-z_0-9]+([A-Z][a-zA-Z_0-9]+)\(\): Argument #1 \(\$value\)(.+given).*$/',
+                    $error,
+                    $matches
+                );
                 if ($matches) {
-                    $error = 'Property "' . lcfirst($matches[1]) . '"' . $matches[2] . '.';
+                    $matches[1] = lcfirst($matches[1]);
+                    $matches[2] = preg_replace('/\?([0-9_a-zA-Z]+)/', '$1 or null', $matches[2]);
+                    $error = "Property \"$matches[1]\"$matches[2].";
                 }
             }
             throw new InvalidArgumentException($error);

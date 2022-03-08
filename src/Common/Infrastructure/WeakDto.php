@@ -11,6 +11,6 @@ abstract class WeakDto extends Dto
      */
     public function __construct(array $properties = [])
     {
-        parent::__construct($properties, false);
+        parent::__construct($properties, false, false);
     }
 }

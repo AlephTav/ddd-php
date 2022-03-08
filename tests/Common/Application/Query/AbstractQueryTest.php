@@ -50,6 +50,8 @@ class AbstractQueryTest extends TestCase
             'language' => null,
             'withoutCount' => false,
             'withoutItems' => false,
+            'offsetField' => null,
+            'offsetValue' => null
         ], $query->toArray());
     }
 

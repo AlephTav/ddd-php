@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\Dto;
+use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -14,7 +14,7 @@ use RuntimeException;
  * @property-read mixed $prop2
  * @property mixed $prop3
  */
-class FastDtoParentTestObject extends Dto
+class FastDtoParentTestObject extends StrictDto
 {
     protected $prop1;
     protected $prop2;
@@ -346,7 +346,7 @@ class FastDtoTest extends TestCase
     public function testProcessingTypeError(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property "prop1" must be of the type int or null, string given.');
+        $this->expectExceptionMessage('Property "prop1" must be of type int or null, string given.');
 
         new FastDtoTestObject(['prop1' => 'test']);
     }

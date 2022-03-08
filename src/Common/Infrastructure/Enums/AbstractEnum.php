@@ -88,7 +88,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * @param bool $strict Determines whether to search for identical elements.
      * @throws ReflectionException
      */
-    public static function isValidConstantValue($value, $strict = false): bool
+    public static function isValidConstantValue(mixed $value, bool $strict = false): bool
     {
         return in_array($value, self::getConstants(), $strict);
     }
@@ -100,7 +100,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * @throws UnexpectedValueException
      * @throws ReflectionException
      */
-    public static function validate($name): void
+    public static function validate(string $name): void
     {
         if (!static::isValidConstantName($name)) {
             $enum = (new ReflectionClass(static::class))->getShortName();
@@ -131,7 +131,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * @param static|string|null $constantName
      * @return static|null Returns null if the given constant is null.
      */
-    public static function fromNullable($constantName)
+    public static function fromNullable(mixed $constantName)
     {
         if ($constantName === null) {
             return null;
@@ -145,7 +145,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * @param static|string $constantName
      * @return static
      */
-    public static function from($constantName)
+    public static function from(mixed $constantName)
     {
         if ($constantName instanceof static) {
             return $constantName;
@@ -203,9 +203,8 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      * Compares two enum instance.
      * Returns TRUE if two objects have the same enum value (even though they refer different object instances).
      *
-     * @param mixed $enum
      */
-    public function equals($enum): bool
+    public function equals(mixed $enum): bool
     {
         if ($enum instanceof static) {
             return $this->constant === $enum->getConstantName();

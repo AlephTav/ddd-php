@@ -89,9 +89,9 @@ class PasswordTest extends TestCase
 
     public function testRandomPassword(): void
     {
-        $password = Password::random();
+        $password = Password::random(9);
 
-        self::assertEquals(Password::RANDOM_PASSWORD_LENGTH, strlen($password->password));
+        self::assertEquals(9, strlen($password->password));
         self::assertNotNull($password->hash);
         self::assertTrue(password_verify($password->password, $password->hash));
     }
@@ -213,7 +213,7 @@ class PasswordTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         new class('password') extends Password {
-            protected function hashPassword(?string $password)
+            protected function hashPassword(string $password): mixed
             {
                 return false;
             }

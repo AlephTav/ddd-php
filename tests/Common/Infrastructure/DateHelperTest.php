@@ -4,20 +4,12 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\DateHelper;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
+use stdClass;
 use DateTime;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
-use stdClass;
-
-class DateHelperTestObject extends DateHelper
-{
-    protected static function dateTimeHasCreateFromImmutable(): bool
-    {
-        return false;
-    }
-}
+use AlephTools\DDD\Common\Infrastructure\DateHelper;
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 /**
  * @internal
@@ -102,12 +94,38 @@ class DateHelperTest extends TestCase
         ]);
     }
 
-    public function testParseDateTimeImmutableForOldPhpVersions(): void
+    public function testParsePartlyDefinedDates(): void
     {
-        $date = new DateTimeImmutable();
+        $formats = [
+            'Y-m-d',
+            'Y-m-dP',
+            'm/d/Y',
+            'm/d/y',
+        ];
 
-        $parsedDate = DateHelperTestObject::parse($date);
+        foreach ($formats as $format) {
+            $date = DateHelper::parse(date($format));
 
-        self::assertSame($date->format('Y-m-d H:i:s.u'), $parsedDate->format('Y-m-d H:i:s.u'));
+            $this->assertNotNull($date);
+            $this->assertEquals(0, $date->format('H'));
+            $this->assertEquals(0, $date->format('i'));
+            $this->assertEquals(0, $date->format('s'));
+        }
+
+        $date = DateHelper::parse(date('H:i:s'));
+
+        $this->assertNotNull($date);
+        $this->assertEquals(1970, $date->format('Y'));
+        $this->assertEquals(1, $date->format('m'));
+        $this->assertEquals(1, $date->format('d'));
+
+        $date = DateHelper::parse(date('Y'));
+
+        $this->assertNotNull($date);
+        $this->assertEquals(1, $date->format('m'));
+        $this->assertEquals(1, $date->format('d'));
+        $this->assertEquals(0, $date->format('H'));
+        $this->assertEquals(0, $date->format('i'));
+        $this->assertEquals(0, $date->format('s'));
     }
 }

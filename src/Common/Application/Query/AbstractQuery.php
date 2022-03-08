@@ -75,7 +75,7 @@ abstract class AbstractQuery extends WeakDto
     }
 
     /**
-     * Returns TRUE if the given field is passed with this request as sort or regular field..
+     * Returns TRUE if the given field is passed with this request as sort or regular field.
      *
      */
     public function usesField(string $field): bool
@@ -83,20 +83,12 @@ abstract class AbstractQuery extends WeakDto
         return $this->containsField($field) || $this->containsSortField($field);
     }
 
-    //region Setters
-
-    /**
-     * @param mixed $keyword
-     */
-    protected function setKeyword($keyword): void
+    protected function setKeyword(mixed $keyword): void
     {
         $this->keyword = is_scalar($keyword) ? (string)$keyword : null;
     }
 
-    /**
-     * @param mixed $limit
-     */
-    protected function setLimit($limit): void
+    protected function setLimit(mixed $limit): void
     {
         $this->limit = is_numeric($limit) ? abs((int)$limit) : static::DEFAULT_PAGE_SIZE;
 
@@ -105,26 +97,17 @@ abstract class AbstractQuery extends WeakDto
         }
     }
 
-    /**
-     * @param mixed $offset
-     */
-    protected function setOffset($offset): void
+    protected function setOffset(mixed $offset): void
     {
         $this->offset = is_numeric($offset) ? abs((int)$offset) : null;
     }
 
-    /**
-     * @param mixed $page
-     */
-    protected function setPage($page): void
+    protected function setPage(mixed $page): void
     {
         $this->page = is_numeric($page) ? abs((int)$page) : null;
     }
 
-    /**
-     * @param mixed $sort
-     */
-    protected function setSort($sort): void
+    protected function setSort(mixed $sort): void
     {
         if (!is_string($sort) || $sort === '') {
             return;
@@ -150,26 +133,7 @@ abstract class AbstractQuery extends WeakDto
         $this->sort = $items ?: null;
     }
 
-    /**
-     * @param mixed $fields
-     */
-    protected function setGroup($fields): void
-    {
-        $this->group = $this->fieldsToArray($fields);
-    }
-
-    /**
-     * @param mixed $fields
-     */
-    protected function setFields($fields): void
-    {
-        $this->fields = $this->fieldsToArray($fields);
-    }
-
-    /**
-     * @param mixed $timezone
-     */
-    protected function setTimezone($timezone): void
+    protected function setTimezone(mixed $timezone): void
     {
         $this->timezone = is_numeric($timezone) ? (int)$timezone : null;
     }
@@ -179,38 +143,27 @@ abstract class AbstractQuery extends WeakDto
         $this->language = $language !== null ? Language::from(strtoupper($language)) : null;
     }
 
-    /**
-     * @param mixed $flag
-     */
-    protected function setWithoutCount($flag): void
+    protected function setWithoutCount(mixed $flag): void
     {
         $this->withoutCount = $this->toBoolean($flag);
     }
 
-    /**
-     * @param mixed $flag
-     */
-    protected function setWithoutItems($flag): void
+    protected function setWithoutItems(mixed $flag): void
     {
         $this->withoutItems = $this->toBoolean($flag);
     }
 
-    protected function setOffsetField(?string $offsetField): void
+    protected function setGroup(mixed $fields): void
     {
-        $this->offsetField = $offsetField;
+        $this->group = $this->fieldsToArray($fields);
     }
 
-    protected function setOffsetValue(?string $offsetValue): void
+    protected function setFields(mixed $fields): void
     {
-        $this->offsetValue = $offsetValue;
+        $this->fields = $this->fieldsToArray($fields);
     }
 
-    //endregion
-
-    /**
-     * @param mixed $fields
-     */
-    private function fieldsToArray($fields): ?array
+    private function fieldsToArray(mixed $fields): ?array
     {
         if (!is_string($fields) || $fields === '') {
             return null;

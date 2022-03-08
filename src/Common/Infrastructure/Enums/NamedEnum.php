@@ -15,12 +15,9 @@ class NamedEnum extends AbstractEnum
      */
     protected string $name = '';
 
-    /**
-     * Constructor.
-     *
-     */
     protected function __construct(string $name)
     {
+        parent::__construct();
         $this->name = $name;
     }
 

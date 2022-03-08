@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Tests\Common\Infrastructure;
 
-use AlephTools\DDD\Common\Infrastructure\Dto;
-use AlephTools\DDD\Common\Infrastructure\Hash;
-use AlephTools\DDD\Common\Infrastructure\Hashable;
-use AlephTools\DDD\Common\Model\Gender;
+use stdClass;
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use stdClass;
+use AlephTools\DDD\Common\Infrastructure\Hash;
+use AlephTools\DDD\Common\Infrastructure\Hashable;
+use AlephTools\DDD\Common\Infrastructure\StrictDto;
+use AlephTools\DDD\Common\Model\Gender;
 
 class HashableTestObject implements Hashable
 {
@@ -29,7 +29,7 @@ class HashableTestObject implements Hashable
  * @property mixed $prop1
  * @property mixed $prop2
  */
-class HashableDtoTestObject extends Dto
+class HashableDtoTestObject extends StrictDto
 {
     private $prop1;
     private $prop2;

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Application;
 
-use AlephTools\DDD\Common\Infrastructure\DateHelper;
 use DateTime;
 use DateTimeImmutable;
+use AlephTools\DDD\Common\Infrastructure\DateHelper;
 
 trait TypeConversionAware
 {
-    /**
-     * @param mixed $value
-     */
-    protected function toBoolean($value): bool
+    protected function toBoolean(mixed $value): bool
     {
         if (is_scalar($value)) {
             $value = strtolower(trim((string)$value));
@@ -23,18 +20,12 @@ trait TypeConversionAware
         return false;
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function toDate($value): ?DateTime
+    protected function toDate(mixed $value): ?DateTime
     {
         return DateHelper::parse($value);
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function toImmutableDate($value): ?DateTimeImmutable
+    protected function toImmutableDate(mixed $value): ?DateTimeImmutable
     {
         return DateHelper::parseImmutable($value);
     }

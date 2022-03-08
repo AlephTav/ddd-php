@@ -42,7 +42,7 @@ abstract class AbstractId extends ValueObject implements Scalarable
      * @param mixed $identity
      * @return mixed
      */
-    abstract protected function parse($identity);
+    abstract protected function parse(mixed $identity);
 
     /**
      * Validates the identity.

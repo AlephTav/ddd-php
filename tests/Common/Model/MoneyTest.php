@@ -157,6 +157,13 @@ class MoneyTest extends TestCase
         self::assertSame(Currency::USD(), $money->currency);
     }
 
+    public function testSqrtFromNegativeNumber(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        (new Money('-2.25'))->sqrt();
+    }
+
     public function testCmp(): void
     {
         $money = new Money('3.33');
@@ -299,7 +306,7 @@ class MoneyTest extends TestCase
         self::assertSame('-0.01', $money->toRoundAmount());
 
         $money = new Money('-0.004');
-        self::assertSame('-0.00', $money->toRoundAmount());
+        self::assertSame('0.00', $money->toRoundAmount());
 
         $money = new Money('0');
         self::assertSame('0.00', $money->toRoundAmount());
@@ -326,10 +333,10 @@ class MoneyTest extends TestCase
         self::assertSame('0.01', $money->toCeilAmount());
 
         $money = new Money('-0.005');
-        self::assertSame('-0.00', $money->toCeilAmount());
+        self::assertSame('0.00', $money->toCeilAmount());
 
         $money = new Money('-0.004');
-        self::assertSame('-0.00', $money->toCeilAmount());
+        self::assertSame('0.00', $money->toCeilAmount());
 
         $money = new Money('0');
         self::assertSame('0.00', $money->toCeilAmount());

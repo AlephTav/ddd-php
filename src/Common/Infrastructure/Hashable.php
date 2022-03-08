@@ -12,9 +12,8 @@ interface Hashable
     /**
      * Compares two objects.
      *
-     * @param mixed $other
      */
-    public function equals($other): bool;
+    public function equals(mixed $other): bool;
 
     /**
      * Generates a hash value for this object.

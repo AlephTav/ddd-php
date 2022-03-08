@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Model;
 
+use InvalidArgumentException;
+use UnexpectedValueException;
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
-use UnexpectedValueException;
 
 /**
  * @property-read numeric-string $amount
@@ -121,7 +122,7 @@ class Money extends ValueObject implements Scalarable
      */
     public function cmp(string $amount): int
     {
-        return bccomp($this->amount, $this->normalizeAmount($amount), (int)static::PRECISION);
+        return bccomp($this->amount, $this->normalizeAmount($amount), self::PRECISION);
     }
 
     //endregion
@@ -170,7 +171,11 @@ class Money extends ValueObject implements Scalarable
 
     public function sqrt(): Money
     {
-        return new Money(bcsqrt($this->amount, (int)static::PRECISION), $this->currency);
+        if ($this->isNegative()) {
+            throw new InvalidArgumentException('Cannot take the square root of a negative number.');
+        }
+        $amount = (string)bcsqrt($this->amount, self::PRECISION);
+        return new Money($amount, $this->currency);
     }
 
     /**
@@ -221,7 +226,7 @@ class Money extends ValueObject implements Scalarable
      */
     private function round(string $number, int $precision): string
     {
-        if (strpos($number, '.') !== false) {
+        if (str_contains($number, '.')) {
             /** @psalm-var numeric-string $addend */
             $addend = '0.' . str_repeat('0', $precision) . '5';
             if ($number[0] != '-') {
@@ -237,7 +242,7 @@ class Money extends ValueObject implements Scalarable
      */
     private function floor(string $number, int $precision): string
     {
-        if (strpos($number, '.') !== false) {
+        if (str_contains($number, '.')) {
             if ($number[0] != '-') {
                 return bcadd($number, '0', $precision);
             }
@@ -253,7 +258,7 @@ class Money extends ValueObject implements Scalarable
      */
     private function ceil(string $number, int $precision): string
     {
-        if (strpos($number, '.') !== false) {
+        if (str_contains($number, '.')) {
             if ($number[0] != '-') {
                 /** @psalm-var numeric-string $addend */
                 $addend = '0.' . str_repeat('0', $precision) . '9';
@@ -278,10 +283,7 @@ class Money extends ValueObject implements Scalarable
 
     //region Setters
 
-    /**
-     * @param mixed $amount
-     */
-    protected function setAmount($amount): void
+    protected function setAmount(mixed $amount): void
     {
         $this->assertArgumentFalse(
             $amount !== null && !is_scalar($amount),

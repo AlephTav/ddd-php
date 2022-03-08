@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Application\Data;
 
+use DateTimeImmutable;
 use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Assets\FileId;
-use DateTimeImmutable;
 
 /**
  * @property-read FileId $id
@@ -37,15 +37,8 @@ class FileMetadata extends StrictDto
     private int $size;
     private ?string $url;
     private ?string $downloadLink;
+    private mixed $ownerId;
 
-    /**
-     * @var mixed
-     */
-    private $ownerId;
-
-    /**
-     * @param mixed $ownerId
-     */
     public function __construct(
         FileId $id,
         bool $isPrivate,
@@ -59,7 +52,7 @@ class FileMetadata extends StrictDto
         int $size,
         string $url = null,
         string $downloadLink = null,
-        $ownerId = null
+        mixed $ownerId = null
     ) {
         parent::__construct([
             'id' => $id,

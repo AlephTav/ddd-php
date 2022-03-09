@@ -66,11 +66,6 @@ class DateHelper
         return self::parseInternal($date, DateTime::class);
     }
 
-    protected static function dateTimeHasCreateFromImmutable(): bool
-    {
-        return method_exists(DateTime::class, 'createFromImmutable');
-    }
-
     /**
      * @template T as class-string<DateTime>|class-string<DateTimeImmutable>
      * @param mixed $date

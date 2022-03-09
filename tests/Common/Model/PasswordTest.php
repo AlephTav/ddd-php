@@ -15,6 +15,11 @@ use stdClass;
  */
 class PasswordTest extends TestCase
 {
+    public function setUp(): void
+    {
+        Password::setHashFunction('password_hash');
+    }
+
     public function testCreationFromScalar(): void
     {
         $password = new Password('12345678');
@@ -94,6 +99,20 @@ class PasswordTest extends TestCase
         self::assertEquals(9, strlen($password->password));
         self::assertNotNull($password->hash);
         self::assertTrue(password_verify($password->password, $password->hash));
+    }
+
+    public function testRandomPasswordWithZeroLength(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Password::random(0);
+    }
+
+    public function testRandomPasswordWithNegativeLength(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Password::random(-1);
     }
 
     public function testPasswordHash(): void
@@ -218,5 +237,19 @@ class PasswordTest extends TestCase
                 return false;
             }
         };
+    }
+
+    public function testChangeHashFunction(): void
+    {
+        $hash = function(string $pass, string|int|null $algo) {
+            return $pass;
+        };
+
+        Password::setHashFunction($hash);
+
+        $pass = new Password('test');
+
+        $this->assertSame('test', $pass->hash);
+        $this->assertSame('test', $pass->password);
     }
 }

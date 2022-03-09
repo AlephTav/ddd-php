@@ -24,12 +24,12 @@ class Password extends ValueObject
     protected ?string $password = null;
 
     /**
-     * @var callable(string, string|int|null, array=):scalar
+     * @var callable(string, string|int|null):scalar
      */
     protected static mixed $hashFunction = 'password_hash';
 
     /**
-     * @psalm-param callable(string, string|int|null, array=):scalar $func
+     * @psalm-param callable(string, string|int|null):scalar $func
      * @return void
      */
     final public static function setHashFunction(callable $func): void

@@ -49,6 +49,6 @@
         "cs-fix": "@php-cs-fixer fix",
         "php-cs-fixer": "php-cs-fixer --config=.php-cs-fixer.php --allow-risky=yes",
         "psalm": "psalm --config=psalm.xml --no-cache",
-        "test": "phpunit"
+        "test": "XDEBUG_MODE=coverage phpunit"
     }
 }

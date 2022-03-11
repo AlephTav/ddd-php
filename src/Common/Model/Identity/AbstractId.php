@@ -31,7 +31,7 @@ abstract class AbstractId extends ValueObject implements Scalarable
         return (string)$this->identity;
     }
 
-    public function toScalar()
+    public function toScalar(): mixed
     {
         return $this->identity;
     }

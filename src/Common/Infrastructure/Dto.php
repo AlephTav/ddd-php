@@ -243,7 +243,7 @@ abstract class Dto implements Serializable
      * @param array{int,string|null,string|null,string|null} $info
      * @return mixed
      */
-    private function extractPropertyValue(string $property, array $info)
+    private function extractPropertyValue(string $property, array $info): mixed
     {
         $getter = $info[self::PROP_OFFSET_GETTER];
         if ($getter === null) {

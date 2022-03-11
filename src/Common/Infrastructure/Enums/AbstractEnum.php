@@ -245,7 +245,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
      *
      * @return string
      */
-    public function toScalar()
+    public function toScalar(): mixed
     {
         return $this->getConstantName();
     }

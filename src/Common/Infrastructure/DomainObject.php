@@ -14,9 +14,8 @@ abstract class DomainObject extends StrictDto implements Hashable
     /**
      * Compares two domain objects.
      *
-     * @param mixed $other
      */
-    public function equals($other): bool
+    public function equals(mixed $other): bool
     {
         if ($other instanceof static) {
             return $this->hash() === $other->hash();

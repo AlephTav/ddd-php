@@ -232,16 +232,16 @@ class PasswordTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         new class('password') extends Password {
-            protected function hashPassword(string $password): mixed
+            protected function hashPassword(string $password): string
             {
-                return false;
+                return '';
             }
         };
     }
 
     public function testChangeHashFunction(): void
     {
-        $hash = function(string $pass, string|int|null $algo) {
+        $hash = function(string $pass, string|int|null $algo): string {
             return $pass;
         };
 

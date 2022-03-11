@@ -24,7 +24,7 @@ class Email extends ValueObject implements Scalarable
      *
      * @param array<string,mixed>|string|null $address
      */
-    public function __construct($address = null)
+    public function __construct(null|array|string $address = null)
     {
         if (is_array($address)) {
             parent::__construct($address);
@@ -38,7 +38,7 @@ class Email extends ValueObject implements Scalarable
         return $this->address;
     }
 
-    public function toScalar()
+    public function toScalar(): mixed
     {
         return $this->address;
     }

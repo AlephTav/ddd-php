@@ -90,7 +90,7 @@ abstract class AbstractQuery extends WeakDto
 
     protected function setLimit(mixed $limit): void
     {
-        $this->limit = is_numeric($limit) ? abs((int)$limit) : static::DEFAULT_PAGE_SIZE;
+        $this->limit = is_numeric($limit) ? abs((int)$limit) : (int)static::DEFAULT_PAGE_SIZE;
 
         if ($this->limit > static::getPageMaxSize()) {
             $this->limit = static::getPageMaxSize();

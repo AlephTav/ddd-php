@@ -58,7 +58,7 @@ class Password extends ValueObject
     /**
      * @param array<string,mixed>|string|null $password
      */
-    public function __construct($password)
+    public function __construct(null|string|array $password)
     {
         if (is_array($password)) {
             parent::__construct($password);
@@ -70,21 +70,18 @@ class Password extends ValueObject
         }
     }
 
-    /**
-     * @param mixed $password
-     */
     protected function encodePassword(mixed $password): string
     {
-        $hash = is_scalar($password) || $password === null ? $this->hashPassword((string)$password) : null;
-        if (!$hash) {
+        $hash = is_scalar($password) || $password === null ? $this->hashPassword((string)$password) : '';
+        if ($hash === '') {
             throw new RuntimeException('Failed to hash password.');
         }
-        return (string)$hash;
+        return $hash;
     }
 
-    protected function hashPassword(string $password): mixed
+    protected function hashPassword(string $password): string
     {
-        return (self::$hashFunction)($password, PASSWORD_DEFAULT);
+        return (string)(self::$hashFunction)($password, PASSWORD_DEFAULT);
     }
 
     protected function validateHash(): void

@@ -30,7 +30,7 @@ class Money extends ValueObject implements Scalarable
      *
      * @param array<string,mixed>|string|int|float|Money $amount
      */
-    public function __construct($amount, Currency $currency = null)
+    public function __construct(null|array|string|int|float|Money $amount, Currency $currency = null)
     {
         if (is_array($amount)) {
             parent::__construct($amount);
@@ -52,7 +52,7 @@ class Money extends ValueObject implements Scalarable
         return $this->amount;
     }
 
-    public function toScalar()
+    public function toScalar(): mixed
     {
         return $this->amount;
     }
@@ -106,7 +106,7 @@ class Money extends ValueObject implements Scalarable
         return $this->cmp($amount) >= 0;
     }
 
-    public function equals($other): bool
+    public function equals(mixed $other): bool
     {
         if (is_numeric($other)) {
             return $this->cmp((string)$other) === 0;

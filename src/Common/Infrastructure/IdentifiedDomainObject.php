@@ -8,7 +8,7 @@ use stdClass;
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
 
 /**
- * @property-read AbstractId $id
+ * @property-read AbstractId|null $id
  */
 abstract class IdentifiedDomainObject extends DomainObject implements Identifiable
 {
@@ -21,9 +21,8 @@ abstract class IdentifiedDomainObject extends DomainObject implements Identifiab
     /**
      * Converts an object to its identity.
      *
-     * @return mixed
      */
-    public function toIdentity()
+    public function toIdentity(): mixed
     {
         return $this->id?->identity;
     }

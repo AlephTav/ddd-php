@@ -24,7 +24,7 @@ class Phone extends ValueObject implements Scalarable
      *
      * @param array<string,mixed>|string|null $number
      */
-    public function __construct($number = null)
+    public function __construct(null|array|string $number = null)
     {
         if (is_array($number)) {
             parent::__construct($number);
@@ -40,7 +40,7 @@ class Phone extends ValueObject implements Scalarable
         return $this->number;
     }
 
-    public function toScalar()
+    public function toScalar(): mixed
     {
         return $this->number;
     }

@@ -8,8 +8,5 @@ interface Scalarable
 {
     public function toString(): string;
 
-    /**
-     * @return mixed
-     */
-    public function toScalar();
+    public function toScalar(): mixed;
 }

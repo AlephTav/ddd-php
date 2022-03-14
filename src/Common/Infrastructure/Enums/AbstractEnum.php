@@ -142,7 +142,7 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Creates enum instance from the given constant name.
      *
-     * @param static|string $constantName
+     * @param mixed $constantName
      * @return static
      */
     public static function from(mixed $constantName)

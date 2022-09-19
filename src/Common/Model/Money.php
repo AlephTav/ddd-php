@@ -195,7 +195,7 @@ class Money extends ValueObject implements Scalarable
 
     public function toRoundAmount(): string
     {
-        return $this->toScaledAmount();
+        return $this->toScaledAmount(self::SCALE_FUNC_ROUND);
     }
 
     public function toFloorAmount(): string
@@ -208,7 +208,7 @@ class Money extends ValueObject implements Scalarable
         return $this->toScaledAmount(self::SCALE_FUNC_CEIL);
     }
 
-    public function toScaledAmount(string $scaleFunction = self::SCALE_FUNC_ROUND): string
+    public function toScaledAmount(string $scaleFunction = self::SCALE_FUNC_CEIL): string
     {
         switch ($scaleFunction) {
             case self::SCALE_FUNC_CEIL:

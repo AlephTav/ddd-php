@@ -18,9 +18,35 @@ abstract class AbstractId extends ValueObject implements Scalarable
     /**
      * The identity (unique identifier).
      *
-     * @var mixed
      */
-    protected $identity;
+    protected mixed $identity;
+
+    /**
+     * Returns an instance of the id.
+     *
+     */
+    public static function from(mixed $identity): static
+    {
+        return new static($identity);
+    }
+
+    /**
+     * Returns id instance if the identity is not null, null otherwise.
+     *
+     */
+    public static function fromNullable(mixed $identity): ?static
+    {
+        return $identity !== null ? new static($identity) : null;
+    }
+
+    /**
+     * Constructor.
+     *
+     */
+    public function __construct(mixed $identity)
+    {
+        parent::__construct(['identity' => $this->parse($identity)]);
+    }
 
     /**
      * Converts this identifier to a string.
@@ -39,10 +65,8 @@ abstract class AbstractId extends ValueObject implements Scalarable
     /**
      * Parsing of raw value
      *
-     * @param mixed $identity
-     * @return mixed
      */
-    abstract protected function parse(mixed $identity);
+    abstract protected function parse(mixed $identity): mixed;
 
     /**
      * Validates the identity.

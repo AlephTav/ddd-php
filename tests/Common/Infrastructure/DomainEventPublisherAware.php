@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace Tests\AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
 use AlephTools\DDD\Common\Infrastructure\DomainEventPublisher;
@@ -14,7 +14,7 @@ trait DomainEventPublisherAware
     /**
      * @var DomainEventPublisher
      */
-    protected $publisher;
+    protected DomainEventPublisher $publisher;
 
     public function setUp(): void
     {

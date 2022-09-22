@@ -16,9 +16,8 @@ class GlobalId extends AbstractId
     /**
      * Generates new global identifier.
      *
-     * @return static
      */
-    public static function create()
+    public static function create(): static
     {
         return new static(self::uuid4());
     }
@@ -53,21 +52,10 @@ class GlobalId extends AbstractId
     }
 
     /**
-     * Constructor.
-     *
-     * @param mixed $identity
-     */
-    public function __construct($identity)
-    {
-        parent::__construct(['identity' => $this->parse($identity)]);
-    }
-
-    /**
      * Parses the identifier.
      *
-     * @param mixed $identity
      */
-    protected function parse($identity): ?string
+    protected function parse(mixed $identity): ?string
     {
         if ($identity instanceof static) {
             /** @var mixed $identity */

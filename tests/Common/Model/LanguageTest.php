@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model;
+namespace Tests\AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Model\Language;
 use PHPUnit\Framework\TestCase;

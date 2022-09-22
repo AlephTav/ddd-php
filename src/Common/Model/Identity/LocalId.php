@@ -16,7 +16,6 @@ class LocalId extends AbstractId
     /**
      * Returns TRUE if the given identity can be a local identifier.
      *
-     * @param mixed $identity
      */
     public static function canBeId(mixed $identity): bool
     {
@@ -25,14 +24,6 @@ class LocalId extends AbstractId
         }
 
         return false;
-    }
-
-    /**
-     * @param mixed $identity
-     */
-    public function __construct($identity)
-    {
-        parent::__construct(['identity' => $this->parse($identity)]);
     }
 
     /**

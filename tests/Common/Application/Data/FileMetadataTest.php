@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Application\Data;
+namespace Tests\AlephTools\DDD\Application\Data;
 
 use AlephTools\DDD\Common\Application\Data\FileMetadata;
 use AlephTools\DDD\Common\Model\Assets\FileId;

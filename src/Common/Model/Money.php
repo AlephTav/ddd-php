@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Model;
 
-use InvalidArgumentException;
-use UnexpectedValueException;
 use AlephTools\DDD\Common\Infrastructure\Scalarable;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
+use InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * @property-read numeric-string $amount

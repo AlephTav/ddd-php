@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Model;
 
-
-use RuntimeException;
-use InvalidArgumentException;
 use AlephTools\DDD\Common\Infrastructure\Hash;
 use AlephTools\DDD\Common\Infrastructure\ValueObject;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * @property-read string $hash
@@ -30,7 +29,6 @@ class Password extends ValueObject
 
     /**
      * @psalm-param callable(string, string|int|null):scalar $func
-     * @return void
      */
     final public static function setHashFunction(callable $func): void
     {

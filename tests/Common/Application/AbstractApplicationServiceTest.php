@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Application;
+namespace Tests\AlephTools\DDD\Common\Application;
 
 use AlephTools\DDD\Common\Application\AbstractApplicationService;
 use AlephTools\DDD\Common\Application\UnitOfWork;
@@ -40,7 +40,7 @@ class AbstractApplicationServiceTest extends TestCase
     {
         ApplicationContext::set(function (string $abstract = null, array $parameters = []) {
             if ($abstract === UnitOfWork::class) {
-                return new class() implements UnitOfWork {
+                return new class () implements UnitOfWork {
                     public function execute(callable $callback)
                     {
                         return $callback();
@@ -48,13 +48,13 @@ class AbstractApplicationServiceTest extends TestCase
                 };
             }
             if ($abstract === DomainEventPublisher::class) {
-                return new DomainEventPublisher(new class() implements EventDispatcher {
+                return new DomainEventPublisher(new class () implements EventDispatcher {
                     public function dispatch(string $subscriber, DomainEvent $event, bool $async): void
                     {
                     }
                 });
             }
-            return new class() implements Async {
+            return new class () implements Async {
                 public function run($callback, array $params = []): void
                 {
                     $callback($params);

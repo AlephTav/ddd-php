@@ -18,7 +18,6 @@ interface FileStorage
     /**
      * Returns the file metadata by its unique identifier.
      *
-     * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      * @throws EntityNotFoundException
      */
@@ -37,7 +36,6 @@ interface FileStorage
     /**
      * Returns a URL to access the given public file.
      *
-     * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
     public function getUrl(mixed $fileId, int $expirationInSeconds = 0, mixed $ownerId = null): string;
@@ -45,7 +43,6 @@ interface FileStorage
     /**
      * Returns the download link for a file.
      *
-     * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
     public function getDownloadLink(mixed $fileId, int $expirationInSeconds, mixed $ownerId = null): string;
@@ -53,7 +50,6 @@ interface FileStorage
     /**
      * Upload a file to storage.
      *
-     * @param mixed $file
      * @param string $path Optional path to the file in the storage.
      * @param mixed $ownerId The file owner.
      */
@@ -68,7 +64,6 @@ interface FileStorage
     /**
      * Downloads a private file.
      *
-     * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      * @return mixed
      */
@@ -77,7 +72,6 @@ interface FileStorage
     /**
      * Deletes a file.
      *
-     * @param mixed $fileId
      * @param mixed $ownerId The file owner.
      */
     public function delete(mixed $fileId, mixed $ownerId = null): void;

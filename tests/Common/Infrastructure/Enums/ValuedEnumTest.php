@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
+namespace Tests\AlephTools\DDD\Common\Infrastructure\Enums;
 
 use AlephTools\DDD\Common\Infrastructure\Enums\ValuedEnum;
 use PHPUnit\Framework\TestCase;

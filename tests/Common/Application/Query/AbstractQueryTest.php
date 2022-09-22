@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Application\Query;
+namespace Tests\AlephTools\DDD\Common\Application\Query;
 
 use AlephTools\DDD\Common\Application\Query\AbstractQuery;
 use AlephTools\DDD\Common\Model\Language;
@@ -51,7 +51,7 @@ class AbstractQueryTest extends TestCase
             'withoutCount' => false,
             'withoutItems' => false,
             'offsetField' => null,
-            'offsetValue' => null
+            'offsetValue' => null,
         ], $query->toArray());
     }
 

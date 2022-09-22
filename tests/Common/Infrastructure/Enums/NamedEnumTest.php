@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure\Enums;
+namespace Tests\AlephTools\DDD\Common\Infrastructure\Enums;
 
 use AlephTools\DDD\Common\Model\Gender;
 use PHPUnit\Framework\TestCase;

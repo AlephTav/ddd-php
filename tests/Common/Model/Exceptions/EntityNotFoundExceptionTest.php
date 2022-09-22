@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model\Exceptions;
+namespace Tests\AlephTools\DDD\Common\Model\Exceptions;
 
 use AlephTools\DDD\Common\Model\Exceptions\EntityNotFoundException;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;

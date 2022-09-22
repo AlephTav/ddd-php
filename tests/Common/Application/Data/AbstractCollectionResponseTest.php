@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Application\Data;
+namespace Tests\AlephTools\DDD\Common\Application\Data;
 
 use AlephTools\DDD\Common\Application\Data\AbstractCollectionResponse;
 use PHPUnit\Framework\TestCase;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Application\Data;
 
-use DateTimeImmutable;
 use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Assets\FileId;
+use DateTimeImmutable;
 
 /**
  * @property-read FileId $id

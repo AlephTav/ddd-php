@@ -24,7 +24,6 @@ class ValuedEnum extends AbstractEnum
     /**
      * Returns the value that associated with the current enum value.
      *
-     * @return int|float
      */
     public function getValue(): int|float
     {

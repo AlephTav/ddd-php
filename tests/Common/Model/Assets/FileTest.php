@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model\Assets;
+namespace Tests\AlephTools\DDD\Common\Model\Assets;
 
 use AlephTools\DDD\Common\Infrastructure\ApplicationContext;
 use AlephTools\DDD\Common\Infrastructure\FileStorage;

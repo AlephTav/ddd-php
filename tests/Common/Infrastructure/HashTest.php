@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace Tests\AlephTools\DDD\Common\Infrastructure;
 
-use stdClass;
-use DateTime;
-use PHPUnit\Framework\TestCase;
 use AlephTools\DDD\Common\Infrastructure\Hash;
 use AlephTools\DDD\Common\Infrastructure\Hashable;
 use AlephTools\DDD\Common\Infrastructure\StrictDto;
 use AlephTools\DDD\Common\Model\Gender;
+use DateTime;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class HashableTestObject implements Hashable
 {

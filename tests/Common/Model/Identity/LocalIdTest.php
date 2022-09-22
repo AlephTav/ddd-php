@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model\Identity;
+namespace Tests\AlephTools\DDD\Common\Model\Identity;
 
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Identity\LocalId;
@@ -70,9 +70,8 @@ class LocalIdTest extends TestCase
 
     /**
      * @dataProvider invalidIdentityProvider
-     * @param mixed $identity
      */
-    public function testParseInvalidValue(string $error, $identity): void
+    public function testParseInvalidValue(string $error, mixed $identity): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($error);
@@ -104,5 +103,20 @@ class LocalIdTest extends TestCase
 
         self::assertSame('123', $id->toString());
         self::assertSame(123, $id->toScalar());
+    }
+
+    public function testFrom(): void
+    {
+        $id = new LocalId(123);
+
+        self::assertSame($id->identity, LocalId::from($id->identity)->identity);
+    }
+
+    public function testFromNullable(): void
+    {
+        $id = new LocalId(123);
+
+        self::assertSame($id->identity, LocalId::fromNullable($id->identity)?->identity);
+        self::assertNull(LocalId::fromNullable(null));
     }
 }

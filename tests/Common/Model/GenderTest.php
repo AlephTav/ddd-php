@@ -1,20 +1,25 @@
 <?php
 
-namespace AlephTools\DDD\Tests\Common\Model;
+declare(strict_types=1);
+
+namespace Tests\AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Model\Gender;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 class GenderTest extends TestCase
 {
     public function testIdentification(): void
     {
         $female = Gender::FEMALE();
-        $this->assertTrue($female->isFemale());
-        $this->assertFalse($female->isMale());
+        self::assertTrue($female->isFemale());
+        self::assertFalse($female->isMale());
 
         $male = Gender::MALE();
-        $this->assertTrue($male->isMale());
-        $this->assertFalse($male->isFemale());
+        self::assertTrue($male->isMale());
+        self::assertFalse($male->isFemale());
     }
 }

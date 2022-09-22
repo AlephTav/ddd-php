@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace Tests\AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Infrastructure\EventSourcedEntity;
 use AlephTools\DDD\Common\Model\Events\EntityCreated;
@@ -42,7 +42,7 @@ class EventSourcedEntityTest extends TestCase
 
     public function testCreationWithEvent(): void
     {
-        $id = new class(1) extends LocalId {};
+        $id = new class (1) extends LocalId {};
         $properties = [
             'id' => $id,
             'prop1' => 'a',
@@ -69,7 +69,7 @@ class EventSourcedEntityTest extends TestCase
 
     public function testDeleteEntity(): void
     {
-        $id = new class(1) extends LocalId {};
+        $id = new class (1) extends LocalId {};
         $entity = new EventSourcedEntityTestObject(['id' => $id], true);
         $entity->delete();
 
@@ -83,7 +83,7 @@ class EventSourcedEntityTest extends TestCase
 
     public function testUpdateScalarProperties(): void
     {
-        $id = new class(1) extends LocalId {};
+        $id = new class (1) extends LocalId {};
         $properties = [
             'id' => $id,
             'prop1' => 'a',
@@ -137,7 +137,7 @@ class EventSourcedEntityTest extends TestCase
         ];
         $entity3 = new EventSourcedEntityTestObject($properties, true);
 
-        $id = new class(10) extends LocalId {};
+        $id = new class (10) extends LocalId {};
         $properties = [
             'id' => $id,
             'prop1' => $entity1,

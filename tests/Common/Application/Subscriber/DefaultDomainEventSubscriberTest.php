@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Application\Subscriber;
+namespace Tests\AlephTools\DDD\Common\Application\Subscriber;
 
 use AlephTools\DDD\Common\Application\EventStore;
 use AlephTools\DDD\Common\Application\Subscriber\DefaultDomainEventSubscriber;

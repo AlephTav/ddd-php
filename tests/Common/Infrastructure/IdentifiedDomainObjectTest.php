@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace Tests\AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Infrastructure\IdentifiedDomainObject;
 use AlephTools\DDD\Common\Model\Identity\LocalId;

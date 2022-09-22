@@ -241,7 +241,6 @@ abstract class Dto implements Serializable
 
     /**
      * @param array{int,string|null,string|null,string|null} $info
-     * @return mixed
      */
     private function extractPropertyValue(string $property, array $info): mixed
     {
@@ -391,7 +390,6 @@ abstract class Dto implements Serializable
     /**
      * Assigns value to a property.
      *
-     * @param mixed $value
      * @param bool $strict Determines whether to throw exception for non-existing property (TRUE).
      */
     protected function assignProperty(string $property, mixed $value, bool $strict = true): void
@@ -455,7 +453,6 @@ abstract class Dto implements Serializable
     }
 
     /**
-     * @param mixed $value
      */
     private function assignValueToProperty(string $property, mixed $value): void
     {

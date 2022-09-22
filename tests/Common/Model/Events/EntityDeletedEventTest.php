@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model\Events;
+namespace Tests\AlephTools\DDD\Common\Model\Events;
 
 use AlephTools\DDD\Common\Model\Events\EntityDeleted;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;

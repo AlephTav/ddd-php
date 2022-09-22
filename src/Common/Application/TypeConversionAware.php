@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Application;
 
+use AlephTools\DDD\Common\Infrastructure\DateHelper;
 use DateTime;
 use DateTimeImmutable;
-use AlephTools\DDD\Common\Infrastructure\DateHelper;
 
 trait TypeConversionAware
 {

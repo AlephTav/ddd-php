@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
-use stdClass;
 use AlephTools\DDD\Common\Model\Identity\AbstractId;
+use stdClass;
 
 /**
  * @property-read AbstractId|null $id

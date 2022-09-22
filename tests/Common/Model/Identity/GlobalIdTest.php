@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model\Identity;
+namespace Tests\AlephTools\DDD\Common\Model\Identity;
 
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Identity\GlobalId;
@@ -63,9 +63,10 @@ class GlobalIdTest extends TestCase
 
     /**
      * @dataProvider invalidIdentityProvider
+     * @param string $error
      * @param mixed $identity
      */
-    public function testParseInvalidValue(string $error, $identity): void
+    public function testParseInvalidValue(string $error, mixed $identity): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($error);
@@ -102,5 +103,20 @@ class GlobalIdTest extends TestCase
 
         self::assertSame($id->identity, $id->toString());
         self::assertSame($id->identity, $id->toScalar());
+    }
+
+    public function testFrom(): void
+    {
+        $id = GlobalId::create();
+
+        self::assertSame($id->identity, GlobalId::from($id->identity)->identity);
+    }
+
+    public function testFromNullable(): void
+    {
+        $id = GlobalId::create();
+
+        self::assertSame($id->identity, GlobalId::fromNullable($id->identity)?->identity);
+        self::assertNull(GlobalId::fromNullable(null));
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Infrastructure;
+namespace Tests\AlephTools\DDD\Common\Infrastructure;
 
 use AlephTools\DDD\Common\Infrastructure\Entity;
 use AlephTools\DDD\Common\Model\Events\DomainEvent;
@@ -57,7 +57,7 @@ class EntityTest extends TestCase
 
     public function testPublishEventAfterInstantiation(): void
     {
-        $event = new class() extends DomainEvent {};
+        $event = new class () extends DomainEvent {};
 
         $entity = new EntityTestObject();
         $entity->publish($event);
@@ -67,7 +67,7 @@ class EntityTest extends TestCase
 
     public function testPublishEventBeforeInstantiation(): void
     {
-        $event = new class() extends DomainEvent {};
+        $event = new class () extends DomainEvent {};
 
         $entity = new EntityTestObject();
         $entity->setIsEntityInstantiated(false);

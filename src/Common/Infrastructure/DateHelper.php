@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AlephTools\DDD\Common\Infrastructure;
 
+use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use DateTime;
 use DateTimeImmutable;
-use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 
 class DateHelper
 {
@@ -68,7 +68,6 @@ class DateHelper
 
     /**
      * @template T as class-string<DateTime>|class-string<DateTimeImmutable>
-     * @param mixed $date
      * @param T $class
      * @psalm-return (T is class-string<DateTime> ? DateTime : DateTimeImmutable)
      */

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AlephTools\DDD\Tests\Common\Model;
+namespace Tests\AlephTools\DDD\Common\Model;
 
 use AlephTools\DDD\Common\Model\Exceptions\InvalidArgumentException;
 use AlephTools\DDD\Common\Model\Password;
@@ -15,7 +15,7 @@ use stdClass;
  */
 class PasswordTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         Password::setHashFunction('password_hash');
     }
@@ -231,7 +231,7 @@ class PasswordTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        new class('password') extends Password {
+        new class ('password') extends Password {
             protected function hashPassword(string $password): string
             {
                 return '';
@@ -241,15 +241,13 @@ class PasswordTest extends TestCase
 
     public function testChangeHashFunction(): void
     {
-        $hash = function(string $pass, string|int|null $algo): string {
-            return $pass;
-        };
+        $hash = fn (string $pass, string|int|null $algo): string => $pass;
 
         Password::setHashFunction($hash);
 
         $pass = new Password('test');
 
-        $this->assertSame('test', $pass->hash);
-        $this->assertSame('test', $pass->password);
+        self::assertSame('test', $pass->hash);
+        self::assertSame('test', $pass->password);
     }
 }

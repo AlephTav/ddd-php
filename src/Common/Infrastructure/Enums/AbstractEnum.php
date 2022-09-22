@@ -84,7 +84,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Checks if the given value is in the enum type.
      *
-     * @param mixed $value
      * @param bool $strict Determines whether to search for identical elements.
      * @throws ReflectionException
      */
@@ -142,7 +141,6 @@ abstract class AbstractEnum implements JsonSerializable, Scalarable
     /**
      * Creates enum instance from the given constant name.
      *
-     * @param mixed $constantName
      * @return static
      */
     public static function from(mixed $constantName)

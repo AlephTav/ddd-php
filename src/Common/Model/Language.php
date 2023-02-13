@@ -18,7 +18,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static CS(string $method = null)
  * @method static static HU(string $method = null)
  * @method static static ID(string $method = null)
- * @method static static TJ(string $method = null)
+ * @method static static TG(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -33,7 +33,7 @@ class Language extends AbstractEnum
     private const CS = 'cs_CZ';
     private const HU = 'hu_HU';
     private const ID = 'id_ID';
-    private const TJ = 'tj_TJ';
+    private const TJ = 'tg_TG';
 
     private string $locale;
 

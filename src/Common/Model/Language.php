@@ -33,7 +33,7 @@ class Language extends AbstractEnum
     private const CS = 'cs_CZ';
     private const HU = 'hu_HU';
     private const ID = 'id_ID';
-    private const TJ = 'tj_TJ';
+    private const TJ = 'tg_TJ';
 
     private string $locale;
 

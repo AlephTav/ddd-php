@@ -42,14 +42,14 @@ class PhoneTest extends TestCase
      * @param mixed $phone
      * @param string $sanitizedPhone
      */
-    public function testPhoneSanitization($phone, $sanitizedPhone): void
+    public function testPhoneSanitization(mixed $phone, string $sanitizedPhone): void
     {
         $phone = new Phone($phone);
 
         self::assertSame($sanitizedPhone, $phone->number);
     }
 
-    public function phoneDataProvider(): array
+    public static function phoneDataProvider(): array
     {
         return [
             [null, ''],

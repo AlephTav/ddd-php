@@ -59,7 +59,7 @@ class FileTest extends TestCase
     {
         /** @var MockBuilder $builder */
         $builder = $this->getMockBuilder(FileStorage::class);
-        $storage = $builder->setMethods([
+        $storage = $builder->onlyMethods([
             'getMetadataList',
             'exists',
             'getMetadata',
@@ -67,7 +67,6 @@ class FileTest extends TestCase
             'getDownloadLink',
             'upload',
             'download',
-            'downloadByLink',
             'delete',
         ])->getMock();
 

@@ -66,7 +66,7 @@ class DomainEventPublisherTest extends TestCase
         $this->result = [];
 
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
-            ->setMethods(['dispatch'])
+            ->onlyMethods(['dispatch'])
             ->getMock();
     }
 

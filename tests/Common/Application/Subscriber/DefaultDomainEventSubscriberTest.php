@@ -43,7 +43,7 @@ class DefaultDomainEventSubscriberTest extends TestCase
     private function getEventStoreMock()
     {
         return $this->getMockBuilder(EventStore::class)
-            ->setMethods(['append'])
+            ->onlyMethods(['append'])
             ->getMock();
     }
 }

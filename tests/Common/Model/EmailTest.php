@@ -48,15 +48,16 @@ class EmailTest extends TestCase
     /**
      * @dataProvider emailDataProvider
      * @param mixed $email
+     * @param string $sanitizedEmail
      */
-    public function testEmailSanitization($email, string $sanitizedEmail): void
+    public function testEmailSanitization(mixed $email, string $sanitizedEmail): void
     {
         $email = new Email($email);
 
         self::assertSame($sanitizedEmail, $email->address);
     }
 
-    public function emailDataProvider(): array
+    public static function emailDataProvider(): array
     {
         return [
             [null, ''],

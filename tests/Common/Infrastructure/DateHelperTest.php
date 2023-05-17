@@ -27,9 +27,11 @@ class DateHelperTest extends TestCase
     /**
      * @depends testParseDateFormats
      * @dataProvider dateDataProvider
-     * @param $value
+     * @param mixed $value
+     * @param string|null $format
+     * @param bool $expectException
      */
-    public function testParseDate($value, ?string $format, bool $expectException): void
+    public function testParseDate(mixed $value, ?string $format, bool $expectException): void
     {
         if ($expectException) {
             $this->expectException(InvalidArgumentException::class);
@@ -52,7 +54,7 @@ class DateHelperTest extends TestCase
         }
     }
 
-    public function dateDataProvider(): array
+    public static function dateDataProvider(): array
     {
         $data = [];
         $now = new DateTime();

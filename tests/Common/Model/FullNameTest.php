@@ -95,6 +95,11 @@ class FullNameTest extends TestCase
 
     /**
      * @dataProvider nameFormattingDataProvider
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $middleName
+     * @param string $format
+     * @param string $formattedName
      */
     public function testFullNameFormatting(
         string $firstName,
@@ -108,7 +113,7 @@ class FullNameTest extends TestCase
         self::assertSame($formattedName, $name->asFormattedName($format));
     }
 
-    public function nameFormattingDataProvider(): array
+    public static function nameFormattingDataProvider(): array
     {
         return [
             [
@@ -235,6 +240,11 @@ class FullNameTest extends TestCase
 
     /**
      * @dataProvider nameParsingDataProvider
+     * @param string|null $fullName
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $middleName
+     * @param string $format
      */
     public function testParseName(
         ?string $fullName,
@@ -250,7 +260,7 @@ class FullNameTest extends TestCase
         self::assertSame($middleName, $name->middleName);
     }
 
-    public function nameParsingDataProvider(): array
+    public static function nameParsingDataProvider(): array
     {
         return [
             [

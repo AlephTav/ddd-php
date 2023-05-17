@@ -20,7 +20,7 @@ trait DomainEventPublisherAware
     {
         /** @var MockBuilder $dispatcher */
         $dispatcher = $this->getMockBuilder(EventDispatcher::class);
-        $dispatcher = $dispatcher->setMethods(['dispatch'])->getMock();
+        $dispatcher = $dispatcher->onlyMethods(['dispatch'])->getMock();
 
         /**
          * @var EventDispatcher $dispatcher

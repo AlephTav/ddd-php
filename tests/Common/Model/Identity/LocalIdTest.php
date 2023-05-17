@@ -70,6 +70,8 @@ class LocalIdTest extends TestCase
 
     /**
      * @dataProvider invalidIdentityProvider
+     * @param string $error
+     * @param mixed $identity
      */
     public function testParseInvalidValue(string $error, mixed $identity): void
     {
@@ -79,7 +81,7 @@ class LocalIdTest extends TestCase
         new LocalId($identity);
     }
 
-    public function invalidIdentityProvider(): array
+    public static function invalidIdentityProvider(): array
     {
         return [
             [

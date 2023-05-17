@@ -47,14 +47,17 @@ class HashTest extends TestCase
 {
     /**
      * @dataProvider hashData
-     * @param $value
+     * @param mixed $value
+     * @param string $algorithm
+     * @param bool $rawOutput
+     * @param string $expectedHash
      */
-    public function testHash($value, string $algorithm, bool $rawOutput, string $expectedHash): void
+    public function testHash(mixed $value, string $algorithm, bool $rawOutput, string $expectedHash): void
     {
         self::assertSame(Hash::of($value, $algorithm, $rawOutput), $expectedHash);
     }
 
-    public function hashData(): array
+    public static function hashData(): array
     {
         $resourceHash = function ($resource) {
             $hash = new stdClass();
@@ -96,7 +99,7 @@ class HashTest extends TestCase
                 md5(serialize($arr)),
             ],
             [
-                $arr = [new stdClass(), [true], $resource = STDIN],
+                [new stdClass(), [true], STDIN],
                 'md5',
                 true,
                 hash(
@@ -144,7 +147,7 @@ class HashTest extends TestCase
                 md5(serialize($dto)),
             ],
             [
-                $iterator = function () {
+                function () {
                     $n = 3;
                     while ($n > 0) {
                         yield $n;
@@ -156,7 +159,7 @@ class HashTest extends TestCase
                 md5(serialize([3, 2, 1])),
             ],
             [
-                $closure = fn () => 'test',
+                fn () => 'test',
                 'md5',
                 false,
                 md5(serialize('test')),

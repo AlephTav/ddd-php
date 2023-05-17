@@ -58,14 +58,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider booleanDataProvider
      * @param mixed $value
+     * @param bool $result
      */
-    public function testToBoolean($value, bool $result): void
+    public function testToBoolean(mixed $value, bool $result): void
     {
         $query = new TestQueryTestObject();
         self::assertEquals($result, $query->castToBoolean($value));
     }
 
-    public function booleanDataProvider(): array
+    public static function booleanDataProvider(): array
     {
         return [
             [' tRue', true],
@@ -101,14 +102,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider keywordDataProvider
      * @param mixed $value
+     * @param string|null $keyword
      */
-    public function testSetKeyword($value, ?string $keyword): void
+    public function testSetKeyword(mixed $value, ?string $keyword): void
     {
         $query = new TestQueryTestObject(['keyword' => $value]);
         self::assertSame($keyword, $query->keyword);
     }
 
-    public function keywordDataProvider(): array
+    public static function keywordDataProvider(): array
     {
         return [
             ['test', 'test'],
@@ -125,14 +127,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider limitDataProvider
      * @param mixed $value
+     * @param int $limit
      */
-    public function testSetLimit($value, int $limit): void
+    public function testSetLimit(mixed $value, int $limit): void
     {
         $query = new TestQueryTestObject(['limit' => $value]);
         self::assertSame($limit, $query->limit);
     }
 
-    public function limitDataProvider(): array
+    public static function limitDataProvider(): array
     {
         return [
             [10, 10],
@@ -150,14 +153,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider offsetDataProvider
      * @param mixed $value
+     * @param int|null $offset
      */
-    public function testSetOffset($value, ?int $offset): void
+    public function testSetOffset(mixed $value, ?int $offset): void
     {
         $query = new TestQueryTestObject(['offset' => $value]);
         self::assertSame($offset, $query->offset);
     }
 
-    public function offsetDataProvider(): array
+    public static function offsetDataProvider(): array
     {
         return [
             [10, 10],
@@ -174,14 +178,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider pageDataProvider
      * @param mixed $value
+     * @param int|null $page
      */
-    public function testSetPage($value, ?int $page): void
+    public function testSetPage(mixed $value, ?int $page): void
     {
         $query = new TestQueryTestObject(['page' => $value]);
         self::assertSame($page, $query->page);
     }
 
-    public function pageDataProvider(): array
+    public static function pageDataProvider(): array
     {
         return [
             [10, 10],
@@ -198,14 +203,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider timezoneDataProvider
      * @param mixed $value
+     * @param int|null $timezone
      */
-    public function testSetTimezone($value, ?int $timezone): void
+    public function testSetTimezone(mixed $value, ?int $timezone): void
     {
         $query = new TestQueryTestObject(['timezone' => $value]);
         self::assertSame($timezone, $query->timezone);
     }
 
-    public function timezoneDataProvider(): array
+    public static function timezoneDataProvider(): array
     {
         return [
             [10, 10],
@@ -221,6 +227,8 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider languageDataProvider
+     * @param string|null $value
+     * @param Language|null $language
      */
     public function testSetLanguage(?string $value, ?Language $language): void
     {
@@ -228,7 +236,7 @@ class AbstractQueryTest extends TestCase
         self::assertSame($language, $query->language);
     }
 
-    public function languageDataProvider(): array
+    public static function languageDataProvider(): array
     {
         return [
             ['ru', Language::RU()],
@@ -258,16 +266,17 @@ class AbstractQueryTest extends TestCase
     }
 
     /**
-     * @dataProvider sortDataPRovider
+     * @dataProvider sortDataProvider
      * @param mixed $value
+     * @param array|null $sort
      */
-    public function testSetSort($value, ?array $sort): void
+    public function testSetSort(mixed $value, ?array $sort): void
     {
         $query = new TestQueryTestObject(['sort' => $value]);
         self::assertSame($sort, $query->sort);
     }
 
-    public function sortDataProvider(): array
+    public static function sortDataProvider(): array
     {
         return [
             ['column', ['column' => 'ASC']],
@@ -288,8 +297,9 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider fieldsDataProvider
      * @param mixed $value
+     * @param array|null $fields
      */
-    public function testSetFields($value, ?array $fields): void
+    public function testSetFields(mixed $value, ?array $fields): void
     {
         $query = new TestQueryTestObject(['fields' => $value]);
         self::assertSame($fields, $query->fields);
@@ -298,14 +308,15 @@ class AbstractQueryTest extends TestCase
     /**
      * @dataProvider fieldsDataProvider
      * @param mixed $value
+     * @param array|null $fields
      */
-    public function testSetGroup($value, ?array $fields): void
+    public function testSetGroup(mixed $value, ?array $fields): void
     {
         $query = new TestQueryTestObject(['group' => $value]);
         self::assertSame($fields, $query->group);
     }
 
-    public function fieldsDataProvider(): array
+    public static function fieldsDataProvider(): array
     {
         return [
             ['field', ['field']],

@@ -50,8 +50,9 @@ class MoneyTest extends TestCase
     /**
      * @dataProvider invalidMoneyTypes
      * @param mixed $value
+     * @param string $error
      */
-    public function testInvalidAmountType($value, string $error): void
+    public function testInvalidAmountType(mixed $value, string $error): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($error);
@@ -59,7 +60,7 @@ class MoneyTest extends TestCase
         new Money(['amount' => $value]);
     }
 
-    public function invalidMoneyTypes(): array
+    public static function invalidMoneyTypes(): array
     {
         return [
             [
@@ -77,7 +78,7 @@ class MoneyTest extends TestCase
      * @dataProvider  invalidMoneyValues
      * @param mixed $value
      */
-    public function testInvalidMoneyFormat($value): void
+    public function testInvalidMoneyFormat(mixed $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid money format.');
@@ -85,7 +86,7 @@ class MoneyTest extends TestCase
         new Money($value);
     }
 
-    public function invalidMoneyValues(): array
+    public static function invalidMoneyValues(): array
     {
         return [
             ['0.'],

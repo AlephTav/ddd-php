@@ -74,7 +74,7 @@ class GlobalIdTest extends TestCase
         new GlobalId($identity);
     }
 
-    public function invalidIdentityProvider(): array
+    public static function invalidIdentityProvider(): array
     {
         $invalidIdentity = 'b11c9be1-b619-4ef5-be1b-a1cd9ef265b7' . '0';
         return [

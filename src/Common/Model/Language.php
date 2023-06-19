@@ -25,7 +25,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static AR_EG(string $method = null)
  * @method static static AR_AE(string $method = null)
  * @method static static AR_SA(string $method = null)
- * @method static static AR_KW(string $method = null)
+
  * @method static static AR_BH(string $method = null)
  * @method static static ES_AR(string $method = null)
  * @method static static ES_VE(string $method = null)
@@ -36,9 +36,13 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static PT_PT(string $method = null)
  * @method static static ET_EE(string $method = null)
  * @method static static LV_LV(string $method = null)
+ * @method static static AR_KW(string $method = null)
+ * @method static static AZ_AZ(string $method = null)
+ * @method static static KA_GE(string $method = null)
  */
 class Language extends AbstractEnum
 {
+    private const AR_KW = 'ar_KW';
     private const RU = 'ru_RU';
     private const UK = 'uk_UA';
     private const ES = 'es_ES';
@@ -57,7 +61,7 @@ class Language extends AbstractEnum
     private const AR_EG = 'ar_EG';
     private const AR_AE = 'ar_AE';
     private const AR_SA = 'ar_SA';
-    private const AR_KW = 'ar_KW';
+
     private const AR_BH = 'ar_BH';
     private const ES_AR = 'es_AR';
     private const ES_VE = 'es_VE';
@@ -68,6 +72,8 @@ class Language extends AbstractEnum
     private const PT_PT = 'pt_PT';
     private const ET_EE = 'et_EE';
     private const LV_LV = 'lv_LV';
+    private const AZ_AZ = 'az_AZ';
+    private const KA_GE = 'ka_GE';
 
     private string $locale;
 

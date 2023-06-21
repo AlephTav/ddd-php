@@ -36,6 +36,8 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static PT_PT(string $method = null)
  * @method static static ET_EE(string $method = null)
  * @method static static LV_LV(string $method = null)
+ * @method static static AZ_AZ(string $method = null)
+ * @method static static KA_GE(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -68,6 +70,8 @@ class Language extends AbstractEnum
     private const PT_PT = 'pt_PT';
     private const ET_EE = 'et_EE';
     private const LV_LV = 'lv_LV';
+    private const AZ_AZ = 'az_AZ';
+    private const KA_GE = 'ka_GE';
 
     private string $locale;
 

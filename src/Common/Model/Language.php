@@ -41,48 +41,55 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  */
 class Language extends AbstractEnum
 {
-    private const RU = 'ru_RU';
-    private const UK = 'uk_UA';
-    private const ES = 'es_ES';
-    private const EN = 'en_US';
-    private const DE = 'de_DE';
-    private const VI = 'vi_VN';
-    private const KZ = 'kk_KZ';
-    private const UZ = 'uz_UZ';
-    private const CS = 'cs_CZ';
-    private const HU = 'hu_HU';
-    private const ID = 'id_ID';
-    private const TJ = 'tg_TJ';
-    private const EN_GB = 'en_GB';
-    private const EN_KE = 'en_KE';
-    private const EN_NG = 'en_NG';
-    private const AR_EG = 'ar_EG';
-    private const AR_AE = 'ar_AE';
-    private const AR_SA = 'ar_SA';
-    private const AR_KW = 'ar_KW';
-    private const AR_BH = 'ar_BH';
-    private const ES_AR = 'es_AR';
-    private const ES_VE = 'es_VE';
-    private const ES_MX = 'es_MX';
-    private const ES_BO = 'es_BO';
-    private const ES_CL = 'es_CL';
-    private const PT_BR = 'pt_BR';
-    private const PT_PT = 'pt_PT';
-    private const ET_EE = 'et_EE';
-    private const LV_LV = 'lv_LV';
-    private const AZ_AZ = 'az_AZ';
-    private const KA_GE = 'ka_GE';
+    private const RU = ['ru_RU', 'русский'];
+    private const UK = ['uk_UA', 'український'];
+    private const ES = ['es_ES', 'español'];
+    private const EN = ['en_US', 'english'];
+    private const DE = ['de_DE', 'deutsch'];
+    private const VI = ['vi_VN', 'tiếng việt'];
+    private const KZ = ['kk_KZ', 'қазақ'];
+    private const UZ = ['uz_UZ', "o'zbek"];
+    private const CS = ['cs_CZ', 'čeština'];
+    private const HU = ['hu_HU', 'magyar'];
+    private const ID = ['id_ID', 'bahasa indonesia'];
+    private const TJ = ['tg_TJ', 'тоҷикӣ'];
+    private const EN_GB = ['en_GB', 'english'];
+    private const EN_KE = ['en_KE', 'english'];
+    private const EN_NG = ['en_NG', 'english'];
+    private const AR_EG = ['ar_EG', 'مصري'];
+    private const AR_AE = ['ar_AE', 'عرب'];
+    private const AR_SA = ['ar_SA', 'عرب'];
+    private const AR_KW = ['ar_KW', 'كويتي'];
+    private const AR_BH = ['ar_BH', 'بحريني'];
+    private const ES_AR = ['es_AR', 'argentino'];
+    private const ES_VE = ['es_VE', 'venezolano'];
+    private const ES_MX = ['es_MX', 'mexicano'];
+    private const ES_BO = ['es_BO', 'boliviano'];
+    private const ES_CL = ['es_CL', 'chileno'];
+    private const PT_BR = ['pt_BR', 'brasileño'];
+    private const PT_PT = ['pt_PT', 'portugués'];
+    private const ET_EE = ['et_EE', 'eesti keel'];
+    private const LV_LV = ['lv_LV', 'latviski'];
+    private const AZ_AZ = ['az_AZ', 'azərbaycan'];
+    private const KA_GE = ['ka_GE', 'ქართული'];
 
     private string $locale;
+    private string $name;
 
-    protected function __construct(string $locale)
+    protected function __construct(string $locale, string $name)
     {
         parent::__construct();
         $this->locale = $locale;
+        $this->name = $name;
     }
 
     public function getLocale(): string
     {
         return $this->locale;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

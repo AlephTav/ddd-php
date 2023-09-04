@@ -18,4 +18,10 @@ class LanguageTest extends TestCase
 
         self::assertSame('ru_RU', $language->getLocale());
     }
+
+    public function testName(): void
+    {
+        $language = Language::RU();
+        self::assertSame('русский', $language->getName());
+    }
 }

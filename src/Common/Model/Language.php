@@ -38,6 +38,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static LV_LV(string $method = null)
  * @method static static AZ_AZ(string $method = null)
  * @method static static KA_GE(string $method = null)
+ * @method static static LT_LT(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -72,6 +73,7 @@ class Language extends AbstractEnum
     private const LV_LV = ['lv_LV', 'latviski'];
     private const AZ_AZ = ['az_AZ', 'azərbaycan'];
     private const KA_GE = ['ka_GE', 'ქართული'];
+    private const LT_LT = ['lt_LT', 'lietuvių'];
 
     private string $locale;
     private string $name;

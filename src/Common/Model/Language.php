@@ -39,6 +39,8 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static AZ_AZ(string $method = null)
  * @method static static KA_GE(string $method = null)
  * @method static static LT_LT(string $method = null)
+ * @method static static KY_KG(string $method = null)
+ * @method static static FR_FR(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -74,6 +76,8 @@ class Language extends AbstractEnum
     private const AZ_AZ = ['az_AZ', 'azərbaycan'];
     private const KA_GE = ['ka_GE', 'ქართული'];
     private const LT_LT = ['lt_LT', 'lietuvių'];
+    private const KY_KG = ['ky_KG', 'кыргызча'];
+    private const FR_FR = ['fr_FR', 'français'];
 
     private string $locale;
     private string $name;

@@ -42,6 +42,10 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static KY(string $method = null)
  * @method static static FR_FR(string $method = null)
  * @method static static SI_LK(string $method = null)
+ * @method static static UR_PK(string $method = null)
+ * @method static static UR_IN(string $method = null)
+ * @method static static SW_KE(string $method = null)
+ * @method static static EN_PK(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -80,6 +84,10 @@ class Language extends AbstractEnum
     private const LT_LT = ['lt_LT', 'lietuvių'];
     private const FR_FR = ['fr_FR', 'français'];
     private const SI_LK = ['si_LK', 'සිංහල'];
+    private const UR_PK = ['ur_PK', 'پاکستانی'];
+    private const UR_IN = ['ur_IN', 'ہندوستانی'];
+    private const SW_KE = ['sw_KE', 'Mkenya'];
+    private const EN_PK = ['en_PK', 'Pakistani'];
 
     private string $locale;
     private string $name;

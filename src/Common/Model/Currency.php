@@ -187,7 +187,7 @@ class Currency extends AbstractEnum
     private const ARS = ['Argentine peso', '032', 2];
     private const AUD = ['Australian dollar', '036', 2];
     private const AWG = ['Aruban florin', '533', 2];
-    private const AZN = ['Azerbaijani manat', '944', 2];
+    private const AZN = ['Azerbaijani manat', '944', 2, '&#x20BC;'];
     private const BAM = ['Bosnia and Herzegovina convertible mark', '977', 2];
     private const BBD = ['Barbados dollar', '052', 2];
     private const BDT = ['Bangladeshi taka', '050', 2];
@@ -202,19 +202,19 @@ class Currency extends AbstractEnum
     private const BSD = ['Bahamian dollar', '044', 2];
     private const BTN = ['Bhutanese ngultrum', '064', 2];
     private const BWP = ['Botswana pula', '072', 2];
-    private const BYN = ['Belarusian ruble', '933', 2];
+    private const BYN = ['Belarusian ruble', '933', 2, 'Br'];
     private const BZD = ['Belize dollar', '084', 2];
-    private const CAD = ['Canadian dollar', '124', 2];
+    private const CAD = ['Canadian dollar', '124', 2, '$'];
     private const CDF = ['Congolese franc', '976', 2];
-    private const CHE = ['WIR Euro (complementary currency)', '947', 2];
+    private const CHE = ['WIR Euro (complementary currency)', '947', 2, '&#x20A3;'];
     private const CHF = ['Swiss franc', '756', 2];
     private const CHW = ['WIR Franc (complementary currency)', '948', 2];
     private const CLF = ['Unidad de Fomento (funds code)', '990', 4];
     private const CLP = ['Chilean peso', '152', 0];
-    private const CNY = ['Renminbi (Chinese) yuan', '156', 2];
+    private const CNY = ['Renminbi (Chinese) yuan', '156', 2, '&#x00A5;'];
     private const COP = ['Colombian peso', '170', 2];
     private const COU = ['Unidad de Valor Real (UVR) (funds code)', '970', 2];
-    private const CRC = ['Costa Rican colon', '188', 2];
+    private const CRC = ['Costa Rican colon', '188', 2, '&#x20A1;'];
     private const CUC = ['Cuban convertible peso', '931', 2];
     private const CUP = ['Cuban peso', '192', 2];
     private const CVE = ['Cape Verde escudo', '132', 2];
@@ -226,10 +226,10 @@ class Currency extends AbstractEnum
     private const EGP = ['Egyptian pound', '818', 2];
     private const ERN = ['Eritrean nakfa', '232', 2];
     private const ETB = ['Ethiopian birr', '230', 2];
-    private const EUR = ['Euro', '978', 2];
+    private const EUR = ['Euro', '978', 2, '&#8364;'];
     private const FJD = ['Fiji dollar', '242', 2];
     private const FKP = ['Falkland Islands pound', '238', 2];
-    private const GBP = ['Pound sterling', '826', 2];
+    private const GBP = ['Pound sterling', '826', 2, '&#163;'];
     private const GEL = ['Georgian lari', '981', 2];
     private const GHS = ['Ghanaian cedi', '936', 2];
     private const GIP = ['Gibraltar pound', '292', 2];
@@ -241,25 +241,25 @@ class Currency extends AbstractEnum
     private const HNL = ['Honduran lempira', '340', 2];
     private const HRK = ['Croatian kuna', '191', 2];
     private const HTG = ['Haitian gourde', '332', 2];
-    private const HUF = ['Hungarian forint', '348', 2];
-    private const IDR = ['Indonesian rupiah', '360', 2];
+    private const HUF = ['Hungarian forint', '348', 2, 'Ft'];
+    private const IDR = ['Indonesian rupiah', '360', 2, 'Rp'];
     private const ILS = ['Israeli new shekel', '376', 2];
-    private const INR = ['Indian rupee', '356', 2];
+    private const INR = ['Indian rupee', '356', 2, '&#x20B9;'];
     private const IQD = ['Iraqi dinar', '368', 3];
     private const IRR = ['Iranian rial', '364', 2];
     private const ISK = ['Icelandic króna', '352', 0];
     private const JMD = ['Jamaican dollar', '388', 2];
     private const JOD = ['Jordanian dinar', '400', 3];
-    private const JPY = ['Japanese yen', '392', 0];
-    private const KES = ['Kenyan shilling', '404', 2];
-    private const KGS = ['Kyrgyzstani som', '417', 2];
+    private const JPY = ['Japanese yen', '392', 0, '&#165;'];
+    private const KES = ['Kenyan shilling', '404', 2, 'KSh'];
+    private const KGS = ['Kyrgyzstani som', '417', 2, '&#x20C0;'];
     private const KHR = ['Cambodian riel', '116', 2];
     private const KMF = ['Comoro franc', '174', 0];
     private const KPW = ['North Korean won', '408', 2];
     private const KRW = ['South Korean won', '410', 0];
     private const KWD = ['Kuwaiti dinar', '414', 3];
     private const KYD = ['Cayman Islands dollar', '136', 2];
-    private const KZT = ['Kazakhstani tenge', '398', 2];
+    private const KZT = ['Kazakhstani tenge', '398', 2, '&#8376;'];
     private const LAK = ['Lao kip', '418', 2];
     private const LBP = ['Lebanese pound', '422', 2];
     private const LKR = ['Sri Lankan rupee', '144', 2];
@@ -268,7 +268,7 @@ class Currency extends AbstractEnum
     private const LYD = ['Libyan dinar', '434', 3];
     private const MAD = ['Moroccan dirham', '504', 2];
     private const MDL = ['Moldovan leu', '498', 2];
-    private const MGA = ['Malagasy ariary', '969', 2];
+    private const MGA = ['Malagasy ariary', '969', 2, 'Ar'];
     private const MKD = ['Macedonian denar', '807', 2];
     private const MMK = ['Myanmar kyat', '104', 2];
     private const MNT = ['Mongolian tögrög', '496', 2];
@@ -277,7 +277,7 @@ class Currency extends AbstractEnum
     private const MUR = ['Mauritian rupee', '480', 2];
     private const MVR = ['Maldivian rufiyaa', '462', 2];
     private const MWK = ['Malawian kwacha', '454', 2];
-    private const MXN = ['Mexican peso', '484', 2];
+    private const MXN = ['Mexican peso', '484', 2, 'Mex$'];
     private const MXV = ['Mexican Unidad de Inversion (UDI) (funds code)', '979', 2];
     private const MYR = ['Malaysian ringgit', '458', 2];
     private const MZN = ['Mozambican metical', '943', 2];
@@ -293,12 +293,12 @@ class Currency extends AbstractEnum
     private const PGK = ['Papua New Guinean kina', '598', 2];
     private const PHP = ['Philippine peso', '608', 2];
     private const PKR = ['Pakistani rupee', '586', 2];
-    private const PLN = ['Polish złoty', '985', 2];
+    private const PLN = ['Polish złoty', '985', 2, 'zł'];
     private const PYG = ['Paraguayan guaraní', '600', 0];
     private const QAR = ['Qatari riyal', '634', 2];
     private const RON = ['Romanian leu', '946', 2];
     private const RSD = ['Serbian dinar', '941', 2];
-    private const RUB = ['Russian ruble', '643', 2];
+    private const RUB = ['Russian ruble', '643', 2, '&#8381;'];
     private const RWF = ['Rwandan franc', '646', 0];
     private const SAR = ['Saudi riyal', '682', 2];
     private const SBD = ['Solomon Islands dollar', '090', 2];
@@ -316,7 +316,7 @@ class Currency extends AbstractEnum
     private const SYP = ['Syrian pound', '760', 2];
     private const SZL = ['Swazi lilangeni', '748', 2];
     private const THB = ['Thai baht', '764', 2];
-    private const TJS = ['Tajikistani somoni', '972', 2];
+    private const TJS = ['Tajikistani somoni', '972', 2, 'SM'];
     private const TMT = ['Turkmenistan manat', '934', 2];
     private const TND = ['Tunisian dinar', '788', 3];
     private const TOP = ['Tongan paʻanga', '776', 2];
@@ -324,9 +324,9 @@ class Currency extends AbstractEnum
     private const TTD = ['Trinidad and Tobago dollar', '780', 2];
     private const TWD = ['New Taiwan dollar', '901', 2];
     private const TZS = ['Tanzanian shilling', '834', 2];
-    private const UAH = ['Ukrainian hryvnia', '980', 2];
+    private const UAH = ['Ukrainian hryvnia', '980', 2, '&#8372;'];
     private const UGX = ['Ugandan shilling', '800', 0];
-    private const USD = ['United States dollar', '840', 2];
+    private const USD = ['United States dollar', '840', 2, '$'];
     private const USN = ['United States dollar (next day) (funds code)', '997', 2];
     private const UYI = ['Uruguay Peso', '940', 0];
     private const UYU = ['Uruguayan peso', '858', 2];
@@ -337,7 +337,7 @@ class Currency extends AbstractEnum
     private const VUV = ['Vanuatu vatu', '548', 0];
     private const WST = ['Samoan tala', '882', 2];
     private const XAF = ['CFA franc BEAC', '950', 0];
-    private const XCD = ['East Caribbean dollar', '951', 2];
+    private const XCD = ['East Caribbean dollar', '951', 2, 'EC$'];
     private const XOF = ['CFA franc BCEAO', '952', 0];
     private const XPF = ['CFP franc (franc Pacifique)', '953', 0];
     private const YER = ['Yemeni rial', '886', 2];
@@ -349,13 +349,15 @@ class Currency extends AbstractEnum
     private string $name;
     private string $numericCode;
     private int $subunits;
+    private string $symbol;
 
-    protected function __construct(string $name, string $numericCode, int $subunits)
+    protected function __construct(string $name, string $numericCode, int $subunits, string $symbol = '')
     {
         parent::__construct();
         $this->name = $name;
         $this->numericCode = $numericCode;
         $this->subunits = $subunits;
+        $this->symbol = $symbol;
     }
 
     public function getName(): string
@@ -375,5 +377,10 @@ class Currency extends AbstractEnum
     public function getSubunits(): int
     {
         return $this->subunits;
+    }
+
+    public function getSymbol(): string
+    {
+        return $this->symbol;
     }
 }

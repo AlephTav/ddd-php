@@ -55,7 +55,12 @@ class AbstractApplicationServiceTest extends TestCase
                 });
             }
             return new class () implements Async {
-                public function run($callback, array $params = []): void
+                public function run(mixed $callback, array $params = [], int $delay = 0): void
+                {
+                    $callback($params);
+                }
+
+                public function runBatch(mixed $callback, array $params = [], int $delay = 0): void
                 {
                     $callback($params);
                 }

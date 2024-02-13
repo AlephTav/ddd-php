@@ -174,6 +174,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static ZAR(string $method = null)
  * @method static static ZMW(string $method = null)
  * @method static static ZWL(string $method = null)
+ * @method static static ZZZ(string $method = null) // empty currency
  */
 class Currency extends AbstractEnum
 {
@@ -343,6 +344,7 @@ class Currency extends AbstractEnum
     private const ZAR = ['South African rand', '710', 2];
     private const ZMW = ['Zambian kwacha', '967', 2];
     private const ZWL = ['Zimbabwean dollar', '932', 2];
+    private const ZZZ = ['No currency', '', 0];
 
     private string $name;
     private string $numericCode;

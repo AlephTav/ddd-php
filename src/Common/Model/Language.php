@@ -48,6 +48,9 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static EN_PK(string $method = null)
  * @method static static HI_IN(string $method = null)
  * @method static static TR_TR(string $method = null)
+ * @method static static RO_RO(string $method = null)
+ * @method static static ES_CO(string $method = null)
+ * @method static static FIL_PH(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -92,6 +95,9 @@ class Language extends AbstractEnum
     private const EN_PK = ['en_PK', 'Pakistani'];
     private const HI_IN = ['hi_IN', 'हिन्दी'];
     private const TR_TR = ['tr_TR', 'Türkçe'];
+    private const RO_RO = ['ro_RO', 'Limba română'];
+    private const ES_CO = ['es_CO', 'Español (Colombia)'];
+    private const FIL_PH = ['fil_PH', 'Filipino (Philippines)'];
 
     private string $locale;
     private string $name;

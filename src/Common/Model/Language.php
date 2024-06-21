@@ -98,6 +98,10 @@ class Language extends AbstractEnum
     private const RO_RO = ['ro_RO', 'Limba română'];
     private const ES_CO = ['es_CO', 'Español (Colombia)'];
     private const FIL_PH = ['fil_PH', 'Filipino (Philippines)'];
+    private const BS_BA = ['bs-BA', 'Bosanski'];
+    private const SR_RS = ['sr-RS', 'Srpski'];
+    private const EL_GR = ['el-GR', 'Ελληνικά'];
+    private const IW_IL = ['iw-IL', 'עִבְרִית'];
 
     private string $locale;
     private string $name;

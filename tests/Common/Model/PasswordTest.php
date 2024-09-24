@@ -47,8 +47,6 @@ class PasswordTest extends TestCase
 
     /**
      * @dataProvider propertyDataProvider
-     * @param array $properties
-     * @param string $error
      */
     public function testValidation(array $properties, string $error): void
     {
@@ -154,9 +152,6 @@ class PasswordTest extends TestCase
 
     /**
      * @dataProvider compareDataProvider
-     * @param array $properties1
-     * @param array $properties2
-     * @param bool $result
      */
     public function testPasswordCompare(array $properties1, array $properties2, bool $result): void
     {

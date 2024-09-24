@@ -63,8 +63,6 @@ class GlobalIdTest extends TestCase
 
     /**
      * @dataProvider invalidIdentityProvider
-     * @param string $error
-     * @param mixed $identity
      */
     public function testParseInvalidValue(string $error, mixed $identity): void
     {

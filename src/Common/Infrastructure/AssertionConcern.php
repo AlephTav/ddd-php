@@ -135,9 +135,9 @@ trait AssertionConcern
         }
     }
 
-    protected function assertArgumentPatternMatch(string $value, string $pattern, string $msg): void
+    protected function assertArgumentPatternMatch(string $value, string $pattern, string $msg, mixed &$matches = null): void
     {
-        if (!preg_match($pattern, $value)) {
+        if (!preg_match($pattern, $value, $matches)) {
             throw new InvalidArgumentException($msg);
         }
     }

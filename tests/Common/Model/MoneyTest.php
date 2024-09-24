@@ -17,40 +17,50 @@ use UnexpectedValueException;
  */
 class MoneyTest extends TestCase
 {
-    public function testCreation(): void
+    /**
+     * @dataProvider validMoneyTypes
+     */
+    public function testCreation(mixed $value, Currency $currency, string $expected): void
     {
-        $money = new Money(123);
+        $money = new Money($value, $currency);
 
-        self::assertSame('123', $money->amount);
-        self::assertSame(Currency::USD(), $money->currency);
-        self::assertSame('123', $money->toString());
+        self::assertSame($expected, $money->amount);
+        self::assertSame($currency, $money->currency);
+        self::assertSame($expected, $money->toString());
+    }
 
-        $money = new Money(null, Currency::EUR());
-
-        self::assertSame('0', $money->amount);
-        self::assertSame(Currency::EUR(), $money->currency);
-        self::assertSame('0', $money->toString());
-
-        $money = new Money([
-            'amount' => 111.555,
-            'currency' => Currency::RUB(),
-        ]);
-
-        self::assertSame('111.555', $money->amount);
-        self::assertSame(Currency::RUB(), $money->currency);
-        self::assertSame('111.555', $money->toString());
-
-        $money = new Money($money, Currency::USD());
-
-        self::assertSame('111.555', $money->amount);
-        self::assertSame(Currency::RUB(), $money->currency);
-        self::assertSame('111.555', $money->toString());
+    public static function validMoneyTypes(): array
+    {
+        return [
+            [
+                0, Currency::ALL(), '0',
+            ],
+            [
+                '123', Currency::USD(), '123',
+            ],
+            [
+                125.3467, Currency::RUB(), '125.3467',
+            ],
+            [
+                1234567890, Currency::ARS(), '1234567890',
+            ],
+            [
+                '1.6E-7', Currency::RUB(), '0.00000016',
+            ],
+            [
+                '0.006E3', Currency::RUB(), '6',
+            ],
+            [
+                5.67e8, Currency::CLF(), '567000000',
+            ],
+            [
+                '001.0001e-2', Currency::BAM(), '0.010001',
+            ]
+        ];
     }
 
     /**
      * @dataProvider invalidMoneyTypes
-     * @param mixed $value
-     * @param string $error
      */
     public function testInvalidAmountType(mixed $value, string $error): void
     {
@@ -75,8 +85,7 @@ class MoneyTest extends TestCase
     }
 
     /**
-     * @dataProvider  invalidMoneyValues
-     * @param mixed $value
+     * @dataProvider invalidMoneyValues
      */
     public function testInvalidMoneyFormat(mixed $value): void
     {
@@ -89,14 +98,13 @@ class MoneyTest extends TestCase
     public static function invalidMoneyValues(): array
     {
         return [
-            ['0.'],
-            ['.0'],
             ['.'],
             ['+'],
             ['-'],
             ['+.'],
-            ['+0.'],
-            ['-.0'],
+            ['-.'],
+            ['.e'],
+            ['e'],
         ];
     }
 
@@ -123,7 +131,7 @@ class MoneyTest extends TestCase
     {
         $money = (new Money('13.67'))->add('12.56');
 
-        self::assertSame('26.230000000000', $money->amount);
+        self::assertSame('26.23', $money->amount);
         self::assertSame(Currency::USD(), $money->currency);
     }
 
@@ -131,7 +139,7 @@ class MoneyTest extends TestCase
     {
         $money = (new Money('11.04'))->sub('12.96');
 
-        self::assertSame('-1.920000000000', $money->amount);
+        self::assertSame('-1.92', $money->amount);
         self::assertSame(Currency::USD(), $money->currency);
     }
 
@@ -139,7 +147,7 @@ class MoneyTest extends TestCase
     {
         $money = (new Money('7.53'))->mul('17.79');
 
-        self::assertSame('133.958700000000', $money->amount);
+        self::assertSame('133.9587', $money->amount);
         self::assertSame(Currency::USD(), $money->currency);
     }
 
@@ -154,7 +162,7 @@ class MoneyTest extends TestCase
     public function testSqrt(): void
     {
         $money = (new Money('2.25'))->sqrt();
-        self::assertSame('1.500000000000', $money->amount);
+        self::assertSame('1.5', $money->amount);
         self::assertSame(Currency::USD(), $money->currency);
     }
 
@@ -307,16 +315,16 @@ class MoneyTest extends TestCase
         self::assertSame('-0.01', $money->toRoundAmount());
 
         $money = new Money('-0.004');
-        self::assertSame('0.00', $money->toRoundAmount());
+        self::assertSame('0', $money->toRoundAmount());
 
         $money = new Money('0');
-        self::assertSame('0.00', $money->toRoundAmount());
+        self::assertSame('0', $money->toRoundAmount());
     }
 
     public function testToFloorAmount(): void
     {
         $money = new Money('0.005');
-        self::assertSame('0.00', $money->toFloorAmount());
+        self::assertSame('0', $money->toFloorAmount());
 
         $money = new Money('-0.005');
         self::assertSame('-0.01', $money->toFloorAmount());
@@ -325,7 +333,7 @@ class MoneyTest extends TestCase
         self::assertSame('-0.01', $money->toFloorAmount());
 
         $money = new Money('0');
-        self::assertSame('0.00', $money->toFloorAmount());
+        self::assertSame('0', $money->toFloorAmount());
     }
 
     public function testToCeilAmount(): void
@@ -334,13 +342,13 @@ class MoneyTest extends TestCase
         self::assertSame('0.01', $money->toCeilAmount());
 
         $money = new Money('-0.005');
-        self::assertSame('0.00', $money->toCeilAmount());
+        self::assertSame('0', $money->toCeilAmount());
 
         $money = new Money('-0.004');
-        self::assertSame('0.00', $money->toCeilAmount());
+        self::assertSame('0', $money->toCeilAmount());
 
         $money = new Money('0');
-        self::assertSame('0.00', $money->toCeilAmount());
+        self::assertSame('0', $money->toCeilAmount());
     }
 
     public function testToScaledAmountWithInvalidScaleFunction(): void

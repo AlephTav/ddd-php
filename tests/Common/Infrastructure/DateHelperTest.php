@@ -27,9 +27,6 @@ class DateHelperTest extends TestCase
     /**
      * @depends testParseDateFormats
      * @dataProvider dateDataProvider
-     * @param mixed $value
-     * @param string|null $format
-     * @param bool $expectException
      */
     public function testParseDate(mixed $value, ?string $format, bool $expectException): void
     {

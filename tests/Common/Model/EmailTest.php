@@ -47,8 +47,6 @@ class EmailTest extends TestCase
 
     /**
      * @dataProvider emailDataProvider
-     * @param mixed $email
-     * @param string $sanitizedEmail
      */
     public function testEmailSanitization(mixed $email, string $sanitizedEmail): void
     {

@@ -55,6 +55,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static SR_RS(string $method = null)
  * @method static static EL_GR(string $method = null)
  * @method static static IW_IL(string $method = null)
+ * @method static static IT(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -106,6 +107,7 @@ class Language extends AbstractEnum
     private const SR = ['sr_SR', 'Srpski'];
     private const EL = ['el_EL', 'Ελληνικά'];
     private const HE = ['he_HE', 'עִבְרִית'];
+    private const IT = ['it_IT', 'Italiano'];
 
     private string $locale;
     private string $name;

@@ -50,15 +50,20 @@ interface FileStorage
     /**
      * Upload a file to storage.
      *
+     * @param mixed $file File object.
+     * @param bool $isPrivate Determines whether the file is required permissions to download.
      * @param string $path Optional path to the file in the storage.
+     * @param int $linksExpirationInSeconds Expiration of the file download link.
      * @param mixed $ownerId The file owner.
+     * @param string $mimeType The file mimte type.
      */
     public function upload(
         mixed $file,
         bool $isPrivate,
         string $path = '',
         int $linksExpirationInSeconds = 0,
-        mixed $ownerId = null
+        mixed $ownerId = null,
+        string $mimeType = null
     ): FileMetadata;
 
     /**

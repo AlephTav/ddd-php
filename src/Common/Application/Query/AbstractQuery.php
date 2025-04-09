@@ -140,7 +140,13 @@ abstract class AbstractQuery extends WeakDto
 
     protected function setLanguage(?string $language): void
     {
-        $this->language = $language !== null ? Language::from(strtoupper($language)) : null;
+        $this->language = null;
+        if (!empty($language)) {
+            $language = strtoupper($language);
+            if (Language::isValidConstantName($language)) {
+                $this->language = Language::from($language);
+            }
+        }
     }
 
     protected function setWithoutCount(mixed $flag): void

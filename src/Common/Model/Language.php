@@ -19,6 +19,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static HU(string $method = null)
  * @method static static ID(string $method = null)
  * @method static static TJ(string $method = null)
+ * @method static static HY(string $method = null)
  * @method static static EN_GB(string $method = null)
  * @method static static EN_KE(string $method = null)
  * @method static static EN_NG(string $method = null)
@@ -56,6 +57,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static EL_GR(string $method = null)
  * @method static static IW_IL(string $method = null)
  * @method static static IT(string $method = null)
+ * @method static static ZH_CN(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -72,6 +74,7 @@ class Language extends AbstractEnum
     private const ID = ['id_ID', 'bahasa indonesia'];
     private const TJ = ['tg_TJ', 'тоҷикӣ'];
     private const KY = ['ky_KG', 'кыргызча'];
+    private const HY = ['hy_HY', 'հայերէն'];
     private const EN_GB = ['en_GB', 'english (GB)'];
     private const EN_KE = ['en_KE', 'english (KE)'];
     private const EN_NG = ['en_NG', 'english (NG)'];
@@ -108,6 +111,11 @@ class Language extends AbstractEnum
     private const EL = ['el_EL', 'Ελληνικά'];
     private const HE = ['he_HE', 'עִבְרִית'];
     private const IT = ['it_IT', 'Italiano'];
+    private const BS_BA = ['bs-BA', 'Bosanski'];
+    private const SR_RS = ['sr-RS', 'Srpski'];
+    private const EL_GR = ['el-GR', 'Ελληνικά'];
+    private const IW_IL = ['iw-IL', 'עִבְרִית'];
+    private const ZH_CN = ['zh-CN', '汉语'];
 
     private string $locale;
     private string $name;

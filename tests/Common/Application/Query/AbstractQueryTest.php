@@ -57,8 +57,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider booleanDataProvider
-     * @param mixed $value
-     * @param bool $result
      */
     public function testToBoolean(mixed $value, bool $result): void
     {
@@ -101,8 +99,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider keywordDataProvider
-     * @param mixed $value
-     * @param string|null $keyword
      */
     public function testSetKeyword(mixed $value, ?string $keyword): void
     {
@@ -126,8 +122,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider limitDataProvider
-     * @param mixed $value
-     * @param int $limit
      */
     public function testSetLimit(mixed $value, int $limit): void
     {
@@ -152,8 +146,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider offsetDataProvider
-     * @param mixed $value
-     * @param int|null $offset
      */
     public function testSetOffset(mixed $value, ?int $offset): void
     {
@@ -177,8 +169,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider pageDataProvider
-     * @param mixed $value
-     * @param int|null $page
      */
     public function testSetPage(mixed $value, ?int $page): void
     {
@@ -202,8 +192,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider timezoneDataProvider
-     * @param mixed $value
-     * @param int|null $timezone
      */
     public function testSetTimezone(mixed $value, ?int $timezone): void
     {
@@ -227,8 +215,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider languageDataProvider
-     * @param string|null $value
-     * @param Language|null $language
      */
     public function testSetLanguage(?string $value, ?Language $language): void
     {
@@ -267,8 +253,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider sortDataProvider
-     * @param mixed $value
-     * @param array|null $sort
      */
     public function testSetSort(mixed $value, ?array $sort): void
     {
@@ -296,8 +280,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider fieldsDataProvider
-     * @param mixed $value
-     * @param array|null $fields
      */
     public function testSetFields(mixed $value, ?array $fields): void
     {
@@ -307,8 +289,6 @@ class AbstractQueryTest extends TestCase
 
     /**
      * @dataProvider fieldsDataProvider
-     * @param mixed $value
-     * @param array|null $fields
      */
     public function testSetGroup(mixed $value, ?array $fields): void
     {

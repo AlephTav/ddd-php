@@ -52,6 +52,11 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static RO_RO(string $method = null)
  * @method static static ES_CO(string $method = null)
  * @method static static FIL_PH(string $method = null)
+ * @method static static BS_BA(string $method = null)
+ * @method static static SR_RS(string $method = null)
+ * @method static static EL_GR(string $method = null)
+ * @method static static IW_IL(string $method = null)
+ * @method static static IT(string $method = null)
  * @method static static ZH_CN(string $method = null)
  */
 class Language extends AbstractEnum
@@ -101,6 +106,11 @@ class Language extends AbstractEnum
     private const RO_RO = ['ro_RO', 'Limba română'];
     private const ES_CO = ['es_CO', 'Español (Colombia)'];
     private const FIL_PH = ['fil_PH', 'Filipino (Philippines)'];
+    private const BS = ['bs_BS', 'Bosanski'];
+    private const SR = ['sr_SR', 'Srpski'];
+    private const EL = ['el_EL', 'Ελληνικά'];
+    private const HE = ['he_HE', 'עִבְרִית'];
+    private const IT = ['it_IT', 'Italiano'];
     private const BS_BA = ['bs-BA', 'Bosanski'];
     private const SR_RS = ['sr-RS', 'Srpski'];
     private const EL_GR = ['el-GR', 'Ελληνικά'];

@@ -12,7 +12,6 @@ use PHPUnit\Framework\MockObject\MockBuilder;
 trait DomainEventPublisherAware
 {
     /**
-     * @var DomainEventPublisher
      */
     protected DomainEventPublisher $publisher;
 

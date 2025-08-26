@@ -128,7 +128,7 @@ class Password extends ValueObject
             if ($this->password !== null && $other->password !== null) {
                 return $this->password === $other->password;
             } elseif ($this->password !== null) {
-                return password_verify($this->password, (string)$other->hash);
+                return password_verify($this->password, $other->hash);
             } elseif ($other->password !== null) {
                 return password_verify($other->password, $this->hash);
             }

@@ -26,8 +26,6 @@ class Money extends ValueObject implements Scalarable
     protected ?Currency $currency = null;
 
     /**
-     * Constructor.
-     *
      * @param array<string,mixed>|string|int|float|Money $amount
      */
     public function __construct(null|array|string|int|float|Money $amount, Currency $currency = null)
@@ -56,8 +54,6 @@ class Money extends ValueObject implements Scalarable
     {
         return $this->amount;
     }
-
-    //region Comparison
 
     public function isPositive(): bool
     {
@@ -122,12 +118,8 @@ class Money extends ValueObject implements Scalarable
      */
     public function cmp(string $amount): int
     {
-        return bccomp($this->amount, $this->normalizeAmount($amount), self::PRECISION);
+        return bccomp($this->amount, $this->normalize($amount), self::PRECISION);
     }
-
-    //endregion
-
-    //region Basic Operation
 
     public function abs(): Money
     {
@@ -183,15 +175,11 @@ class Money extends ValueObject implements Scalarable
      */
     private function op(string $amount, string $operation): Money
     {
-        $amount = $this->normalizeAmount($amount);
+        $amount = $this->normalize($amount);
         /** @var numeric-string $amount */
         $amount = $operation($this->amount, $amount, static::PRECISION);
         return new Money($amount, $this->currency);
     }
-
-    //endregion
-
-    //region Scaling
 
     public function toRoundAmount(): string
     {
@@ -212,13 +200,57 @@ class Money extends ValueObject implements Scalarable
     {
         switch ($scaleFunction) {
             case self::SCALE_FUNC_CEIL:
-                return $this->ceil($this->amount, $this->currency->getSubunits());
+                $amount = $this->ceil($this->amount, $this->currency->getSubunits());
+                break;
             case self::SCALE_FUNC_FLOOR:
-                return $this->floor($this->amount, $this->currency->getSubunits());
+                $amount = $this->floor($this->amount, $this->currency->getSubunits());
+                break;
             case self::SCALE_FUNC_ROUND:
-                return $this->round($this->amount, $this->currency->getSubunits());
+                $amount = $this->round($this->amount, $this->currency->getSubunits());
+                break;
+            default:
+                throw new UnexpectedValueException("Unexpected scale function: $scaleFunction.");    
         }
-        throw new UnexpectedValueException("Unexpected scale function: $scaleFunction.");
+        return $this->removeZeros($amount);
+    }
+
+    private function normalize(mixed $amount): string
+    {
+        $this->assertArgumentFalse(
+            $amount !== null && !is_scalar($amount),
+            'Money amount must be a scalar, ' . gettype($amount) . ' given.'
+        );
+        $amount = str_replace(',', '.', (string)$amount);
+        $this->assertArgumentPatternMatch(
+            $amount,
+            '/^[+\-]?(\d+\.\d*|\d*\.\d+|\d+)([eE]([+\-]?\d+))?$/',
+            'Invalid money format.',
+            $matches,
+        );
+        if (count($matches) < 4) {
+            return $this->removeZeros($amount);
+        }
+        $exp = (int)$matches[3];
+        $amount = substr($amount, 0, -strlen($matches[2]));
+        $e = '1' . str_repeat('0', abs($exp));
+        if ($exp < 0) {
+            $amount = bcdiv($amount, $e, self::PRECISION);
+        } else {
+            $amount = bcmul($amount, $e, self::PRECISION);
+        }
+        return $this->removeZeros($amount);
+    }
+
+    private function removeZeros(string $amount): string
+    {
+        if (!str_contains($amount, '.')) {
+            return $amount;
+        }
+        $amount = rtrim(rtrim($amount, '0'), '.');
+        if ($amount === '') {
+            return '0';
+        }
+        return $amount;
     }
 
     /**
@@ -269,48 +301,13 @@ class Money extends ValueObject implements Scalarable
         return $number . '.' . str_repeat('0', $precision);
     }
 
-    //endregion
-
-    /**
-     * @return numeric-string
-     */
-    protected function normalizeAmount(string $amount): string
-    {
-        $amount = str_replace(',', '.', $amount);
-        $this->assertArgumentTrue(is_numeric($amount), 'Amount must be a number.');
-        return $amount;
-    }
-
-    //region Setters
-
     protected function setAmount(mixed $amount): void
     {
-        $this->assertArgumentFalse(
-            $amount !== null && !is_scalar($amount),
-            'Money amount must be a scalar, ' . gettype($amount) . ' given.'
-        );
-        /** @psalm-var numeric-string $amount */
-        $amount = $amount ? str_replace(',', '.', (string)$amount) : '0';
-        $this->amount = $amount;
+        $this->amount = $this->normalize($amount);
     }
-
-    //endregion
-
-    //region Validators
 
     protected function validateCurrency(): void
     {
         $this->assertArgumentNotNull($this->currency, 'Currency must not be null.');
     }
-
-    protected function validateAmount(): void
-    {
-        $this->assertArgumentPatternMatch(
-            $this->amount,
-            '/^[+-]?[0-9]+(\.[0-9]+)?$/',
-            'Invalid money format.'
-        );
-    }
-
-    //endregion
 }

@@ -39,8 +39,6 @@ class PhoneTest extends TestCase
 
     /**
      * @dataProvider phoneDataProvider
-     * @param mixed $phone
-     * @param string $sanitizedPhone
      */
     public function testPhoneSanitization(mixed $phone, string $sanitizedPhone): void
     {

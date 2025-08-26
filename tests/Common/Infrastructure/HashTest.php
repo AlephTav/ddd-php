@@ -47,10 +47,6 @@ class HashTest extends TestCase
 {
     /**
      * @dataProvider hashData
-     * @param mixed $value
-     * @param string $algorithm
-     * @param bool $rawOutput
-     * @param string $expectedHash
      */
     public function testHash(mixed $value, string $algorithm, bool $rawOutput, string $expectedHash): void
     {

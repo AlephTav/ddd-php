@@ -216,8 +216,11 @@ class Money extends ValueObject implements Scalarable
 
     private function normalize(mixed $amount): string
     {
+        if ($amount === '' || $amount === null) {
+            return '0';
+        }
         $this->assertArgumentFalse(
-            $amount !== null && !is_scalar($amount),
+            !is_scalar($amount),
             'Money amount must be a scalar, ' . gettype($amount) . ' given.'
         );
         $amount = str_replace(',', '.', (string)$amount);

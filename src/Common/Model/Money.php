@@ -221,6 +221,9 @@ class Money extends ValueObject implements Scalarable
             'Money amount must be a scalar, ' . gettype($amount) . ' given.'
         );
         $amount = str_replace(',', '.', (string)$amount);
+        if ($amount === '') {
+            return '0';
+        }
         $this->assertArgumentPatternMatch(
             $amount,
             '/^[+\-]?(\d+\.\d*|\d*\.\d+|\d+)([eE]([+\-]?\d+))?$/',

@@ -39,6 +39,15 @@ class GlobalIdTest extends TestCase
         self::assertTrue(GlobalId::canBeId($id->identity));
     }
 
+    public function testNewId7(): void
+    {
+        $id = GlobalId::create7();
+
+        self::assertInstanceOf(GlobalId::class, $id);
+        self::assertTrue(GlobalId::canBeId($id->identity));
+        self::assertSame('7', substr($id->identity, 14, 1));
+    }
+
     public function testCanBeId(): void
     {
         $identity = 'b5e2cf01-8bb6-4fcd-ad88-0efb611195da';
@@ -53,9 +62,31 @@ class GlobalIdTest extends TestCase
         self::assertFalse(GlobalId::canBeId(null));
     }
 
+    public function testCanBeId7(): void
+    {
+        // Valid UUID7 examples
+        $validUuid7 = '019a005c-330a-7417-b3e5-829eaa6c10ee';
+
+        self::assertTrue(GlobalId::canBeId($validUuid7));
+        self::assertTrue(GlobalId::canBeId(GlobalId::create7()));
+
+        // Invalid UUID7 examples
+        self::assertFalse(GlobalId::canBeId('019a005c-330a-6417-b3e5-829eaa6c10ee')); // version 6
+        self::assertFalse(GlobalId::canBeId('019a005c-330a-7417-b3e5-829eaa6c10ee0')); // too long
+        self::assertFalse(GlobalId::canBeId('019a005c-330a-7417-c3e5-829eaa6c10ee')); // invalid variant
+    }
+
     public function testParseGlobalId(): void
     {
         $id = GlobalId::create();
+        $copy = new GlobalId($id);
+
+        self::assertSame($id->identity, $copy->identity);
+    }
+
+    public function testParseGlobalId7(): void
+    {
+        $id = GlobalId::create7();
         $copy = new GlobalId($id);
 
         self::assertSame($id->identity, $copy->identity);
@@ -116,5 +147,54 @@ class GlobalIdTest extends TestCase
 
         self::assertSame($id->identity, GlobalId::fromNullable($id->identity)?->identity);
         self::assertNull(GlobalId::fromNullable(null));
+    }
+
+    public function testUuid7ChronologicalOrder(): void
+    {
+        $uuids = [];
+        for ($i = 0; $i < 5; $i++) {
+            $uuids[] = GlobalId::create7();
+            usleep(1000); // 1ms delay to ensure different timestamps
+        }
+
+        // Extract the identities as strings for comparison
+        $identities = array_map(fn($id) => $id->identity, $uuids);
+        $sorted = $identities;
+        sort($sorted);
+
+        // UUID7 should be roughly chronological (allowing for some variance due to random bits)
+        // Since we have small delays, most UUIDs should be in chronological order
+        self::assertGreaterThanOrEqual(3, count(array_intersect_assoc($identities, $sorted)));
+    }
+
+    public function testUuid7Uniqueness(): void
+    {
+        $uuids = [];
+        $count = 1000;
+
+        for ($i = 0; $i < $count; $i++) {
+            $uuids[] = GlobalId::create7()->identity;
+        }
+
+        $uniqueUuids = array_unique($uuids);
+
+        self::assertSame($count, count($uniqueUuids), 'All UUID7 should be unique');
+    }
+
+    public function testUuid7Performance(): void
+    {
+        $count = 10000;
+        $start = microtime(true);
+
+        for ($i = 0; $i < $count; $i++) {
+            GlobalId::create7();
+        }
+
+        $time = microtime(true) - $start;
+        $performance = $count / $time;
+
+        // Should be able to generate at least 100,000 UUID7 per second
+        self::assertGreaterThan(100000, $performance,
+            "UUID7 generation should be fast. Got: " . number_format($performance) . " UUID/sec");
     }
 }

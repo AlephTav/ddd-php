@@ -12,6 +12,7 @@ namespace AlephTools\DDD\Common\Model\Identity;
 class GlobalId extends AbstractId
 {
     public const UUID4_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
+    public const UUID7_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-7[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$';
 
     /**
      * Generates new global identifier.
@@ -20,6 +21,15 @@ class GlobalId extends AbstractId
     public static function create(): static
     {
         return new static(self::uuid4());
+    }
+
+    /**
+     * Generates new global identifier using UUID v7 (time-ordered).
+     *
+     */
+    public static function create7(): static
+    {
+        return new static(self::uuid7());
     }
 
     /**
@@ -35,6 +45,45 @@ class GlobalId extends AbstractId
     }
 
     /**
+     * Generates new uuid7 (time-ordered UUID)
+     * Implementation optimized for high performance
+     *
+     */
+    private static function uuid7(): string
+    {
+        // Get current Unix timestamp in milliseconds (48 bits)
+        $timestampMs = (int)(microtime(true) * 1000);
+
+        // Convert to 6-byte big-endian representation
+        $timestampBytes = pack('J', $timestampMs);
+        $timestampBytes = substr($timestampBytes, -6);
+
+        // Generate 10 random bytes (80 bits) for the random portion
+        $randomBytes = random_bytes(10);
+
+        // Combine timestamp (6 bytes) + random (10 bytes) = 16 bytes total
+        $uuidBytes = $timestampBytes . $randomBytes;
+
+        // Set version to 0111 (UUID v7) in the most significant 4 bits of byte 6
+        $uuidBytes[6] = chr(ord($uuidBytes[6]) & 0x0f | 0x70);
+
+        // Set variant to 10 in the most significant 2 bits of byte 8
+        $uuidBytes[8] = chr(ord($uuidBytes[8]) & 0x3f | 0x80);
+
+        // Convert to hexadecimal string with UUID formatting
+        $hex = bin2hex($uuidBytes);
+
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12)
+        );
+    }
+
+    /**
      * Returns TRUE if the given identity can be a global identifier.
      *
      */
@@ -45,7 +94,8 @@ class GlobalId extends AbstractId
         }
 
         if (is_string($identity)) {
-            return (bool)preg_match('/' . self::UUID4_PATTERN . '/D', $identity);
+            return (bool)preg_match('/' . self::UUID4_PATTERN . '/D', $identity) ||
+                   (bool)preg_match('/' . self::UUID7_PATTERN . '/D', $identity);
         }
 
         return false;

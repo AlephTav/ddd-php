@@ -196,7 +196,7 @@ class FastDtoTest extends TestCase
         ];
         $obj = new FastDtoTestObject($properties);
 
-        $expected = print_r($obj, true);
+        $expected = '{"prop1":5,"prop2":null,"prop3":true,"prop4":"foo","prop5":"test"}';
         self::assertEquals($expected, $obj->toString());
         self::assertEquals($expected, (string)$obj);
     }

@@ -257,7 +257,7 @@ abstract class Dto implements Serializable
      */
     public function toJson(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->jsonSerialize());
     }
 
     /**
@@ -275,7 +275,7 @@ abstract class Dto implements Serializable
      */
     public function toString(): string
     {
-        return print_r($this, true);
+        return $this->toJson();
     }
 
     /**

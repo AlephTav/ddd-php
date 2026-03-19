@@ -11,7 +11,7 @@ namespace AlephTools\DDD\Common\Model\Identity;
  */
 class GlobalId extends AbstractId
 {
-    public const UUID4_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
+    public const UUID_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
     public const UUID7_PATTERN = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-7[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$';
 
     /**
@@ -94,8 +94,24 @@ class GlobalId extends AbstractId
         }
 
         if (is_string($identity)) {
-            return (bool)preg_match('/' . self::UUID4_PATTERN . '/D', $identity) ||
-                   (bool)preg_match('/' . self::UUID7_PATTERN . '/D', $identity);
+            return (bool)preg_match('/' . self::UUID_PATTERN . '/D', $identity);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns TRUE if the given identity can be a global identifier of version 7.
+     *
+     */
+    public static function canBeId7(mixed $identity): bool
+    {
+        if ($identity instanceof self) {
+            return true;
+        }
+
+        if (is_string($identity)) {
+            return (bool)preg_match('/' . self::UUID7_PATTERN . '/D', $identity);
         }
 
         return false;

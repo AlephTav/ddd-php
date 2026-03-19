@@ -158,7 +158,7 @@ class DtoTest extends TestCase
         ];
         $obj = new DtoTestObject($attributes);
 
-        $expected = print_r($obj, true);
+        $expected = '{"prop1":null,"prop2":5,"prop3":true,"prop4":"boo","docComment":null}';
         self::assertEquals($expected, $obj->toString());
         self::assertEquals($expected, (string)$obj);
     }

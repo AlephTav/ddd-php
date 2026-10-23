@@ -14,7 +14,7 @@ class EntityNotFoundException extends DomainException
      *
      * @param string|AbstractId $message
      */
-    public function __construct($message = '', int $code = 0, Throwable $previous = null)
+    public function __construct($message = '', int $code = 0, ?Throwable $previous = null)
     {
         if ($message instanceof AbstractId) {
             $message = $this->errorMessageFrom($message);

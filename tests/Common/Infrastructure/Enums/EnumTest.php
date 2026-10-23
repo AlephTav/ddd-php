@@ -36,7 +36,7 @@ class EnumTestObject extends AbstractEnum
         return json_encode($this->data);
     }
 
-    public function getData(int $index = null)
+    public function getData(?int $index = null)
     {
         if (is_array($this->data) && $index !== null) {
             return $this->data[$index];

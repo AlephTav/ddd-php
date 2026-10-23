@@ -38,7 +38,7 @@ class AbstractApplicationServiceTest extends TestCase
 {
     protected function setUp(): void
     {
-        ApplicationContext::set(function (string $abstract = null, array $parameters = []) {
+        ApplicationContext::set(function (?string $abstract = null, array $parameters = []) {
             if ($abstract === UnitOfWork::class) {
                 return new class () implements UnitOfWork {
                     public function execute(callable $callback)

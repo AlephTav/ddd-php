@@ -50,8 +50,8 @@ class FileMetadata extends StrictDto
         string $suggestedExtension,
         string $path,
         int $size,
-        string $url = null,
-        string $downloadLink = null,
+        ?string $url = null,
+        ?string $downloadLink = null,
         mixed $ownerId = null
     ) {
         parent::__construct([

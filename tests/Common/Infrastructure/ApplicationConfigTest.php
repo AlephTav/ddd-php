@@ -14,7 +14,7 @@ class ApplicationConfigTest extends TestCase
 {
     public function testResolveDependency(): void
     {
-        $config = fn (string $key = null, $default = null) => [$key, $default];
+        $config = fn (?string $key = null, $default = null) => [$key, $default];
 
         ApplicationConfig::set($config);
 

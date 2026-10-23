@@ -63,7 +63,7 @@ interface FileStorage
         string $path = '',
         int $linksExpirationInSeconds = 0,
         mixed $ownerId = null,
-        string $mimeType = null
+        ?string $mimeType = null
     ): FileMetadata;
 
     /**

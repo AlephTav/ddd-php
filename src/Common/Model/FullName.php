@@ -62,7 +62,7 @@ class FullName extends ValueObject
      *
      * @param array<string,mixed>|string|null $firstName
      */
-    public function __construct($firstName = null, string $lastName = null, string $middleName = null)
+    public function __construct($firstName = null, ?string $lastName = null, ?string $middleName = null)
     {
         if (is_array($firstName)) {
             parent::__construct($firstName);

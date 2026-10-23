@@ -28,7 +28,7 @@ class Money extends ValueObject implements Scalarable
     /**
      * @param array<string,mixed>|string|int|float|Money $amount
      */
-    public function __construct(null|array|string|int|float|Money $amount, Currency $currency = null)
+    public function __construct(null|array|string|int|float|Money $amount, ?Currency $currency = null)
     {
         if (is_array($amount)) {
             parent::__construct($amount);

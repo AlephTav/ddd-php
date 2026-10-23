@@ -31,7 +31,7 @@ final class ApplicationContext
      * @param P $abstract
      * @psalm-return (P is class-string<T> ? T : object)
      */
-    public static function get(string $abstract = null, array $parameters = [])
+    public static function get(?string $abstract = null, array $parameters = [])
     {
         return (self::$context)($abstract, $parameters);
     }

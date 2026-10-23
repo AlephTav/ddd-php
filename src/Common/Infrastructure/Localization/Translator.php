@@ -13,5 +13,5 @@ interface Translator
      * @param array $replacement The key-value pairs to replace substrings in the translated string.
      * @return string|array
      */
-    public function get(string $key, array $replacement = [], string $locale = null);
+    public function get(string $key, array $replacement = [], ?string $locale = null);
 }

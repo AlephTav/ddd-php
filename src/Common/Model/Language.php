@@ -58,6 +58,7 @@ use AlephTools\DDD\Common\Infrastructure\Enums\AbstractEnum;
  * @method static static IW_IL(string $method = null)
  * @method static static IT(string $method = null)
  * @method static static ZH_CN(string $method = null)
+ * @method static static TK_TM(string $method = null)
  */
 class Language extends AbstractEnum
 {
@@ -116,6 +117,7 @@ class Language extends AbstractEnum
     private const EL_GR = ['el-GR', 'Ελληνικά'];
     private const IW_IL = ['iw-IL', 'עִבְרִית'];
     private const ZH_CN = ['zh-CN', '汉语'];
+    private const TK_TM = ['tk-TM', 'Türkmen'];
 
     private string $locale;
     private string $name;
